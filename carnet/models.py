@@ -18,7 +18,7 @@ class TypeMaintenance(models.Model):
     confier_specialiste = models.BooleanField(default=False)
 
     def __str__(self):
-        return self.nom
+        return '{} ({})'.format(self.nom, self.periodicite.nom)
 
 
 class ModeleVoiture(models.Model):
@@ -52,9 +52,7 @@ class OperationMaintenance(models.Model):
                                    help_text='Est décoché si l\'opération de maintenance n\'a pas encore été effectué')
 
     def __str__(self):
-        operation = '[{} de {} {}] {} du {}'.format(self.voiture.modele.nom, self.voiture.proprietaire.first_name,
-                                                    self.voiture.proprietaire.last_name, self.type.nom,
-                                                    self.date.strftime('%d/%m/%Y'))
+        operation = '{} du {}'.format(self.type.nom, self.date.strftime('%d/%m/%Y'))
         if not self.effectue:
             operation += ' (à planifier)'
         return operation
