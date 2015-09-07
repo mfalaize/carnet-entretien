@@ -78,7 +78,7 @@ WSGI_APPLICATION = 'carnet_entretien.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'carnet_entretien',
         'USER': os.environ.get('CARNET_ENTRETIEN_DB_USER'),
         'PASSWORD': os.environ.get('CARNET_ENTRETIEN_DB_PASSWORD'),
