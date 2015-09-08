@@ -15,20 +15,10 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
-
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get('CARNET_ENTRETIEN_SECRET_KEY')
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
-
-ALLOWED_HOSTS = [
-    '.maxime-falaize.fr'
-]
-
+try:
+    from local_settings import *
+except ImportError as e:
+    pass
 
 # Application definition
 
@@ -75,21 +65,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'carnet_entretien.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.8/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'carnet_entretien',
-        'USER': os.environ.get('CARNET_ENTRETIEN_DB_USER'),
-        'PASSWORD': os.environ.get('CARNET_ENTRETIEN_DB_PASSWORD'),
-        'HOST': os.environ.get('CARNET_ENTRETIEN_DB_HOST'),
-        'PORT': os.environ.get('CARNET_ENTRETIEN_DB_PORT')
-    }
-}
-
-
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
@@ -108,10 +83,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
-
-EMAIL_USE_TLS = True
-EMAIL_HOST = os.environ.get('CARNET_ENTRETIEN_EMAIL_HOST')
-EMAIL_PORT = os.environ.get('CARNET_ENTRETIEN_EMAIL_PORT')
-EMAIL_HOST_USER = os.environ.get('CARNET_ENTRETIEN_EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('CARNET_ENTRETIEN_EMAIL_HOST_PASSWORD')
-DEFAULT_FROM_EMAIL = 'carnet_entretien@maxime-falaize.fr'

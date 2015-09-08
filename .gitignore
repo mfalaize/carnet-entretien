@@ -23,6 +23,7 @@
 # .idea/gradle.xml
 # .idea/libraries
 
+/carnet_entretien/local_settings.py
 # Mongo Explorer plugin:
 # .idea/mongoSettings.xml
 
