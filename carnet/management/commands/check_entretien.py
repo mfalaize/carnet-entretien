@@ -21,7 +21,7 @@ def check_entretien():
         # annuel
         if voiture.date_derniere_maj_km < datetime.now().date():
             nb_jours = datetime.now().date() - voiture.date_derniere_maj_km
-            estimation_km = voiture.moyenne_km_annuel / 365 * nb_jours
+            estimation_km = voiture.moyenne_km_annuel / 365 * nb_jours.days
             kilometrage += estimation_km
 
         programmes = voiture.modele.programme_maintenance.all()
