@@ -54,8 +54,25 @@ class OperationMaintenanceNonEffectueInline(admin.TabularInline):
         return qs.filter(pk__in=pks).order_by('-date', 'pk')
 
 
+class OperationMaintenanceCreationInline(admin.TabularInline):
+    model = OperationMaintenance
+    extra = 0
+    can_delete = True
+    fields = ('type', 'kilometrage', 'date', 'effectue')
+    verbose_name = 'Opération de maintenance à créer'
+    verbose_name_plural = 'Opérations de maintenance à créer'
+
+    def get_queryset(self, request):
+        """
+        Cette classe n'est que pour la création. On ne retourne donc rien.
+        """
+        qs = super().get_queryset(request)
+        return qs.none()
+
+
 class VoitureAdmin(admin.ModelAdmin):
-    inlines = [OperationMaintenanceNonEffectueInline, OperationMaintenanceEffectueInline]
+    inlines = [OperationMaintenanceNonEffectueInline, OperationMaintenanceEffectueInline,
+               OperationMaintenanceCreationInline]
 
 
 admin.site.register(Periodicite)
