@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block bootstrap3_extra_head %}
+    <link href="{% static 'css/signin.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block bootstrap3_content %}
+
+    <form class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+        {% csrf_token %}
+        <h2 class="form-signin-heading">{% trans "Connexion" %}</h2>
+        {% bootstrap_form form show_label=False form_group_class='' %}
+
+        {# Assumes you setup the password_reset view in your URLconf #}
+        <p><a href="{% url 'password_reset' %}">{% trans "Mot de passe perdu ?" %}</a></p>
+
+        <button class="btn btn-lg btn-primary btn-block" type="submit">{% trans "Se connecter" %}</button>
+        <input type="hidden" name="next" value="{{ next }}"/>
+    </form>
+
+{% endblock %}
+
+{% block bootstrap3_extra_script %}
+    {# IE10 viewport hack for Surface/desktop Windows 8 bug #}
+    <script src="{% static 'js/ie10-viewport-bug-workaround.js' %}"></script>
+{% endblock %}
