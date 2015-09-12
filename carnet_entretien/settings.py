@@ -88,6 +88,9 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+LOGIN_URL = '/login/'
+LOGOUT_URL = '/logout/'
+
 BOOTSTRAP3 = {
 
     # The URL to the jQuery JavaScript file
@@ -124,7 +127,7 @@ BOOTSTRAP3 = {
     'set_disabled': True,
 
     # Set placeholder attributes to label if no placeholder is provided
-    'set_placeholder': False,
+    'set_placeholder': True,
 
     # Class to indicate required (better to set this in your Django form)
     'required_css_class': '',

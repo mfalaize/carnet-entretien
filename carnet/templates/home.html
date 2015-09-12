@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block bootstrap3_extra_head %}
+    <link href="{% static 'css/carnet.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block bootstrap3_content %}
+    <div class="container">
+        <div class="row">
+            {% for voiture in voitures %}
+                <div class="col-md-offset-2 col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ voiture.nom }}</h3>
+                        </div>
+
+                        <div class="panel-body">
+                            <a href="#" class="thumbnail">
+                                <img src="http://i-cms.linternaute.com/image_cms/original/373771-numero-6-renault-megane-2.jpg"/>
+                            </a>
+                        </div>
+
+                        <div class="panel-footer">
+                            {% trans "Modèle" %} : {{ voiture.modele.nom }}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">{{ voiture.nom }}</h3>
+                        </div>
+
+                        <div class="panel-body">
+                            <a href="#" class="thumbnail">
+                                <img src="http://i-cms.linternaute.com/image_cms/original/373771-numero-6-renault-megane-2.jpg"/>
+                            </a>
+                        </div>
+
+                        <div class="panel-footer">
+                            {% trans "Modèle" %} : {{ voiture.modele.nom }}
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="operations-home">
+            <h2>{% trans "Dernières opérations" %}</h2>
+        </div>
+
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <table class="table table-stripped">
+                    <thead>
+                    <tr>
+                        <th>{% trans "Voiture" %}</th>
+                        <th>{% trans "Opération" %}</th>
+                        <th>{% trans "Date prévue" %}</th>
+                        <th>{% trans "Etat" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for operation in dernieres_operations %}
+                        <tr>
+                            <td>{{ operation.voiture.nom }}</td>
+                            <td>{{ operation.type.nom }}</td>
+                            <td>{{ operation.date }}</td>
+                            {% if operation.effectue %}
+                                <td><span class="label label-success">{% trans "Effectué" %}</span></td>
+                            {% else %}
+                                <td><span class="label label-warning">{% trans "A prévoir" %}</span></td>
+                            {% endif %}
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="text-center">
+                    {% bootstrap_pagination dernieres_operations %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

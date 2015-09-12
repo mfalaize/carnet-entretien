@@ -3,12 +3,12 @@
 {% load staticfiles %}
 {% load bootstrap3 %}
 {% block bootstrap3_extra_head %}
-    <link href="{% static 'css/signin.css' %}" rel="stylesheet">
+    <link href="{% static 'css/carnet.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block bootstrap3_content %}
 
-    <form class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">
+    <form class="form-signin" method="post" action="{% url 'login' %}">
         {% csrf_token %}
         <h2 class="form-signin-heading">{% trans "Connexion" %}</h2>
         {% bootstrap_form form show_label=False form_group_class='' %}
