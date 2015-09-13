@@ -1,4 +1,4 @@
-from carnet.models import Periodicite, TypeMaintenance, ModeleVoiture, Voiture, OperationMaintenance
+from carnet.models import Periodicite, TypeMaintenance, Voiture, OperationMaintenance
 from django.contrib import admin
 
 
@@ -77,5 +77,4 @@ class VoitureAdmin(admin.ModelAdmin):
 
 admin.site.register(Periodicite)
 admin.site.register(TypeMaintenance)
-admin.site.register(ModeleVoiture)
 admin.site.register(Voiture, VoitureAdmin)

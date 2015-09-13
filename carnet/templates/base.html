@@ -1,3 +1,58 @@
 {% extends 'bootstrap3/bootstrap3.html' %}
 {% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load utils %}
 {% block bootstrap3_title %}{% trans "Carnet Entretien Auto" %}{% endblock %}
+{% block bootstrap3_extra_head %}
+    <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker.min.css"
+          rel="stylesheet">
+    <link href="{% static 'css/carnet.css' %}" rel="stylesheet">
+{% endblock %}
+
+{% block bootstrap3_content %}
+
+    {% if user.is_authenticated %}
+        <nav class="navbar navbar-default navbar-static-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="{% url 'home' %}">{% trans "Carnet Entretien" %}</a>
+                </div>
+                <div class="navbar-collapse collapse">
+                    {% block navbar-content %}{% endblock %}
+                    <div class="navbar-right">
+                    <span class="navbar-text">{% blocktrans with name=user.get_full_name %}Bonjour {{ name }}
+                        !{% endblocktrans %}</span>
+                        <a href="{% url 'logout' %}" class="btn btn-default navbar-btn">{% trans "Se déconnecter" %}</a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    {% endif %}
+
+    {% block content %}{% endblock %}
+
+{% endblock %}
+
+{% block bootstrap3_extra_script %}
+    <script type="text/javascript"
+            src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+    {% if request.LANGUAGE_CODE %}
+        <script type="text/javascript"
+                src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/locales/bootstrap-datepicker.{{ request.LANGUAGE_CODE }}.min.js"></script>
+        <script type="text/javascript">
+            $('.datepicker').datepicker({
+                language: '{{ request.LANGUAGE_CODE }}'
+            });
+        </script>
+    {% else %}
+        <script type="text/javascript"
+                src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/locales/bootstrap-datepicker.fr.min.js"></script>
+        <script type="text/javascript">
+            $('.datepicker').datepicker({
+                language: 'fr'
+            });
+        </script>
+    {% endif %}
+    <script type="text/javascript" src="{% static 'js/carnet.js' %}"></script>
+{% endblock %}

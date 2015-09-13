@@ -1,38 +1,24 @@
 {% extends 'base.html' %}
 {% load i18n %}
-{% load staticfiles %}
+{% load static %}
 {% load bootstrap3 %}
 {% load utils %}
-{% block bootstrap3_extra_head %}
-    <link href="{% static 'css/carnet.css' %}" rel="stylesheet">
+
+{% block navbar-content %}
+    <div class="navbar-left">
+        <a href="{% url 'ajout_voiture' %}"
+           class="btn btn-primary navbar-btn">{% trans "Ajouter une voiture" %}</a>
+    </div>
 {% endblock %}
 
-{% block bootstrap3_content %}
-    <nav class="navbar navbar-default navbar-static-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a class="navbar-brand" href="#">{% trans "Carnet Entretien" %}</a>
-            </div>
-            <div class="navbar-collapse collapse">
-                <div class="navbar-left">
-                    <a href="#"
-                       class="btn btn-primary navbar-btn">{% trans "Ajouter une voiture" %}</a>
-                </div>
-                <div class="navbar-right">
-                    <span class="navbar-text">{% blocktrans with name=user.get_full_name %}Bonjour {{ name }}
-                        !{% endblocktrans %}</span>
-                    <a href="{% url 'logout' %}" class="btn btn-default navbar-btn">{% trans "Se déconnecter" %}</a>
-                </div>
-            </div>
-        </div>
-    </nav>
+{% block content %}
     <div class="container">
         {% for voiture in voitures %}
             {# On met un maximum de 3 vignettes de voitures par ligne #}
             {% if forloop.counter0|divisibleby:3 %}
                 <div class="row">
             {% endif %}
-        <div class="{% if voitures|length|subtract:forloop.counter0 == 2 %}col-md-offset-2 {% elif voitures|length|subtract:forloop.counter0 == 1 %}col-md-offset-4 {% endif %}col-md-4">
+        <div class="{% if forloop.counter0|divisibleby:3 and voitures|length|subtract:forloop.counter0 == 2 %}col-md-offset-2 {% elif forloop.counter0|divisibleby:3 and voitures|length|subtract:forloop.counter0 == 1 %}col-md-offset-4 {% endif %}col-md-4">
             <div class="panel panel-primary">
                 <div class="panel-heading">
                     <h3 class="panel-title">{{ voiture.nom }}</h3>
@@ -45,11 +31,11 @@
                 </div>
 
                 <div class="panel-footer">
-                    {% trans "Modèle" %} : {{ voiture.modele.nom }}
+                    {% trans "Modèle" %} : {{ voiture.modele }}
                 </div>
             </div>
         </div>
-        {% if forloop.counter0|divisibleby:3 %}
+        {% if forloop.last or not forloop.first and forloop.counter|divisibleby:3 %}
             </div>
         {% endif %}
 
@@ -93,7 +79,7 @@
                 </table>
 
                 <div class="text-center">
-                    {% bootstrap_pagination dernieres_operations %}
+                    {% bootstrap_pagination page_obj %}
                 </div>
             </div>
         </div>
