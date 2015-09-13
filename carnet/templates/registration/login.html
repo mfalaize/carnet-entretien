@@ -8,17 +8,19 @@
 
 {% block bootstrap3_content %}
 
-    <form class="form-signin" method="post" action="{% url 'login' %}">
-        {% csrf_token %}
-        <h2 class="form-signin-heading">{% trans "Connexion" %}</h2>
-        {% bootstrap_form form show_label=False form_group_class='' %}
+    <div class="body-signin">
+        <form class="form-signin" method="post" action="{% url 'login' %}">
+            {% csrf_token %}
+            <h2 class="form-signin-heading">{% trans "Connexion" %}</h2>
+            {% bootstrap_form form show_label=False form_group_class='' %}
 
-        {# Assumes you setup the password_reset view in your URLconf #}
-        <p><a href="{% url 'password_reset' %}">{% trans "Mot de passe perdu ?" %}</a></p>
+            {# Assumes you setup the password_reset view in your URLconf #}
+            <p><a href="{% url 'password_reset' %}">{% trans "Mot de passe perdu ?" %}</a></p>
 
-        <button class="btn btn-lg btn-primary btn-block" type="submit">{% trans "Se connecter" %}</button>
-        <input type="hidden" name="next" value="{{ next }}"/>
-    </form>
+            <button class="btn btn-lg btn-primary btn-block" type="submit">{% trans "Se connecter" %}</button>
+            <input type="hidden" name="next" value="{{ next }}"/>
+        </form>
+    </div>
 
 {% endblock %}
 

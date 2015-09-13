@@ -90,6 +90,7 @@ STATIC_URL = '/static/'
 
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
+LOGIN_REDIRECT_URL = '/'
 
 BOOTSTRAP3 = {
 

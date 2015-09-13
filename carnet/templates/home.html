@@ -2,50 +2,60 @@
 {% load i18n %}
 {% load staticfiles %}
 {% load bootstrap3 %}
+{% load utils %}
 {% block bootstrap3_extra_head %}
     <link href="{% static 'css/carnet.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block bootstrap3_content %}
-    <div class="container">
-        <div class="row">
-            {% for voiture in voitures %}
-                <div class="col-md-offset-2 col-md-4">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">{{ voiture.nom }}</h3>
-                        </div>
-
-                        <div class="panel-body">
-                            <a href="#" class="thumbnail">
-                                <img src="http://i-cms.linternaute.com/image_cms/original/373771-numero-6-renault-megane-2.jpg"/>
-                            </a>
-                        </div>
-
-                        <div class="panel-footer">
-                            {% trans "Modèle" %} : {{ voiture.modele.nom }}
-                        </div>
-                    </div>
+    <nav class="navbar navbar-default navbar-static-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">{% trans "Carnet Entretien" %}</a>
+            </div>
+            <div class="navbar-collapse collapse">
+                <div class="navbar-left">
+                    <a href="#"
+                       class="btn btn-primary navbar-btn">{% trans "Ajouter une voiture" %}</a>
                 </div>
-                <div class="col-md-4">
-                    <div class="panel panel-primary">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">{{ voiture.nom }}</h3>
-                        </div>
-
-                        <div class="panel-body">
-                            <a href="#" class="thumbnail">
-                                <img src="http://i-cms.linternaute.com/image_cms/original/373771-numero-6-renault-megane-2.jpg"/>
-                            </a>
-                        </div>
-
-                        <div class="panel-footer">
-                            {% trans "Modèle" %} : {{ voiture.modele.nom }}
-                        </div>
-                    </div>
+                <div class="navbar-right">
+                    <span class="navbar-text">{% blocktrans with name=user.get_full_name %}Bonjour {{ name }}
+                        !{% endblocktrans %}</span>
+                    <a href="{% url 'logout' %}" class="btn btn-default navbar-btn">{% trans "Se déconnecter" %}</a>
                 </div>
-            {% endfor %}
+            </div>
         </div>
+    </nav>
+    <div class="container">
+        {% for voiture in voitures %}
+            {# On met un maximum de 3 vignettes de voitures par ligne #}
+            {% if forloop.counter0|divisibleby:3 %}
+                <div class="row">
+            {% endif %}
+        <div class="{% if voitures|length|subtract:forloop.counter0 == 2 %}col-md-offset-2 {% elif voitures|length|subtract:forloop.counter0 == 1 %}col-md-offset-4 {% endif %}col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ voiture.nom }}</h3>
+                </div>
+
+                <div class="panel-body">
+                    <a href="#" class="thumbnail">
+                        <img src="{% static "img/megane.jpg" %}"/>
+                    </a>
+                </div>
+
+                <div class="panel-footer">
+                    {% trans "Modèle" %} : {{ voiture.modele.nom }}
+                </div>
+            </div>
+        </div>
+        {% if forloop.counter0|divisibleby:3 %}
+            </div>
+        {% endif %}
+
+        {% empty %}
+            <p class="lead operations-home">{% trans "Aucune voiture ! Vous pouvez en ajouter en cliquant sur le bouton en haut de l'écran !" %}</p>
+        {% endfor %}
 
         <div class="operations-home">
             <h2>{% trans "Dernières opérations" %}</h2>
@@ -58,7 +68,7 @@
                     <tr>
                         <th>{% trans "Voiture" %}</th>
                         <th>{% trans "Opération" %}</th>
-                        <th>{% trans "Date prévue" %}</th>
+                        <th>{% trans "Date" %}</th>
                         <th>{% trans "Etat" %}</th>
                     </tr>
                     </thead>
@@ -73,6 +83,10 @@
                             {% else %}
                                 <td><span class="label label-warning">{% trans "A prévoir" %}</span></td>
                             {% endif %}
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td class="text-center" colspan="4">{% trans "Aucune opération encore enregistrée !" %}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
