@@ -6,7 +6,7 @@
 
 {% block navbar-content %}
     <div class="navbar-left">
-        <a href="{% url 'ajout_voiture' %}"
+        <a href="{% url 'ajout_voiture' %}?previous={{ request.path }}"
            class="btn btn-primary navbar-btn">{% trans "Ajouter une voiture" %}</a>
     </div>
 {% endblock %}
@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="panel-body">
-                    <a href="#" class="thumbnail">
+                    <a href="{% url 'voiture' pk=voiture.pk %}" class="thumbnail">
                         <img src="{% static "img/megane.jpg" %}"/>
                     </a>
                 </div>

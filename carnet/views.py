@@ -1,11 +1,13 @@
 # Create your views here.
 from datetime import date
 
+from carnet.forms import VoitureForm
 from carnet.models import Voiture, OperationMaintenance
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
+from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
-from django.views.generic import CreateView, ListView
+from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
 
 
 class Home(ListView):
@@ -27,23 +29,61 @@ class Home(ListView):
         return super().dispatch(request, *args, **kwargs)
 
 
+def add_previous_link_in_context(request, context):
+    if request.GET:
+        context['previous'] = request.GET['previous']
+    return context
+
+
 class AjoutVoiture(CreateView):
     model = Voiture
+    form_class = VoitureForm
     template_name = 'voiture.html'
-    fields = ['nom', 'modele', 'immatriculation', 'kilometrage', 'date_mise_circulation', 'moyenne_km_annuel',
-              'photo']
     success_url = reverse_lazy('home')
 
-    def get_form(self, form_class=None):
-        form = super().get_form(form_class)
-        form.fields['nom'].widget.attrs['autofocus'] = True
-        form.fields['date_mise_circulation'].widget.attrs['class'] = 'datepicker'
-        return form
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['creation'] = True
+        return add_previous_link_in_context(self.request, context)
 
     def form_valid(self, form):
         form.instance.proprietaire = self.request.user
         form.instance.date_derniere_maj_km = date.today()
         return super().form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class EditeVoiture(UpdateView):
+    model = Voiture
+    form_class = VoitureForm
+    template_name = 'voiture.html'
+    success_url = reverse_lazy('home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edition'] = True
+        return add_previous_link_in_context(self.request, context)
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class SupprimeVoiture(DeleteView):
+    model = Voiture
+    success_url = reverse_lazy('home')
+
+
+class ManageVoiture(TemplateView):
+    template_name = 'manage_voiture.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['voiture'] = get_object_or_404(Voiture, pk=kwargs['pk'])
+        return context
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

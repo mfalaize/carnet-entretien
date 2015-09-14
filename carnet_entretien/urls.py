@@ -17,11 +17,9 @@ from carnet.forms import BootstrapAuthenticationForm
 from django.conf.urls import include, url
 from django.contrib import admin
 from django.contrib.auth import views as auth
-from carnet import views
 
 urlpatterns = [
-    url(r'^$', views.Home.as_view(), name='home'),
-    url(r'^ajout_voiture/$', views.AjoutVoiture.as_view(), name='ajout_voiture'),
+    url(r'^', include('carnet.urls')),
     url(r'^login/$', auth.login, {'authentication_form': BootstrapAuthenticationForm}, name='login'),
     url(r'^logout/$', auth.logout, {'next_page': 'login'}, name='logout'),
     url(r'^password_change/$', auth.password_change, name='password_change'),
