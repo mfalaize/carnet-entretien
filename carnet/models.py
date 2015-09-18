@@ -4,33 +4,24 @@ from django.utils.translation import ugettext_lazy as _
 
 
 def get_image_user_path(instance, filename):
-    """
-    Utilisé par le modèle Voiture
-    """
+    """Utilisé par le modèle Voiture"""
     user = instance.proprietaire
     return 'img/%s/%s' % (user.username, filename)
 
 
-class Periodicite(models.Model):
-    nom = models.CharField(max_length=128)
-    nb_kilometres = models.IntegerField(verbose_name=_("Nombre de Km d'intervalle pour la périodicite"))
-    nb_annees = models.IntegerField(verbose_name=_("Nombre d'années d'intervalle pour la périodicite"))
-
-    def __str__(self):
-        return self.nom
+class ChampSupplementaire(models.Model):
+    """Représente un champ supplémentaire spécifique pour un type d'opération"""
+    libelle = models.CharField(max_length=128)
 
 
-class TypeMaintenance(models.Model):
+class TypeOperation(models.Model):
+    """Représente un type d'opération unitaire à effectuer sur une voiture"""
     nom = models.CharField(max_length=256)
-    periodicite = models.ForeignKey(Periodicite)
-    difficulte = models.IntegerField()
-    confier_specialiste = models.BooleanField(default=False)
-
-    def __str__(self):
-        return '%s (%s)' % (self.nom, self.periodicite.nom)
+    champs_supplementaires = models.ManyToManyField(ChampSupplementaire)
 
 
 class Voiture(models.Model):
+    """Représente une voiture"""
     nom = models.CharField(max_length=256, verbose_name=_('Nom de la voiture'), help_text=_("Ex : Voiture de Maxime"))
     immatriculation = models.CharField(max_length=16, verbose_name=_('Immatriculation'))
     modele = models.CharField(max_length=256, verbose_name=_('Modèle'),
@@ -41,22 +32,38 @@ class Voiture(models.Model):
     date_derniere_maj_km = models.DateField(verbose_name=_('Date de dernière mise à jour du kilométrage'))
     photo = models.ImageField(upload_to=get_image_user_path, blank=True, verbose_name="Photo")
     proprietaire = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Propriétaire'))
-    programme_maintenance = models.ManyToManyField(TypeMaintenance, verbose_name=_('Programme de maintenance'))
+    prix_achat = models.DecimalField(null=True, decimal_places=2, max_digits=10, verbose_name=_("Prix d'achat"))
+    date_achat = models.DateField(null=True, verbose_name=_("Date d'achat"))
+    kilometrage_achat = models.IntegerField(null=True, verbose_name="Nombre de Km à l'achat")
 
-    def __str__(self):
-        return self.nom + ' (' + self.modele.nom + ')'
+
+class ProgrammeMaintenance(models.Model):
+    """Représente une opération unique d'un programme de maintenance pour une voiture"""
+    type_operation = models.ForeignKey(TypeOperation)
+    periodicite_kilometres = models.IntegerField(null=True, verbose_name=_("Périodicité en Km"))
+    periodicite_annees = models.IntegerField(null=True, verbose_name=_("Périodicité en année"))
+    voiture = models.ForeignKey(Voiture)
 
 
-class OperationMaintenance(models.Model):
-    type = models.ForeignKey(TypeMaintenance, verbose_name=_('Type'))
-    voiture = models.ForeignKey(Voiture, verbose_name=_('Voiture'))
-    kilometrage = models.IntegerField(verbose_name=_("Nombre de Km lors de l'opération de maintenance"))
+class Revision(models.Model):
+    """Représente une révision d'une voiture"""
+    voiture = models.ForeignKey(Voiture)
     date = models.DateField(verbose_name=_('Date'))
+    kilometrage = models.IntegerField(verbose_name=_("Nombre de Km lors de la révision"))
+
+
+class Operation(models.Model):
+    """Représente une opération unitaire"""
+    type = models.ForeignKey(TypeOperation, verbose_name=_('Type'))
+    revision = models.ForeignKey(Revision, verbose_name=_('Révision'))
+    prix = models.DecimalField(null=True, decimal_places=2, max_digits=8, verbose_name=_("Prix"))
+    effectue_par_garage = models.BooleanField(default=True, verbose_name=_("Effectué par un garage ?"))
     effectue = models.BooleanField(default=False, verbose_name=_('Effectué ?'),
                                    help_text=_("Est décoché si l'opération de maintenance n'a pas encore été effectué"))
 
-    def __str__(self):
-        operation = _('%(nom)s du %(date)s') % {'nom': self.type.nom, 'date': self.date.strftime('%d/%m/%Y')}
-        if not self.effectue:
-            operation += '' + _('(à planifier)')
-        return operation
+
+class ChampSupplementaireValeur(models.Model):
+    """Représente la valeur d'un champ supplémentaire pour une opération donnée"""
+    champ = models.ForeignKey(ChampSupplementaire)
+    operation = models.ForeignKey(Operation)
+    valeur = models.CharField(max_length=256)

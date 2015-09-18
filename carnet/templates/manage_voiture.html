@@ -6,14 +6,52 @@
 
 {% block navbar-content %}
     <div class="navbar-left">
-        <a href="{% url 'edite_voiture' pk=voiture.pk %}?previous={{ request.path }}"
-           class="btn btn-primary navbar-btn">{% trans "Editer la voiture" %}</a>
-        <button type="button" data-toggle="modal" data-target="#confirmeSuppression"
-                class="btn btn-danger navbar-btn">{% trans "Supprimer la voiture" %}</button>
+        <a href="{% url 'ajout_voiture' %}?previous={{ request.path }}"
+           class="btn btn-primary navbar-btn">{% trans "Enregistrer une révision" %}</a>
     </div>
 {% endblock %}
 
 {% block content %}
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title text-center">{{ voiture.nom }}</h3>
+                    </div>
+
+                    <div class="panel-body">
+                        <img src="{% static 'img/megane.jpg' %}" class="img-thumbnail"/>
+                    </div>
+
+                    <div class="panel-footer">
+                        <div class="text-center">
+                            <a href="{% url 'edite_voiture' pk=voiture.pk %}?previous={{ request.path }}"
+                               class="btn btn-primary navbar-btn">{% trans "Editer la voiture" %}</a>
+                            <button type="button" data-toggle="modal" data-target="#confirmeSuppression"
+                                    class="btn btn-danger navbar-btn">{% trans "Supprimer la voiture" %}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <h4>{% trans "Entretien" %} :
+                    <span class="text-success">{% bootstrap_icon "ok" %} {% trans "OK !" %} <a
+                            class="button badge">?</a></span>
+                </h4>
+            </div>
+
+            <div class="col-md-4">
+                <h4>{% trans "Prochain entretien estimé" %} :
+                    <span class="text-success">{% bootstrap_icon "ok" %} {% trans "OK !" %} <a
+                            class="button badge">?</a></span>
+                </h4>
+            </div>
+        </div>
+    </div>
+
 
     <div class="modal fade" role="dialog" id="confirmeSuppression">
         <div class="modal-dialog">

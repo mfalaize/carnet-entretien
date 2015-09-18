@@ -2,7 +2,7 @@
 from datetime import date
 
 from carnet.forms import VoitureForm
-from carnet.models import Voiture, OperationMaintenance
+from carnet.models import Voiture, Operation
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
@@ -17,7 +17,7 @@ class Home(ListView):
 
     def get_queryset(self):
         self.voitures = Voiture.objects.filter(proprietaire=self.request.user)
-        return OperationMaintenance.objects.filter(voiture__in=self.voitures).order_by('effectue', '-date')
+        return Operation.objects.filter(voiture__in=self.voitures).order_by('effectue', '-date')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -76,13 +76,27 @@ class SupprimeVoiture(DeleteView):
     model = Voiture
     success_url = reverse_lazy('home')
 
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
 
 class ManageVoiture(TemplateView):
     template_name = 'manage_voiture.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['voiture'] = get_object_or_404(Voiture, pk=kwargs['pk'])
+        voiture = get_object_or_404(Voiture, pk=kwargs['pk'])
+
+        # Récupération des opérations à prévoir
+        context['operations_a_prevoir'] = Operation.objects.filter(voiture=voiture, effectue=False).order_by(
+            '-date')
+
+        # Récupération des dernières opérations
+        context['dernieres_operations'] = Operation.objects.filter(voiture=voiture, effectue=True).order_by(
+            '-date')
+
+        context['voiture'] = voiture
         return context
 
     @method_decorator(login_required)

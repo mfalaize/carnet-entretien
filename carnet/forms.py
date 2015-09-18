@@ -1,6 +1,7 @@
 from carnet.models import Voiture
 from django.contrib.auth.forms import AuthenticationForm
-from django.forms import ModelForm
+from django.forms import ModelForm, ValidationError
+from django.utils.translation import ugettext_lazy as _
 
 
 class BootstrapAuthenticationForm(AuthenticationForm):
@@ -13,9 +14,19 @@ class VoitureForm(ModelForm):
     class Meta:
         model = Voiture
         fields = ['nom', 'modele', 'immatriculation', 'kilometrage', 'date_mise_circulation', 'moyenne_km_annuel',
-                  'photo']
+                  'prix_achat', 'date_achat', 'kilometrage_achat', 'photo']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['nom'].widget.attrs['autofocus'] = True
         self.fields['date_mise_circulation'].widget.attrs['class'] = 'datepicker'
+        self.fields['date_achat'].widget.attrs['class'] = 'datepicker'
+
+    def clean(self):
+        cleaned_data = super().clean()
+
+        # La date d'achat doit être inférieure à la date de mise en circulation
+        if cleaned_data['date_achat'] < cleaned_data['date_mise_circulation']:
+            raise ValidationError(_("La date d'achat ne peut pas précéder la date de mise en circulation"))
+
+        return cleaned_data
