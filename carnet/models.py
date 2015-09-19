@@ -38,10 +38,20 @@ class Voiture(models.Model):
 
 
 class ProgrammeMaintenance(models.Model):
-    """Représente une opération unique d'un programme de maintenance pour une voiture"""
-    type_operation = models.ForeignKey(TypeOperation)
-    periodicite_kilometres = models.IntegerField(null=True, verbose_name=_("Périodicité en Km"))
-    periodicite_annees = models.IntegerField(null=True, verbose_name=_("Périodicité en année"))
+    """Représente une liste d'opérations pour un programme de maintenance pour une voiture"""
+    types_operations = models.ManyToManyField(TypeOperation)
+    periodicite_kilometres = models.IntegerField(null=True, blank=True, verbose_name=_("Périodicité en Km"))
+    periodicite_annees = models.IntegerField(null=True, blank=True, verbose_name=_("Périodicité en année"))
+    delai_alerte = models.IntegerField(default=0, blank=True,
+                                       verbose_name=_("Délai pour déclencher une alerte (en jours)"),
+                                       help_text=_("Contrôle le délai d'alerte pour une opération à effectuer " +
+                                                   "de façon à déclencher l'alerte plus tôt que le jour j (par " +
+                                                   "défaut est déclenché le jour j)"))
+    delai_rappel = models.IntegerField(default=15, blank=True,
+                                       verbose_name=_("Délai pour déclencher un rappel (en jours)"),
+                                       help_text=_(
+                                           "Le rappel permet de renvoyer un mail lorsque les opérations du programme " +
+                                           "n'ont pas été encore effectués (par défaut 15 jours)"))
     voiture = models.ForeignKey(Voiture)
 
 
