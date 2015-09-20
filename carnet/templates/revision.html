@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load utils %}
+
+{% block navbar-content %}
+    <div class="navbar-left">
+        <a class="btn btn-default navbar-btn" href="{% if creation %}{% url 'voiture' pk=pk_voiture %}{% else %}{% url 'programme' pk=programme.voiture.pk %}{% endif %}">{% trans "Retour" %}</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <form method="post" action="{% if creation %}{% url 'ajout_revision' pk=pk_voiture %}{% else %}{% url 'edite_programme' pk=programme.voiture.pk pk_programme=programme.pk %}{% endif %}">
+                {% csrf_token %}
+                <div class="col-md-12">
+                    <p class="lead text-center">
+                        {% if creation %}{% trans "Ajout d'une révision" %}{% elif edition %}
+                            {% trans "Edition d'une révision" %}{% endif %}
+                    </p>
+
+                    <div class="form-horizontal">
+                        {% bootstrap_form form layout='horizontal' %}
+
+                        {% for inline in inlines %}
+                            {{ inline.management_form }}
+                            <table class="table table-striped">
+                                {% for form_op in inline %}
+                                    {% if forloop.first %}
+                                        <thead>
+                                        <tr>
+                                            <th>{{ form_op.type.label }}</th>
+                                            <th>{{ form_op.prix.label }}</th>
+                                            <th>{{ form_op.effectue_par_garage.label }}</th>
+                                            <th>{{ form_op.effectue.label }}</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                    {% endif %}
+                                        <tr>
+                                            <td>{% bootstrap_field form_op.type show_label=False size='small' layout='horizontal' horizontal_label_class='' horizontal_field_class='col-md-12' %}</td>
+                                            <td>{% bootstrap_field form_op.prix show_label=False size='small' layout='horizontal' horizontal_label_class='' horizontal_field_class='col-md-12' %}</td>
+                                            <td>{{ form_op.effectue_par_garage }}</td>
+                                            <td>{{ form_op.effectue }}</td>
+                                        </tr>
+                                    {% if forloop.last %}
+                                        </tbody>
+                                    {% endif %}
+                                {% endfor %}
+                            </table>
+                        {% endfor %}
+                    </div>
+
+                    <div class="pull-right">
+                        <button type="submit" class="btn btn-primary">{% trans "Valider la saisie" %}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

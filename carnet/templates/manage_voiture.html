@@ -7,7 +7,7 @@
 {% block navbar-content %}
     <div class="navbar-left">
         <a class="btn btn-default navbar-btn" href="{% url 'home' %}">{% trans "Retour" %}</a>
-        <a href="{% url 'ajout_voiture' %}"
+        <a href="{% url 'ajout_revision' pk=voiture.pk %}"
            class="btn btn-primary navbar-btn">{% trans "Enregistrer une révision" %}</a>
         <a href="{% url 'programme' pk=voiture.pk %}"
            class="btn btn-primary navbar-btn">{% trans "Gérer le programme de maintenance" %}</a>

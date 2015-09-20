@@ -1,13 +1,14 @@
 # Create your views here.
 from datetime import date
 
-from carnet.forms import VoitureForm, ProgrammeMaintenanceForm
-from carnet.models import Voiture, Operation, ProgrammeMaintenance
+from carnet.forms import VoitureForm, ProgrammeMaintenanceForm, RevisionForm, OperationForm
+from carnet.models import Voiture, Operation, ProgrammeMaintenance, Revision
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
+from extra_views import CreateWithInlinesView
 
 
 class Home(ListView):
@@ -176,6 +177,31 @@ class SupprimeProgrammeMaintenance(DeleteView):
 
     def get_success_url(self):
         return reverse_lazy('programme', kwargs={'pk': self.kwargs['pk']})
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class AjoutRevision(CreateWithInlinesView):
+    model = Revision
+    form_class = RevisionForm
+    inlines = [OperationForm]
+    template_name = 'revision.html'
+    context_object_name = 'revision'
+
+    def get_success_url(self):
+        return reverse_lazy('voiture', kwargs={'pk': self.kwargs['pk']})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['creation'] = True
+        context['pk_voiture'] = self.kwargs['pk']
+        return context
+
+    def form_valid(self, form):
+        form.instance.voiture = Voiture.objects.get(pk=self.kwargs['pk'], proprietaire=self.request.user)
+        return super().form_valid(form)
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

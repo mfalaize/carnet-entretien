@@ -22,12 +22,7 @@
                     </p>
 
                     <div class="form-horizontal">
-                        {% bootstrap_form_errors form %}
-                        {% bootstrap_field form.periodicite_kilometres layout='horizontal' %}
-                        {% bootstrap_field form.periodicite_annees layout='horizontal' %}
-                        {% bootstrap_field form.delai_alerte layout='horizontal' %}
-                        {% bootstrap_field form.delai_rappel layout='horizontal' %}
-                        {% bootstrap_field form.types_operations layout='horizontal' %}
+                        {% bootstrap_form form layout='horizontal' %}
                     </div>
 
                     <div class="pull-right">

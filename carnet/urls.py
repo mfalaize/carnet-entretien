@@ -13,6 +13,11 @@ urlpatterns = [
     url(r'^voiture/(?P<pk>[0-9]+)/edite_programme/(?P<pk_programme>[0-9]+)$', views.EditeProgrammeMaintenance.as_view(),
         name='edite_programme'),
     url(r'^voiture/(?P<pk>[0-9]+)/supprime_programme/(?P<pk_programme>[0-9]+)$',
-        views.SupprimeProgrammeMaintenance.as_view(),
-        name='supprime_programme'),
+        views.SupprimeProgrammeMaintenance.as_view(), name='supprime_programme'),
+    url(r'^voiture/(?P<pk>[0-9]+)/ajout_revision/$', views.AjoutRevision.as_view(),
+        name='ajout_revision'),
+    url(r'^voiture/(?P<pk>[0-9]+)/edite_revision/(?P<pk_revision>[0-9]+)$', views.EditeProgrammeMaintenance.as_view(),
+        name='edite_revision'),
+    url(r'^voiture/(?P<pk>[0-9]+)/supprime_revision/(?P<pk_revision>[0-9]+)$',
+        views.SupprimeProgrammeMaintenance.as_view(), name='supprime_revision'),
 ]

@@ -1,7 +1,8 @@
-from carnet.models import Voiture, ProgrammeMaintenance
+from carnet.models import Voiture, ProgrammeMaintenance, Revision, Operation
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ModelForm, ValidationError, CheckboxSelectMultiple
 from django.utils.translation import ugettext_lazy as _
+from extra_views import InlineFormSet
 
 
 class BootstrapAuthenticationForm(AuthenticationForm):
@@ -43,3 +44,18 @@ class ProgrammeMaintenanceForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['periodicite_kilometres'].widget.attrs['autofocus'] = True
+
+
+class RevisionForm(ModelForm):
+    class Meta:
+        model = Revision
+        fields = ['date', 'kilometrage']
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['date'].widget.attrs['class'] = 'datepicker'
+
+
+class OperationForm(InlineFormSet):
+    model = Operation
+    extra = 1
