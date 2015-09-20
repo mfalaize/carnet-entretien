@@ -29,12 +29,6 @@ class Home(ListView):
         return super().dispatch(request, *args, **kwargs)
 
 
-def add_previous_link_in_context(request, context):
-    if request.GET:
-        context['previous'] = request.GET['previous']
-    return context
-
-
 class AjoutVoiture(CreateView):
     model = Voiture
     form_class = VoitureForm
@@ -44,7 +38,7 @@ class AjoutVoiture(CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['creation'] = True
-        return add_previous_link_in_context(self.request, context)
+        return context
 
     def form_valid(self, form):
         form.instance.proprietaire = self.request.user
@@ -69,7 +63,7 @@ class EditeVoiture(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['edition'] = True
-        return add_previous_link_in_context(self.request, context)
+        return context
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -141,7 +135,7 @@ class AjoutProgrammeMaintenance(CreateView):
         context = super().get_context_data(**kwargs)
         context['creation'] = True
         context['pk_voiture'] = self.kwargs['pk']
-        return add_previous_link_in_context(self.request, context)
+        return context
 
     def form_valid(self, form):
         form.instance.voiture = Voiture.objects.get(pk=self.kwargs['pk'], proprietaire=self.request.user)
@@ -169,7 +163,7 @@ class EditeProgrammeMaintenance(UpdateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['edition'] = True
-        return add_previous_link_in_context(self.request, context)
+        return context
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

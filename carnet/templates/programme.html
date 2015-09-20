@@ -4,12 +4,20 @@
 {% load bootstrap3 %}
 {% load utils %}
 
+{% block navbar-content %}
+    <div class="navbar-left">
+        <a class="btn btn-default navbar-btn" href="
+                {% if creation %}{% url 'programme' pk=pk_voiture %}{% else %}{% url 'programme' pk=programme.voiture.pk %}{% endif %}">{% trans "Retour" %}</a>
+    </div>
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="row">
             <form method="post" action="
 
-                    {% if creation %}{% url 'ajout_programme' pk=pk_voiture %}{% elif edition %}{% url 'edite_programme' pk=programme.voiture.pk pk_programme=programme.pk %}{% endif %}">
+
+                    {% if creation %}{% url 'ajout_programme' pk=pk_voiture %}{% else %}{% url 'edite_programme' pk=programme.voiture.pk pk_programme=programme.pk %}{% endif %}">
                 {% csrf_token %}
                 <div class="col-md-12">
                     <p class="lead text-center">
@@ -27,7 +35,6 @@
 
                     <div class="pull-right">
                         <button type="submit" class="btn btn-primary">{% trans "Valider la saisie" %}</button>
-                        <a class="btn btn-default" href="{{ previous }}">{% trans "Annuler" %}</a>
                     </div>
                 </div>
             </form>

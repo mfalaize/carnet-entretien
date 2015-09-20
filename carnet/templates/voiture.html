@@ -4,6 +4,13 @@
 {% load bootstrap3 %}
 {% load utils %}
 
+{% block navbar-content %}
+    <div class="navbar-left">
+        <a class="btn btn-default navbar-btn" href="
+                {% if creation %}{% url 'home' %}{% else %}{% url 'voiture' pk=voiture.pk %}{% endif %}">{% trans "Retour" %}</a>
+    </div>
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <div class="row">
@@ -29,7 +36,7 @@
                 </div>
 
                 <div class="col-md-8">
-                    <p class="lead text-center">{% if creation %}{% trans "Ajout d'une voiture" %}{% elif edition %}
+                    <p class="lead text-center">{% if creation %}{% trans "Ajout d'une voiture" %}{% else %}
                         {% trans "Edition d'une voiture" %}{% endif %}</p>
 
                     <div class="form-horizontal">
@@ -47,7 +54,6 @@
 
                     <div class="pull-right">
                         <button type="submit" class="btn btn-primary">{% trans "Valider la saisie" %}</button>
-                        <a class="btn btn-default" href="{{ previous }}">{% trans "Annuler" %}</a>
                     </div>
                 </div>
             </form>

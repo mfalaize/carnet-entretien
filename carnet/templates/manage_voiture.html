@@ -6,7 +6,8 @@
 
 {% block navbar-content %}
     <div class="navbar-left">
-        <a href="{% url 'ajout_voiture' %}?previous={{ request.path }}"
+        <a class="btn btn-default navbar-btn" href="{% url 'home' %}">{% trans "Retour" %}</a>
+        <a href="{% url 'ajout_voiture' %}"
            class="btn btn-primary navbar-btn">{% trans "Enregistrer une révision" %}</a>
         <a href="{% url 'programme' pk=voiture.pk %}"
            class="btn btn-primary navbar-btn">{% trans "Gérer le programme de maintenance" %}</a>
@@ -31,7 +32,7 @@
 
                     <div class="panel-footer">
                         <div class="text-center">
-                            <a href="{% url 'edite_voiture' pk=voiture.pk %}?previous={{ request.path }}"
+                            <a href="{% url 'edite_voiture' pk=voiture.pk %}"
                                class="btn btn-primary">{% trans "Editer la voiture" %}</a>
                             <button type="button" data-toggle="modal" data-target="#confirmeSuppression"
                                     class="btn btn-danger">{% trans "Supprimer la voiture" %}</button>
