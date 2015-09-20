@@ -25,8 +25,7 @@
                     </div>
 
                     <div class="panel-body">
-                        <img src="
-                                {% if voiture.photo %}{% get_media_prefix %}{{ voiture.photo }}{% else %}{% static "img/megane.jpg" %}{% endif %}"
+                        <img src="{% if voiture.photo %}{% get_media_prefix %}{{ voiture.photo }}{% else %}{% static "img/megane.jpg" %}{% endif %}"
                              class="img-thumbnail"/>
                     </div>
 

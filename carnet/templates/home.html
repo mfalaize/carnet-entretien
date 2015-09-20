@@ -26,8 +26,7 @@
 
                 <div class="panel-body">
                     <a href="{% url 'voiture' pk=voiture.pk %}" class="thumbnail">
-                        <img src="
-                                {% if voiture.photo %}{% get_media_prefix %}{{ voiture.photo }}{% else %}{% static "img/megane.jpg" %}{% endif %}"/>
+                        <img src="{% if voiture.photo %}{% get_media_prefix %}{{ voiture.photo }}{% else %}{% static "img/megane.jpg" %}{% endif %}"/>
                     </a>
                 </div>
 
