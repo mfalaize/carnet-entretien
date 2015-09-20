@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load utils %}
+
+{% block navbar-content %}
+    <div class="navbar-left">
+        <a href="{% url 'ajout_programme' pk=voiture.pk %}?previous={{ request.path }}"
+           class="btn btn-primary navbar-btn">{% trans "Ajouter un programme" %}</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="text-center">
+            <a href="{% url 'voiture' pk=voiture.pk %}"
+               class="btn btn-default">{% trans "Retour à l'écran de gestion de la voiture" %}</a>
+        </div>
+
+        <h2>{% trans "Programme de maintenance de" %} : {{ voiture.nom }}</h2>
+
+        <div class="row">
+            <div class="col-md-12">
+                {% for programme in programmes %}
+                    <h4>{{ programme.get_periodicite }}
+                        ({% blocktrans with delai_alerte=programme.delai_alerte delai_rappel=programme.delai_rappel %}
+                            délai
+                            d'alerte : {{ delai_alerte }}j, délai de rappel : {{ delai_rappel }}j{% endblocktrans %})
+                        <span class="pull-right">
+                            <a href="{% url 'edite_programme' pk=voiture.pk pk_programme=programme.pk %}?previous={{ request.path }}"
+                               class="btn btn-primary">{% trans "Editer le programme" %}</a>
+                            <button type="button" data-toggle="modal" data-target="#confirmeSuppression"
+                                    onclick="$('#confirmeSuppressionForm').attr('action', '{% url 'supprime_programme' pk=voiture.pk pk_programme=programme.pk %}');"
+                                    class="btn btn-danger">{% trans "Supprimer le programme" %}</button>
+                        </span>
+                    </h4>
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>{% trans "Opération" %}</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for operation in programme.types_operations.all %}
+                            <tr>
+                                <td>{{ operation.nom }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td class="text-center"
+                                    colspan="4">{% trans "Aucune opération encore enregistrée !" %}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" role="dialog" id="confirmeSuppression">
+        <div class="modal-dialog">
+            <form id="confirmeSuppressionForm" class="modal-content" method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{% trans "Confirmation suppression" %}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans "Êtes-vous sûr de vouloir supprimer ce programme ?" %}</p>
+                </div>
+                <div class="modal-footer">
+
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Non" %}</button>
+                    <button type="submit" class="btn btn-danger">{% trans "Oui" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

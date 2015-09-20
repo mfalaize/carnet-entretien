@@ -8,6 +8,8 @@
     <div class="navbar-left">
         <a href="{% url 'ajout_voiture' %}?previous={{ request.path }}"
            class="btn btn-primary navbar-btn">{% trans "Enregistrer une révision" %}</a>
+        <a href="{% url 'programme' pk=voiture.pk %}"
+           class="btn btn-primary navbar-btn">{% trans "Gérer le programme de maintenance" %}</a>
     </div>
 {% endblock %}
 
@@ -22,15 +24,17 @@
                     </div>
 
                     <div class="panel-body">
-                        <img src="{% static 'img/megane.jpg' %}" class="img-thumbnail"/>
+                        <img src="
+                                {% if voiture.photo %}{% get_media_prefix %}{{ voiture.photo }}{% else %}{% static "img/megane.jpg" %}{% endif %}"
+                             class="img-thumbnail"/>
                     </div>
 
                     <div class="panel-footer">
                         <div class="text-center">
                             <a href="{% url 'edite_voiture' pk=voiture.pk %}?previous={{ request.path }}"
-                               class="btn btn-primary navbar-btn">{% trans "Editer la voiture" %}</a>
+                               class="btn btn-primary">{% trans "Editer la voiture" %}</a>
                             <button type="button" data-toggle="modal" data-target="#confirmeSuppression"
-                                    class="btn btn-danger navbar-btn">{% trans "Supprimer la voiture" %}</button>
+                                    class="btn btn-danger">{% trans "Supprimer la voiture" %}</button>
                         </div>
                     </div>
                 </div>

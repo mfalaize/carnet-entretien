@@ -1,8 +1,8 @@
 # Create your views here.
 from datetime import date
 
-from carnet.forms import VoitureForm
-from carnet.models import Voiture, Operation
+from carnet.forms import VoitureForm, ProgrammeMaintenanceForm
+from carnet.models import Voiture, Operation, ProgrammeMaintenance
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
@@ -11,17 +11,17 @@ from django.views.generic import CreateView, ListView, UpdateView, DeleteView, T
 
 
 class Home(ListView):
+    model = Voiture
     template_name = 'home.html'
     paginate_by = 10
     context_object_name = 'dernieres_operations'
 
     def get_queryset(self):
-        self.voitures = Voiture.objects.filter(proprietaire=self.request.user)
-        return Operation.objects.filter(voiture__in=self.voitures).order_by('effectue', '-date')
+        return Operation.objects.get_all_dernieres_operations(user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['voitures'] = self.voitures
+        context['voitures'] = Voiture.objects.get_voitures_for_user(self.request.user)
         return context
 
     @method_decorator(login_required)
@@ -62,6 +62,10 @@ class EditeVoiture(UpdateView):
     template_name = 'voiture.html'
     success_url = reverse_lazy('home')
 
+    def get_queryset(self):
+        # On vérifie que la voiture correspond bien à une voiture de l'utilisateur
+        return super().get_queryset().filter(proprietaire=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['edition'] = True
@@ -86,18 +90,98 @@ class ManageVoiture(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        voiture = get_object_or_404(Voiture, pk=kwargs['pk'])
+        # On charge la voiture en prenant soin de regarder si elle appartient à l'utilisateur
+        voiture = get_object_or_404(Voiture, pk=kwargs['pk'], proprietaire=self.request.user)
 
         # Récupération des opérations à prévoir
-        context['operations_a_prevoir'] = Operation.objects.filter(voiture=voiture, effectue=False).order_by(
-            '-date')
+        context['operations_a_prevoir'] = Operation.objects.get_operations_a_prevoir(voiture)
 
         # Récupération des dernières opérations
-        context['dernieres_operations'] = Operation.objects.filter(voiture=voiture, effectue=True).order_by(
-            '-date')
+        context['dernieres_operations'] = Operation.objects.get_dernieres_operations(voiture)
 
         context['voiture'] = voiture
         return context
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class ManageProgrammeMaintenance(ListView):
+    model = ProgrammeMaintenance
+    paginate_by = 20
+    context_object_name = 'programmes'
+    template_name = 'manage_programme.html'
+
+    def get_queryset(self):
+        return ProgrammeMaintenance.objects.get_programmes_for_voiture(voiture_pk=self.kwargs['pk'],
+                                                                       user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        voiture = get_object_or_404(Voiture, pk=self.kwargs['pk'], proprietaire=self.request.user)
+        context['voiture'] = voiture
+        return context
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class AjoutProgrammeMaintenance(CreateView):
+    model = ProgrammeMaintenance
+    form_class = ProgrammeMaintenanceForm
+    template_name = 'programme.html'
+    context_object_name = 'programme'
+
+    def get_success_url(self):
+        return reverse_lazy('programme', kwargs={'pk': self.kwargs['pk']})
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['creation'] = True
+        context['pk_voiture'] = self.kwargs['pk']
+        return add_previous_link_in_context(self.request, context)
+
+    def form_valid(self, form):
+        form.instance.voiture = Voiture.objects.get(pk=self.kwargs['pk'], proprietaire=self.request.user)
+        return super().form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class EditeProgrammeMaintenance(UpdateView):
+    model = ProgrammeMaintenance
+    form_class = ProgrammeMaintenanceForm
+    template_name = 'programme.html'
+    pk_url_kwarg = 'pk_programme'
+    context_object_name = 'programme'
+
+    def get_success_url(self):
+        return reverse_lazy('programme', kwargs={'pk': self.kwargs['pk']})
+
+    def get_queryset(self):
+        # On vérifie que la voiture correspond bien à une voiture de l'utilisateur
+        return super().get_queryset().filter(voiture__proprietaire=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edition'] = True
+        return add_previous_link_in_context(self.request, context)
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class SupprimeProgrammeMaintenance(DeleteView):
+    model = ProgrammeMaintenance
+    pk_url_kwarg = 'pk_programme'
+
+    def get_success_url(self):
+        return reverse_lazy('programme', kwargs={'pk': self.kwargs['pk']})
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

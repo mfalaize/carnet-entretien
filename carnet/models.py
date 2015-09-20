@@ -1,6 +1,54 @@
+from django.utils.formats import localize
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+
+
+class VoitureManager(models.Manager):
+    """Manager pour le modèle Voiture"""
+
+    def get_voitures_for_user(self, user):
+        """Récupère les voitures de l'utilisateur"""
+        return self.filter(proprietaire=user)
+
+
+class OperationManager(models.Manager):
+    """Manager pour le modèle Operation"""
+
+    def get_all_dernieres_operations(self, voitures=None, user=None):
+        """Récupère la liste des dernières opérations pour les voitures de l'utilisateur. Cette liste est triée dans
+        un premier temps par opérations effectués ou non (les opérations non effectuées sortant en premier) puis par
+        date de révision"""
+        if voitures is None:
+            if user is None:
+                raise Exception("L'un des deux paramètres voitures ou user doit être renseigné")
+            voitures = Voiture.objects.get_voitures_for_user(user)
+        return self.filter(revision__voiture__in=voitures).order_by('effectue', '-revision__date')
+
+    def get_operations_a_prevoir(self, voiture):
+        """Récupère la liste des opérations à prévoir pour la voiture en paramètre triée par date"""
+        return self.filter(revision__voiture=voiture, effectue=False).order_by('-revision__date')
+
+    def get_dernieres_operations(self, voiture):
+        """Récupère la liste des dernières opérations effectuées pour la voiture en paramètre. La liste est triée par
+        date"""
+        return self.filter(revision__voiture=voiture, effectue=True).order_by('-revision__date')
+
+
+class ProgrammeMaintenanceManager(models.Manager):
+    """Manager pour le modèle ProgrammeMaintenance"""
+
+    def get_programmes_for_voiture(self, voiture=None, voiture_pk=None, user=None):
+        """Récupère tous les programmes de maintenance pour la voiture en paramètre. La liste est triée par périodicité"""
+        if voiture is None:
+            if voiture_pk is None or user is None:
+                raise Exception(
+                    "Les deux paramètres voiture_pk et user doivent être renseignés lorsque voiture est null")
+            queryset = self.filter(voiture__pk=voiture_pk, voiture__proprietaire=user)
+        else:
+            queryset = self.filter(voiture=voiture)
+
+        return queryset.order_by('periodicite_kilometres', 'periodicite_annees')
 
 
 def get_image_user_path(instance, filename):
@@ -13,15 +61,22 @@ class ChampSupplementaire(models.Model):
     """Représente un champ supplémentaire spécifique pour un type d'opération"""
     libelle = models.CharField(max_length=128)
 
+    def __str__(self):
+        return self.libelle
+
 
 class TypeOperation(models.Model):
     """Représente un type d'opération unitaire à effectuer sur une voiture"""
     nom = models.CharField(max_length=256)
-    champs_supplementaires = models.ManyToManyField(ChampSupplementaire)
+    champs_supplementaires = models.ManyToManyField(ChampSupplementaire, blank=True)
+
+    def __str__(self):
+        return self.nom
 
 
 class Voiture(models.Model):
     """Représente une voiture"""
+    objects = VoitureManager()
     nom = models.CharField(max_length=256, verbose_name=_('Nom de la voiture'), help_text=_("Ex : Voiture de Maxime"))
     immatriculation = models.CharField(max_length=16, verbose_name=_('Immatriculation'))
     modele = models.CharField(max_length=256, verbose_name=_('Modèle'),
@@ -39,7 +94,8 @@ class Voiture(models.Model):
 
 class ProgrammeMaintenance(models.Model):
     """Représente une liste d'opérations pour un programme de maintenance pour une voiture"""
-    types_operations = models.ManyToManyField(TypeOperation)
+    objects = ProgrammeMaintenanceManager()
+    types_operations = models.ManyToManyField(TypeOperation, verbose_name=_("Opérations du programme"))
     periodicite_kilometres = models.IntegerField(null=True, blank=True, verbose_name=_("Périodicité en Km"))
     periodicite_annees = models.IntegerField(null=True, blank=True, verbose_name=_("Périodicité en année"))
     delai_alerte = models.IntegerField(default=0, blank=True,
@@ -54,6 +110,19 @@ class ProgrammeMaintenance(models.Model):
                                            "n'ont pas été encore effectués (par défaut 15 jours)"))
     voiture = models.ForeignKey(Voiture)
 
+    def get_periodicite(self):
+        """Génère le libellé pour la périodicité (années + km si renseignés)"""
+        if self.periodicite_kilometres is not None:
+            if self.periodicite_annees is not None:
+                return _("Tous les %(kilometres)s Km / %(annees)s an(s)") % {
+                    'kilometres': localize(self.periodicite_kilometres, True),
+                    'annees': self.periodicite_annees}
+            return _("Tous les %(kilometres)s Km") % {
+                'kilometres': localize(self.periodicite_kilometres, True)}
+        elif self.periodicite_annees is not None:
+            return _("Tous les %(annees)s an(s)") % {'annees': self.periodicite_annees}
+        return None
+
 
 class Revision(models.Model):
     """Représente une révision d'une voiture"""
@@ -64,6 +133,7 @@ class Revision(models.Model):
 
 class Operation(models.Model):
     """Représente une opération unitaire"""
+    objects = OperationManager()
     type = models.ForeignKey(TypeOperation, verbose_name=_('Type'))
     revision = models.ForeignKey(Revision, verbose_name=_('Révision'))
     prix = models.DecimalField(null=True, decimal_places=2, max_digits=8, verbose_name=_("Prix"))

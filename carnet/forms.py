@@ -1,6 +1,6 @@
-from carnet.models import Voiture
+from carnet.models import Voiture, ProgrammeMaintenance
 from django.contrib.auth.forms import AuthenticationForm
-from django.forms import ModelForm, ValidationError
+from django.forms import ModelForm, ValidationError, CheckboxSelectMultiple
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -30,3 +30,16 @@ class VoitureForm(ModelForm):
             raise ValidationError(_("La date d'achat ne peut pas précéder la date de mise en circulation"))
 
         return cleaned_data
+
+
+class ProgrammeMaintenanceForm(ModelForm):
+    class Meta:
+        model = ProgrammeMaintenance
+        fields = ['periodicite_kilometres', 'periodicite_annees', 'delai_alerte', 'delai_rappel', 'types_operations']
+        widgets = {
+            'types_operations': CheckboxSelectMultiple()
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['periodicite_kilometres'].widget.attrs['autofocus'] = True

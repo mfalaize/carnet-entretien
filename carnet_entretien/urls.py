@@ -14,7 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
 """
 from carnet.forms import BootstrapAuthenticationForm
+from django.conf import settings
 from django.conf.urls import include, url
+from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth
 
@@ -30,4 +32,4 @@ urlpatterns = [
         auth.password_reset_confirm, name='password_reset_confirm'),
     url(r'^reset/done/$', auth.password_reset_complete, name='password_reset_complete'),
     url(r'^admin/', include(admin.site.urls)),
-]
+              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

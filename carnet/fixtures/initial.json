@@ -1,463 +1,309 @@
 [
   {
-    "model": "carnet.Periodicite",
+    "fields": {
+      "libelle": "Type d'huile"
+    },
     "pk": 1,
-    "fields": {
-      "nom": "Tous les 1 000 Km",
-      "nb_kilometres": 1000,
-      "nb_annees": -1
-    }
+    "model": "carnet.champsupplementaire"
   },
   {
-    "model": "carnet.Periodicite",
+    "fields": {
+      "libelle": "R\u00e9f\u00e9rence du filtre"
+    },
     "pk": 2,
-    "fields": {
-      "nom": "Tous les 30 000 Km / 2 ans",
-      "nb_kilometres": 30000,
-      "nb_annees": 2
-    }
+    "model": "carnet.champsupplementaire"
   },
   {
-    "model": "carnet.Periodicite",
+    "fields": {
+      "libelle": "R\u00e9f\u00e9rence des pneumatiques"
+    },
     "pk": 3,
-    "fields": {
-      "nom": "Tous les 60 000 Km / 4 ans",
-      "nb_kilometres": 60000,
-      "nb_annees": 4
-    }
+    "model": "carnet.champsupplementaire"
   },
   {
-    "model": "carnet.Periodicite",
-    "pk": 4,
     "fields": {
-      "nom": "Tous les 60 000 Km",
-      "nb_kilometres": 60000,
-      "nb_annees": -1
-    }
-  },
-  {
-    "model": "carnet.Periodicite",
-    "pk": 5,
-    "fields": {
-      "nom": "Tous les 120 000 Km / 4 ans",
-      "nb_kilometres": 120000,
-      "nb_annees": 4
-    }
-  },
-  {
-    "model": "carnet.Periodicite",
-    "pk": 6,
-    "fields": {
-      "nom": "Tous les 120 000 Km / 5 ans",
-      "nb_kilometres": 120000,
-      "nb_annees": 5
-    }
-  },
-  {
-    "model": "carnet.Periodicite",
-    "pk": 7,
-    "fields": {
-      "nom": "Tous les 2 ans",
-      "nb_kilometres": -1,
-      "nb_annees": 2
-    }
-  },
-  {
-    "model": "carnet.Periodicite",
-    "pk": 8,
-    "fields": {
-      "nom": "Tous les 10 ans",
-      "nb_kilometres": -1,
-      "nb_annees": 10
-    }
-  },
-  {
-    "model": "carnet.TypeMaintenance",
-    "pk": 1,
-    "fields": {
-      "nom": "Contrôle des niveaux du véhicule",
-      "periodicite": 1,
-      "difficulte": 1,
-      "confier_specialiste": false
-    }
-  },
-  {
-    "model": "carnet.TypeMaintenance",
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le des niveaux du v\u00e9hicule"
+    },
     "pk": 2,
-    "fields": {
-      "nom": "Vidange de l'huile moteur",
-      "periodicite": 2,
-      "difficulte": 3,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [
+        1
+      ],
+      "nom": "Vidange de l'huile moteur"
+    },
     "pk": 3,
-    "fields": {
-      "nom": "Remplacement du filtre à huile",
-      "periodicite": 2,
-      "difficulte": 3,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [
+        2
+      ],
+      "nom": "Remplacement du filtre \u00e0 huile"
+    },
     "pk": 4,
-    "fields": {
-      "nom": "Remplacement du filtre d'habitacle",
-      "periodicite": 2,
-      "difficulte": 3,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [
+        2
+      ],
+      "nom": "Remplacement du filtre d'habitacle"
+    },
     "pk": 5,
-    "fields": {
-      "nom": "Contrôle du niveau de l'huile de boîte de vitesse",
-      "periodicite": 2,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le du niveau de l'huile de bo\u00eete de vitesse"
+    },
     "pk": 6,
-    "fields": {
-      "nom": "Contrôle du niveau du liquide de refroidissement moteur",
-      "periodicite": 2,
-      "difficulte": 1,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le du niveau du liquide de refroidissement moteur"
+    },
     "pk": 7,
-    "fields": {
-      "nom": "Contrôle du niveau de liquide de direction assistée",
-      "periodicite": 2,
-      "difficulte": 1,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le du niveau de liquide de direction assist\u00e9e"
+    },
     "pk": 8,
-    "fields": {
-      "nom": "Contrôle du niveau de liquide lave-glace",
-      "periodicite": 2,
-      "difficulte": 1,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le du niveau de liquide lave-glace"
+    },
     "pk": 9,
-    "fields": {
-      "nom": "Contrôle du niveau de la batterie et de l'état de charge de la batterie",
-      "periodicite": 2,
-      "difficulte": 2,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le du niveau de la batterie et de l'\u00e9tat de charge de la batterie"
+    },
     "pk": 10,
-    "fields": {
-      "nom": "Contrôle des jeux dans la direction, le train avant et arrière",
-      "periodicite": 2,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le des jeux dans la direction, le train avant et arri\u00e8re"
+    },
     "pk": 11,
-    "fields": {
-      "nom": "Contrôle de l'état des soufflets de direction et des transmissions",
-      "periodicite": 2,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le de l'\u00e9tat des soufflets de direction et des transmissions"
+    },
     "pk": 12,
-    "fields": {
-      "nom": "Contrôle du niveau de liquide de freins",
-      "periodicite": 2,
-      "difficulte": 1,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le du niveau de liquide de freins"
+    },
     "pk": 13,
-    "fields": {
-      "nom": "Contrôle de l'état et de l'étanchéité du circuit de frein, d'embrayage et de direction assistée",
-      "periodicite": 2,
-      "difficulte": 0,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le de l'\u00e9tat et de l'\u00e9tanch\u00e9it\u00e9 du circuit de frein, d'embrayage et de direction assist\u00e9e"
+    },
     "pk": 14,
-    "fields": {
-      "nom": "Contrôle de l'usure des plaquettes de freins",
-      "periodicite": 2,
-      "difficulte": 3,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le de l'usure des plaquettes de freins"
+    },
     "pk": 15,
-    "fields": {
-      "nom": "Contrôle de l'état de pression des pneumatiques",
-      "periodicite": 2,
-      "difficulte": 2,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le de l'\u00e9tat de pression des pneumatiques"
+    },
     "pk": 16,
-    "fields": {
-      "nom": "Contrôle de fonctionnement de l'équipement de signalisation",
-      "periodicite": 2,
-      "difficulte": 1,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le de fonctionnement de l'\u00e9quipement de signalisation"
+    },
     "pk": 17,
-    "fields": {
-      "nom": "Contrôle visuel des amortisseurs avant et arrière",
-      "periodicite": 2,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le visuel des amortisseurs avant et arri\u00e8re"
+    },
     "pk": 18,
-    "fields": {
-      "nom": "Contrôle de l'état du pare-brise, de la lunette arrière et des rétroviseurs",
-      "periodicite": 2,
-      "difficulte": 1,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le de l'\u00e9tat du pare-brise, de la lunette arri\u00e8re et des r\u00e9troviseurs"
+    },
     "pk": 19,
-    "fields": {
-      "nom": "Contrôle de l'état des balais d'essuie-glace avant et arrière",
-      "periodicite": 2,
-      "difficulte": 2,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le de l'\u00e9tat des balais d'essuie-glace avant et arri\u00e8re"
+    },
     "pk": 20,
-    "fields": {
-      "nom": "Contrôle visuel de la ligne d'échappement",
-      "periodicite": 2,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le visuel de la ligne d'\u00e9chappement"
+    },
     "pk": 21,
-    "fields": {
-      "nom": "Contrôle de câbles de boite de vitesses automatique",
-      "periodicite": 2,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le de c\u00e2bles de boite de vitesses automatique"
+    },
     "pk": 22,
-    "fields": {
-      "nom": "Purge du filtre à gazole",
-      "periodicite": 2,
-      "difficulte": 2,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Purge du filtre \u00e0 gazole"
+    },
     "pk": 23,
-    "fields": {
-      "nom": "Remplacement du filtre à air",
-      "periodicite": 3,
-      "difficulte": 2,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [
+        2
+      ],
+      "nom": "Remplacement du filtre \u00e0 air"
+    },
     "pk": 24,
-    "fields": {
-      "nom": "Remplacement du filtre à gazole",
-      "periodicite": 4,
-      "difficulte": 4,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [
+        2
+      ],
+      "nom": "Remplacement du filtre \u00e0 gazole"
+    },
     "pk": 25,
-    "fields": {
-      "nom": "Remplacement du liquide de freins",
-      "periodicite": 5,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Remplacement du liquide de freins"
+    },
     "pk": 26,
-    "fields": {
-      "nom": "Remplacement du liquide de refroidissement",
-      "periodicite": 5,
-      "difficulte": 4,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Remplacement du liquide de refroidissement"
+    },
     "pk": 27,
-    "fields": {
-      "nom": "Remplacement de la courroie de distribution + galets",
-      "periodicite": 6,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Remplacement de la courroie de distribution + galets"
+    },
     "pk": 28,
-    "fields": {
-      "nom": "Remplacer la courroie accessoires + galets",
-      "periodicite": 6,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Remplacer la courroie accessoires + galets"
+    },
     "pk": 29,
-    "fields": {
-      "nom": "Remplacer la pile de la carte antivol",
-      "periodicite": 7,
-      "difficulte": 2,
-      "confier_specialiste": false
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Remplacer la pile de la carte antivol"
+    },
     "pk": 30,
-    "fields": {
-      "nom": "Contrôle et mise à niveau du circuit de climatisation",
-      "periodicite": 7,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Contr\u00f4le et mise \u00e0 niveau du circuit de climatisation"
+    },
     "pk": 31,
-    "fields": {
-      "nom": "Remplacement des airbags et prétensionneurs des ceintures de sécurité",
-      "periodicite": 8,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.TypeMaintenance",
+    "fields": {
+      "champs_supplementaires": [],
+      "nom": "Remplacement des airbags et pr\u00e9tensionneurs des ceintures de s\u00e9curit\u00e9"
+    },
     "pk": 32,
-    "fields": {
-      "nom": "Remplacement des capteurs du système de surveillance de pression de pneumatiques",
-      "periodicite": 8,
-      "difficulte": -1,
-      "confier_specialiste": true
-    }
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.ModeleVoiture",
-    "pk": 1,
     "fields": {
-      "nom": "RENAULT Mégane II 1.5 dCi 86cv",
-      "programme_maintenance": [
-        1,
-        2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        22,
-        23,
-        24,
-        25,
-        26,
-        27,
-        28,
-        29,
-        30,
-        31,
-        32
-      ]
-    }
+      "champs_supplementaires": [],
+      "nom": "Remplacement des capteurs du syst\u00e8me de surveillance de pression de pneumatiques"
+    },
+    "pk": 33,
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "auth.User",
-    "pk": 1,
     "fields": {
-      "password": "pbkdf2_sha256$20000$rpifbdaAEkyd$q8/g2+G267wyPIVn8IGXS7C1gksIHj0BOrwDFiDPQNo=",
-      "is_superuser": true,
-      "username": "mfalaize",
-      "first_name": "Maxime",
-      "last_name": "Falaize",
-      "email": "maxime.falaize@gmail.com",
-      "is_staff": true,
-      "is_active": true,
-      "date_joined": "2015-08-30"
-    }
+      "champs_supplementaires": [
+        3
+      ],
+      "nom": "Remplacement des pneumatiques avant"
+    },
+    "pk": 34,
+    "model": "carnet.typeoperation"
   },
   {
-    "model": "carnet.Voiture",
-    "pk": 1,
     "fields": {
-      "nom": "Voiture de Maxime",
-      "immatriculation": "BW-846-AK",
-      "modele": 1,
-      "kilometrage": 162292,
-      "date_mise_circulation": "2007-03-15",
-      "date_derniere_maj_km": "2015-08-30",
-      "moyenne_km_annuel": 10000,
-      "proprietaire": 1
-    }
+      "champs_supplementaires": [
+        3
+      ],
+      "nom": "Remplacement des pneumatiques arri\u00e8res"
+    },
+    "pk": 35,
+    "model": "carnet.typeoperation"
   }
 ]

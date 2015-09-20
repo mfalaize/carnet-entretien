@@ -26,7 +26,8 @@
 
                 <div class="panel-body">
                     <a href="{% url 'voiture' pk=voiture.pk %}" class="thumbnail">
-                        <img src="{% static "img/megane.jpg" %}"/>
+                        <img src="
+                                {% if voiture.photo %}{% get_media_prefix %}{{ voiture.photo }}{% else %}{% static "img/megane.jpg" %}{% endif %}"/>
                     </a>
                 </div>
 
@@ -61,9 +62,9 @@
                     <tbody>
                     {% for operation in dernieres_operations %}
                         <tr>
-                            <td>{{ operation.voiture.nom }}</td>
+                            <td>{{ operation.revision.voiture.nom }}</td>
                             <td>{{ operation.type.nom }}</td>
-                            <td>{{ operation.date }}</td>
+                            <td>{{ operation.revision.date }}</td>
                             {% if operation.effectue %}
                                 <td><span class="label label-success">{% trans "Effectué" %}</span></td>
                             {% else %}
