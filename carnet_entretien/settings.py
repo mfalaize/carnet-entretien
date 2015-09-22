@@ -31,7 +31,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'carnet',
     'bootstrap3',
-    'widget_tweaks'
+    'widget_tweaks',
+    'djangoformsetjs'
 )
 
 MIDDLEWARE_CLASSES = (

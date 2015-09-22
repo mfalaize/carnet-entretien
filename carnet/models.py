@@ -1,3 +1,4 @@
+from django.utils import timezone
 from django.utils.formats import localize
 from django.conf import settings
 from django.db import models
@@ -87,9 +88,20 @@ class Voiture(models.Model):
     date_derniere_maj_km = models.DateField(verbose_name=_('Date de dernière mise à jour du kilométrage'))
     photo = models.ImageField(upload_to=get_image_user_path, blank=True, verbose_name="Photo")
     proprietaire = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Propriétaire'))
-    prix_achat = models.DecimalField(null=True, decimal_places=2, max_digits=10, verbose_name=_("Prix d'achat"))
-    date_achat = models.DateField(null=True, verbose_name=_("Date d'achat"))
-    kilometrage_achat = models.IntegerField(null=True, verbose_name="Nombre de Km à l'achat")
+    prix_achat = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=10,
+                                     verbose_name=_("Prix d'achat"))
+    date_achat = models.DateField(null=True, blank=True, verbose_name=_("Date d'achat"))
+    kilometrage_achat = models.IntegerField(null=True, blank=True, verbose_name="Nombre de Km à l'achat")
+
+    def get_estimation_kilometrage(self):
+        """Calcule une estimation du kilométrage actuel à l'aide du dernier kilométrage renseigné, de la moyenne annuelle
+        renseignée au prorata du nombre de jours qui sépare la date du jour de la date de dernière mise à jour du
+        kilométrage"""
+        if self.date_derniere_maj_km < timezone.now().date():
+            nb_jours = timezone.now().date() - self.date_derniere_maj_km
+            estimation_km = self.moyenne_km_annuel / 365 * nb_jours.days
+            return self.kilometrage + round(estimation_km)
+        return self.kilometrage
 
 
 class ProgrammeMaintenance(models.Model):
@@ -127,7 +139,7 @@ class ProgrammeMaintenance(models.Model):
 class Revision(models.Model):
     """Représente une révision d'une voiture"""
     voiture = models.ForeignKey(Voiture)
-    date = models.DateField(verbose_name=_('Date'))
+    date = models.DateField(default=timezone.now, verbose_name=_('Date'))
     kilometrage = models.IntegerField(verbose_name=_("Nombre de Km lors de la révision"))
 
 
@@ -136,7 +148,7 @@ class Operation(models.Model):
     objects = OperationManager()
     type = models.ForeignKey(TypeOperation, verbose_name=_('Type'))
     revision = models.ForeignKey(Revision, verbose_name=_('Révision'))
-    prix = models.DecimalField(null=True, decimal_places=2, max_digits=8, verbose_name=_("Prix"))
+    prix = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=8, verbose_name=_("Prix"))
     effectue_par_garage = models.BooleanField(default=True, verbose_name=_("Effectué par un garage ?"))
     effectue = models.BooleanField(default=False, verbose_name=_('Effectué ?'),
                                    help_text=_("Est décoché si l'opération de maintenance n'a pas encore été effectué"))

@@ -2,6 +2,7 @@
 {% load i18n %}
 {% load static %}
 {% load bootstrap3 %}
+{% load formset_tags %}
 {% load utils %}
 
 {% block navbar-content %}
@@ -25,31 +26,55 @@
                         {% bootstrap_form form layout='horizontal' %}
 
                         {% for inline in inlines %}
+                            <div id="formset{{ forloop.counter }}" data-formset-prefix="{{ inline.prefix }}">
                             {{ inline.management_form }}
-                            <table class="table table-striped">
-                                {% for form_op in inline %}
-                                    {% if forloop.first %}
-                                        <thead>
-                                        <tr>
-                                            <th>{{ form_op.type.label }}</th>
-                                            <th>{{ form_op.prix.label }}</th>
-                                            <th>{{ form_op.effectue_par_garage.label }}</th>
-                                            <th>{{ form_op.effectue.label }}</th>
+                                <table class="table table-striped">
+                                    {% for form_op in inline %}
+                                        {% if forloop.first %}
+                                            <thead>
+                                            <tr>
+                                                <th>{{ form_op.type.label }}</th>
+                                                <th>{{ form_op.prix.label }}</th>
+                                                <th>{{ form_op.effectue_par_garage.label }}</th>
+                                                <th>{{ form_op.effectue.label }}</th>
+                                                <th>{% trans "Actions" %}</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody data-formset-body>
+                                        {% endif %}
+                                            <tr data-formset-form>
+                                                <td>{% bootstrap_field form_op.type show_label=False size='small' layout='horizontal' horizontal_label_class='' horizontal_field_class='col-md-12' %}</td>
+                                                <td>{% bootstrap_field form_op.prix show_label=False size='small' layout='horizontal' horizontal_label_class='' horizontal_field_class='col-md-12' %}</td>
+                                                <td>{{ form_op.effectue_par_garage }}</td>
+                                                <td>{{ form_op.effectue }}</td>
+                                                <td>
+                                                    <div class="hidden">{{ form_op.DELETE }}</div>
+                                                    <button type="button" class="btn btn-danger" data-formset-delete-button>{% trans "Supprimer" %}</button>
+                                                </td>
+                                            </tr>
+                                        {% if forloop.last %}
+                                            </tbody>
+                                        {% endif %}
+                                    {% endfor %}
+                                </table>
+
+                                <script type="form-template" data-formset-empty-form>
+                                    {% escapescript %}
+                                        <tr data-formset-form>
+                                            <td>{% bootstrap_field inline.empty_form.type show_label=False size='small' layout='horizontal' horizontal_label_class='' horizontal_field_class='col-md-12' %}</td>
+                                            <td>{% bootstrap_field inline.empty_form.prix show_label=False size='small' layout='horizontal' horizontal_label_class='' horizontal_field_class='col-md-12' %}</td>
+                                            <td>{{ inline.empty_form.effectue_par_garage }}</td>
+                                            <td>{{ inline.empty_form.effectue }}</td>
+                                            <td>
+                                                <div class="hidden">{{ inline.empty_form.DELETE }}</div>
+                                                <button type="button" class="btn btn-danger" data-formset-delete-button>{% trans "Supprimer" %}</button>
+                                            </td>
                                         </tr>
-                                        </thead>
-                                        <tbody>
-                                    {% endif %}
-                                        <tr>
-                                            <td>{% bootstrap_field form_op.type show_label=False size='small' layout='horizontal' horizontal_label_class='' horizontal_field_class='col-md-12' %}</td>
-                                            <td>{% bootstrap_field form_op.prix show_label=False size='small' layout='horizontal' horizontal_label_class='' horizontal_field_class='col-md-12' %}</td>
-                                            <td>{{ form_op.effectue_par_garage }}</td>
-                                            <td>{{ form_op.effectue }}</td>
-                                        </tr>
-                                    {% if forloop.last %}
-                                        </tbody>
-                                    {% endif %}
-                                {% endfor %}
-                            </table>
+                                    {% endescapescript %}
+                                </script>
+
+                                <input type="button" class="btn btn-default" value="{% trans "Ajouter" %}" data-formset-add>
+                            </div>
                         {% endfor %}
                     </div>
 
@@ -60,4 +85,15 @@
             </form>
         </div>
     </div>
+{% endblock %}
+
+{% block extra_script %}
+    <script src="{% static 'js/jquery.formset.js' %}"></script>
+    <script>
+        jQuery(function($) {
+            $("div[id^='formset']").formset({
+                animateForms: true
+            });
+        });
+    </script>
 {% endblock %}

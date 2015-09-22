@@ -190,6 +190,10 @@ class AjoutRevision(CreateWithInlinesView):
     template_name = 'revision.html'
     context_object_name = 'revision'
 
+    def get_initial(self):
+        voiture = Voiture.objects.get(pk=self.kwargs['pk'], proprietaire=self.request.user)
+        return {'kilometrage': voiture.get_estimation_kilometrage()}
+
     def get_success_url(self):
         return reverse_lazy('voiture', kwargs={'pk': self.kwargs['pk']})
 
@@ -199,9 +203,9 @@ class AjoutRevision(CreateWithInlinesView):
         context['pk_voiture'] = self.kwargs['pk']
         return context
 
-    def form_valid(self, form):
+    def forms_valid(self, form, inlines):
         form.instance.voiture = Voiture.objects.get(pk=self.kwargs['pk'], proprietaire=self.request.user)
-        return super().form_valid(form)
+        return super().forms_valid(form, inlines)
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

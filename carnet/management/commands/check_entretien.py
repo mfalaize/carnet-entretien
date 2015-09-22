@@ -1,10 +1,9 @@
-from datetime import datetime
-
 from carnet.models import Voiture, Operation, Revision
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.management import BaseCommand
+from django.utils import timezone
 
 
 def check_entretien():
@@ -15,13 +14,7 @@ def check_entretien():
         need_to_send_mail = False
         revision_a_prevoir = None
         corps_mail = "<ul>"
-        kilometrage = voiture.kilometrage
-        # Si la date de mise à jour du kilométrage n'est pas la date du jour on l'ajuste avec l'estimation du kilométrage
-        # annuel
-        if voiture.date_derniere_maj_km < datetime.now().date():
-            nb_jours = datetime.now().date() - voiture.date_derniere_maj_km
-            estimation_km = voiture.moyenne_km_annuel / 365 * nb_jours.days
-            kilometrage += estimation_km
+        kilometrage = voiture.get_estimation_kilometrage()
 
         programmes = voiture.programmemaintenance_set.all()
         revisions = voiture.revision_set.all()
@@ -47,7 +40,7 @@ def check_entretien():
                 date_nok = False
                 if programme.periodicite_annees is not None:
                     new_date = derniere_date + relativedelta(years=programme.periodicite_annees)
-                    date_nok = new_date <= (datetime.now().date() - relativedelta(day=programme.delai_alerte))
+                    date_nok = new_date <= (timezone.now().date() - relativedelta(day=programme.delai_alerte))
 
                 km_nok = False
                 if programme.periodicite_kilometres is not None:
@@ -61,7 +54,7 @@ def check_entretien():
                 rappel_nok = False
                 if not derniere_operation_effectue:
                     new_date = derniere_date + relativedelta(day=programme.delai_rappel)
-                    rappel_nok = new_date <= datetime.now().date()
+                    rappel_nok = new_date <= timezone.now().date()
 
                 if date_nok or km_nok or rappel_nok:
                     need_to_send_mail = True
@@ -75,7 +68,7 @@ def check_entretien():
                         if revision_a_prevoir is None:
                             revision_a_prevoir = Revision()
                             revision_a_prevoir.voiture = voiture
-                            revision_a_prevoir.date = datetime.now().date() + relativedelta(day=programme.delai_alerte)
+                            revision_a_prevoir.date = timezone.now().date() + relativedelta(day=programme.delai_alerte)
                             revision_a_prevoir.kilometrage = kilometrage
                             revision_a_prevoir.save()
 
