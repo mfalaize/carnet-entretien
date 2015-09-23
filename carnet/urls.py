@@ -16,8 +16,10 @@ urlpatterns = [
         views.SupprimeProgrammeMaintenance.as_view(), name='supprime_programme'),
     url(r'^voiture/(?P<pk>[0-9]+)/ajout_revision/$', views.AjoutRevision.as_view(),
         name='ajout_revision'),
-    url(r'^voiture/(?P<pk>[0-9]+)/edite_revision/(?P<pk_revision>[0-9]+)$', views.EditeProgrammeMaintenance.as_view(),
+    url(r'^voiture/(?P<pk>[0-9]+)/edite_revision/(?P<pk_revision>[0-9]+)$', views.EditeRevision.as_view(),
         name='edite_revision'),
     url(r'^voiture/(?P<pk>[0-9]+)/supprime_revision/(?P<pk_revision>[0-9]+)$',
-        views.SupprimeProgrammeMaintenance.as_view(), name='supprime_revision'),
+        views.SupprimeRevision.as_view(), name='supprime_revision'),
+    url(r'^voiture/(?P<pk>[0-9]+)/supprime_operation/(?P<pk_operation>[0-9]+)$',
+        views.SupprimeOperation.as_view(), name='supprime_operation'),
 ]

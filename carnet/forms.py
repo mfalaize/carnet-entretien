@@ -56,6 +56,11 @@ class RevisionForm(ModelForm):
         self.fields['date'].widget.attrs['class'] = 'datepicker'
 
 
-class OperationForm(InlineFormSet):
+class AjoutOperationForm(InlineFormSet):
     model = Operation
     extra = 1
+
+
+class EditeOperationForm(InlineFormSet):
+    model = Operation
+    extra = 0

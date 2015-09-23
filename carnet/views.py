@@ -1,14 +1,15 @@
 # Create your views here.
 from datetime import date
 
-from carnet.forms import VoitureForm, ProgrammeMaintenanceForm, RevisionForm, OperationForm
+from carnet.forms import VoitureForm, ProgrammeMaintenanceForm, RevisionForm, AjoutOperationForm, \
+    EditeOperationForm
 from carnet.models import Voiture, Operation, ProgrammeMaintenance, Revision
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
-from extra_views import CreateWithInlinesView
+from extra_views import CreateWithInlinesView, UpdateWithInlinesView
 
 
 class Home(ListView):
@@ -186,7 +187,7 @@ class SupprimeProgrammeMaintenance(DeleteView):
 class AjoutRevision(CreateWithInlinesView):
     model = Revision
     form_class = RevisionForm
-    inlines = [OperationForm]
+    inlines = [AjoutOperationForm]
     template_name = 'revision.html'
     context_object_name = 'revision'
 
@@ -206,6 +207,55 @@ class AjoutRevision(CreateWithInlinesView):
     def forms_valid(self, form, inlines):
         form.instance.voiture = Voiture.objects.get(pk=self.kwargs['pk'], proprietaire=self.request.user)
         return super().forms_valid(form, inlines)
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class EditeRevision(UpdateWithInlinesView):
+    model = Revision
+    form_class = RevisionForm
+    inlines = [EditeOperationForm]
+    template_name = 'revision.html'
+    context_object_name = 'revision'
+    pk_url_kwarg = 'pk_revision'
+
+    def get_success_url(self):
+        return reverse_lazy('voiture', kwargs={'pk': self.kwargs['pk']})
+
+    def get_queryset(self):
+        # On vérifie que la voiture correspond bien à une voiture de l'utilisateur
+        return super().get_queryset().filter(voiture__proprietaire=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edition'] = True
+        return context
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class SupprimeRevision(DeleteView):
+    model = Revision
+    pk_url_kwarg = 'pk_revision'
+
+    def get_success_url(self):
+        return reverse_lazy('voiture', kwargs={'pk': self.kwargs['pk']})
+
+    @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)
+
+
+class SupprimeOperation(DeleteView):
+    model = Operation
+    pk_url_kwarg = 'pk_operation'
+
+    def get_success_url(self):
+        return reverse_lazy('voiture', kwargs={'pk': self.kwargs['pk']})
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

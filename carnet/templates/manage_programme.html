@@ -15,7 +15,9 @@
 
 {% block content %}
     <div class="container">
-        <h2>{% trans "Programme de maintenance de" %} : {{ voiture.nom }}</h2>
+        <p class="lead text-center">
+            {% trans "Programme de maintenance de" %} : {{ voiture.nom }}
+        </p>
 
         <div class="row">
             <div class="col-md-12">
@@ -32,10 +34,10 @@
                             <th>
                                 <div class="pull-right">
                                     <a href="{% url 'edite_programme' pk=voiture.pk pk_programme=programme.pk %}"
-                                       class="btn btn-primary">{% trans "Editer le programme" %}</a>
+                                       class="btn btn-primary btn-sm">{% trans "Editer le programme" %}</a>
                                     <button type="button" data-toggle="modal" data-target="#confirmeSuppression"
                                             onclick="$('#confirmeSuppressionForm').attr('action', '{% url 'supprime_programme' pk=voiture.pk pk_programme=programme.pk %}');"
-                                            class="btn btn-danger">{% trans "Supprimer le programme" %}</button>
+                                            class="btn btn-danger btn-sm">{% trans "Supprimer le programme" %}</button>
                                 </div>
                             </th>
                         </tr>

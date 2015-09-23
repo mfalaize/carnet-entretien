@@ -9,8 +9,6 @@
         <a class="btn btn-default navbar-btn" href="{% url 'home' %}">{% trans "Retour" %}</a>
         <a href="{% url 'ajout_revision' pk=voiture.pk %}"
            class="btn btn-primary navbar-btn">{% trans "Enregistrer une révision" %}</a>
-        <a href="{% url 'programme' pk=voiture.pk %}"
-           class="btn btn-primary navbar-btn">{% trans "Gérer le programme de maintenance" %}</a>
     </div>
 {% endblock %}
 
@@ -32,9 +30,9 @@
                     <div class="panel-footer">
                         <div class="text-center">
                             <a href="{% url 'edite_voiture' pk=voiture.pk %}"
-                               class="btn btn-primary">{% trans "Editer la voiture" %}</a>
+                               class="btn btn-primary btn-sm">{% trans "Editer la voiture" %}</a>
                             <button type="button" data-toggle="modal" data-target="#confirmeSuppression"
-                                    class="btn btn-danger">{% trans "Supprimer la voiture" %}</button>
+                                    class="btn btn-danger btn-sm">{% trans "Supprimer la voiture" %}</button>
                         </div>
                     </div>
                 </div>
@@ -45,6 +43,9 @@
                     <span class="text-success">{% bootstrap_icon "ok" %} {% trans "OK !" %} <a
                             class="button badge">?</a></span>
                 </h4>
+
+                <a href="{% url 'programme' pk=voiture.pk %}"
+                    class="btn btn-primary navbar-btn">{% trans "Gérer le programme de maintenance" %}</a>
             </div>
 
             <div class="col-md-4">
@@ -52,6 +53,96 @@
                     <span class="text-success">{% bootstrap_icon "ok" %} {% trans "OK !" %} <a
                             class="button badge">?</a></span>
                 </h4>
+            </div>
+        </div>
+
+        <p class="lead text-center">
+            {% trans "Opérations à effectuer" %}
+        </p>
+
+         <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{% trans "Opération" %}</th>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "Kilométrage" %}</th>
+                        <th>{% trans "Etat" %}</th>
+                        <th>{% trans "Actions" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for operation in operations_a_prevoir %}
+                        <tr>
+                            <td>{{ operation.type.nom }}</td>
+                            <td>{{ operation.revision.date }}</td>
+                            <td>{{ operation.revision.kilometrage }}</td>
+                            {% if operation.effectue %}
+                                <td><span class="label label-success">{% trans "Effectué" %}</span></td>
+                            {% else %}
+                                <td><span class="label label-warning">{% trans "A prévoir" %}</span></td>
+                            {% endif %}
+                            <td>
+                                <a href="{% url 'edite_revision' pk=voiture.pk pk_revision=operation.revision.id %}"
+                                    class="btn btn-primary btn-xs">{% trans "Editer" %}</a>
+                                <button type="button" data-toggle="modal" data-target="#confirmeSuppressionOperation"
+                                        onclick="$('#confirmeSuppressionOperationForm').attr('action', '{% url 'supprime_operation' pk=voiture.pk pk_operation=operation.pk %}');"
+                                    class="btn btn-danger btn-xs">{% trans "Supprimer" %}</button>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td class="text-center" colspan="5">{% trans "Aucune opération encore enregistrée !" %}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <p class="lead text-center">
+            {% trans "Dernières opérations" %}
+        </p>
+
+         <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{% trans "Opération" %}</th>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "Kilométrage" %}</th>
+                        <th>{% trans "Etat" %}</th>
+                        <th>{% trans "Actions" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for operation in dernieres_operations %}
+                        <tr>
+                            <td>{{ operation.type.nom }}</td>
+                            <td>{{ operation.revision.date }}</td>
+                            <td>{{ operation.revision.kilometrage }}</td>
+                            {% if operation.effectue %}
+                                <td><span class="label label-success">{% trans "Effectué" %}</span></td>
+                            {% else %}
+                                <td><span class="label label-warning">{% trans "A prévoir" %}</span></td>
+                            {% endif %}
+                            <td>
+                                <a href="{% url 'edite_revision' pk=voiture.pk pk_revision=operation.revision.id %}"
+                                    class="btn btn-primary btn-xs">{% trans "Editer" %}</a>
+                                <button type="button" data-toggle="modal" data-target="#confirmeSuppressionOperation"
+                                        onclick="$('#confirmeSuppressionOperationForm').attr('action', '{% url 'supprime_operation' pk=voiture.pk pk_operation=operation.pk %}');"
+                                    class="btn btn-danger btn-xs">{% trans "Supprimer" %}</button>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td class="text-center" colspan="5">{% trans "Aucune opération encore enregistrée !" %}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -70,7 +161,26 @@
                     <p>{% trans "Êtes-vous sûr de vouloir supprimer cette voiture ?" %}</p>
                 </div>
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Non" %}</button>
+                    <button type="submit" class="btn btn-danger">{% trans "Oui" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
+    <div class="modal fade" role="dialog" id="confirmeSuppressionOperation">
+        <div class="modal-dialog">
+            <form id="confirmeSuppressionOperationForm" class="modal-content" method="post">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{% trans "Confirmation suppression" %}</h4>
+                </div>
+                <div class="modal-body">
+                    <p>{% trans "Êtes-vous sûr de vouloir supprimer cette opération ?" %}</p>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Non" %}</button>
                     <button type="submit" class="btn btn-danger">{% trans "Oui" %}</button>
                 </div>
