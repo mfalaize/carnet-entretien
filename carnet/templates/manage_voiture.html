@@ -84,8 +84,6 @@
                                 <td><span class="label label-warning">{% trans "A prévoir" %}</span></td>
                             {% endif %}
                             <td>
-                                <a href="{% url 'edite_revision' pk=voiture.pk pk_revision=operation.revision.id %}"
-                                    class="btn btn-primary btn-xs">{% trans "Editer" %}</a>
                                 <button type="button" data-toggle="modal" data-target="#confirmeSuppressionOperation"
                                         onclick="$('#confirmeSuppressionOperationForm').attr('action', '{% url 'supprime_operation' pk=voiture.pk pk_operation=operation.pk %}');"
                                     class="btn btn-danger btn-xs">{% trans "Supprimer" %}</button>

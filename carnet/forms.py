@@ -1,4 +1,5 @@
 from carnet.models import Voiture, ProgrammeMaintenance, Revision, Operation
+from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ModelForm, ValidationError, CheckboxSelectMultiple
 from django.utils.translation import ugettext_lazy as _
@@ -56,11 +57,19 @@ class RevisionForm(ModelForm):
         self.fields['date'].widget.attrs['class'] = 'datepicker'
 
 
-class AjoutOperationForm(InlineFormSet):
+class OperationForm(ModelForm):
+    id_operation_prevue = forms.IntegerField(required=False, min_value=0)
+
+    class Meta:
+        model = Operation
+        fields = '__all__'
+
+
+class AjoutOperationFormSet(InlineFormSet):
+    form_class = OperationForm
     model = Operation
     extra = 1
 
 
-class EditeOperationForm(InlineFormSet):
-    model = Operation
+class EditeOperationFormSet(AjoutOperationFormSet):
     extra = 0

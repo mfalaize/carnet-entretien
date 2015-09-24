@@ -150,8 +150,42 @@ class Operation(models.Model):
     revision = models.ForeignKey(Revision, verbose_name=_('Révision'))
     prix = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=8, verbose_name=_("Prix"))
     effectue_par_garage = models.BooleanField(default=True, verbose_name=_("Effectué par un garage ?"))
-    effectue = models.BooleanField(default=False, verbose_name=_('Effectué ?'),
+    effectue = models.BooleanField(default=True, verbose_name=_('Effectué ?'),
                                    help_text=_("Est décoché si l'opération de maintenance n'a pas encore été effectué"))
+    id_operation_prevue = None  # Transient. Correspond à l'identifiant de l'opération prévue
+
+    def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
+        deja_sauvegarde = False
+        if self.id_operation_prevue is not None:
+            # Si l'id_operation_prevue est renseigné, on charge l'opération et on la lie à la révision pour la sauvegarder
+            # à la place de l'opération self
+            operation_prevue = Operation.objects.get(pk=self.id_operation_prevue)
+            if operation_prevue.type == self.type:
+                revision_prevue = operation_prevue.revision
+                operation_prevue.revision = self.revision
+                operation_prevue.prix = self.prix
+                operation_prevue.effectue_par_garage = self.effectue_par_garage
+                operation_prevue.effectue = self.effectue
+                operation_prevue.save()
+                deja_sauvegarde = True
+
+                # Comme on déplace une opération d'une révision à une autre on doit vérifier que l'ancienne révision
+                # est devenue vide. Si oui il faut la supprimer
+                if revision_prevue.operation_set.count() == 0:
+                    revision_prevue.delete()
+
+        if not deja_sauvegarde:
+            super().save(force_insert, force_update, using, update_fields)
+
+    def delete(self, using=None):
+        revision = self.revision
+        super().delete(using)
+
+        # A chaque delete d'opération on vérifie que la révision associée n'est pas vide.
+        # Si elle l'est on la supprime aussi
+        if revision.operation_set.count() == 0:
+            revision.delete()
+
 
 
 class ChampSupplementaireValeur(models.Model):

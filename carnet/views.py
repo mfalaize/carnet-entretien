@@ -1,11 +1,12 @@
 # Create your views here.
 from datetime import date
 
-from carnet.forms import VoitureForm, ProgrammeMaintenanceForm, RevisionForm, AjoutOperationForm, \
-    EditeOperationForm
+from carnet.forms import VoitureForm, ProgrammeMaintenanceForm, RevisionForm, AjoutOperationFormSet, \
+    EditeOperationFormSet
 from carnet.models import Voiture, Operation, ProgrammeMaintenance, Revision
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
@@ -187,9 +188,28 @@ class SupprimeProgrammeMaintenance(DeleteView):
 class AjoutRevision(CreateWithInlinesView):
     model = Revision
     form_class = RevisionForm
-    inlines = [AjoutOperationForm]
+    inlines = [AjoutOperationFormSet]
     template_name = 'revision.html'
     context_object_name = 'revision'
+
+    def construct_inlines(self):
+        inline_formsets = []
+        form = AjoutOperationFormSet(self.model, self.request, self.object, self.kwargs, self)
+        form.initial = []
+        if self.request.method == 'GET':
+            voiture = Voiture.objects.get(pk=self.kwargs['pk'], proprietaire=self.request.user)
+            # On préenregistre les éléments des opérations à prévoir
+            for operation in Operation.objects.get_operations_a_prevoir(voiture):
+                form.initial.append({'type': operation.type, 'prix': operation.prix, 'effectue': True,
+                                     'id_operation_prevue': operation.pk})
+                form.extra += 1
+
+            if form.extra > 1:
+                form.extra -= 1
+
+        formset = form.construct_formset()
+        inline_formsets.append(formset)
+        return inline_formsets
 
     def get_initial(self):
         voiture = Voiture.objects.get(pk=self.kwargs['pk'], proprietaire=self.request.user)
@@ -206,7 +226,13 @@ class AjoutRevision(CreateWithInlinesView):
 
     def forms_valid(self, form, inlines):
         form.instance.voiture = Voiture.objects.get(pk=self.kwargs['pk'], proprietaire=self.request.user)
-        return super().forms_valid(form, inlines)
+        self.object = form.save()
+        for formset in inlines:
+            for form_op in formset:
+                # On met à jour l'id de l'opération prévue pour remplacer cette opération au lieu d'en rajouter un nouveau
+                form_op.instance.id_operation_prevue = form_op.cleaned_data['id_operation_prevue']
+            formset.save()
+        return HttpResponseRedirect(self.get_success_url())
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -216,7 +242,7 @@ class AjoutRevision(CreateWithInlinesView):
 class EditeRevision(UpdateWithInlinesView):
     model = Revision
     form_class = RevisionForm
-    inlines = [EditeOperationForm]
+    inlines = [EditeOperationFormSet]
     template_name = 'revision.html'
     context_object_name = 'revision'
     pk_url_kwarg = 'pk_revision'
