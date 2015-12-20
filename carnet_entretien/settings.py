@@ -32,7 +32,8 @@ INSTALLED_APPS = (
     'carnet',
     'bootstrap3',
     'widget_tweaks',
-    'djangoformsetjs'
+    'djangoformsetjs',
+    'rest_framework'
 )
 
 MIDDLEWARE_CLASSES = (
@@ -155,4 +156,9 @@ BOOTSTRAP3 = {
         'default': 'bootstrap3.renderers.FieldRenderer',
         'inline': 'bootstrap3.renderers.InlineFieldRenderer',
     },
+}
+
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'PAGE_SIZE': 10
 }

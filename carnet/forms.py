@@ -28,7 +28,7 @@ class VoitureForm(ModelForm):
         cleaned_data = super().clean()
 
         # La date d'achat doit être inférieure à la date de mise en circulation
-        if cleaned_data['date_achat'] < cleaned_data['date_mise_circulation']:
+        if cleaned_data['date_achat'] is not None and cleaned_data['date_achat'] < cleaned_data['date_mise_circulation']:
             raise ValidationError(_("La date d'achat ne peut pas précéder la date de mise en circulation"))
 
         return cleaned_data

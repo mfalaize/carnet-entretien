@@ -21,7 +21,8 @@ from django.contrib import admin
 from django.contrib.auth import views as auth
 
 urlpatterns = [
-    url(r'^', include('carnet.urls')),
+    url(r'^carnet_auto/', include('carnet.urls')),
+    url(r'^compta/', include('compta.urls')),
     url(r'^login/$', auth.login, {'authentication_form': BootstrapAuthenticationForm}, name='login'),
     url(r'^logout/$', auth.logout, {'next_page': 'login'}, name='logout'),
     url(r'^password_change/$', auth.password_change, name='password_change'),
