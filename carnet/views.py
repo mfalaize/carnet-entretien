@@ -82,6 +82,13 @@ class SupprimeVoiture(DeleteView):
         return super().dispatch(request, *args, **kwargs)
 
 
+class IndicateurEntretien():
+    """Une énumération des différents indicateurs d'entretien pour un véhicule"""
+    OK = 1
+    WARN = 2
+    NOK = 3
+
+
 class ManageVoiture(TemplateView):
     template_name = 'manage_voiture.html'
 
@@ -97,7 +104,42 @@ class ManageVoiture(TemplateView):
         context['dernieres_operations'] = Operation.objects.get_dernieres_operations(voiture)
 
         context['voiture'] = voiture
+
+        context['date_prochain_entretien'] = None
+        context['indicateur_entretien'] = self.calculer_indicateur_entretien(context)
+
+        if context['date_prochain_entretien'] is None:
+            context['date_prochain_entretien'] = self.calculer_date_prochain_entretien_estime(context)
+
+        context['IndicateurEntretien'] = IndicateurEntretien
+
         return context
+
+    def calculer_indicateur_entretien(self, context):
+        """Calcule l'indicateur d'entretien pour le véhicule en cours"""
+        if context['operations_a_prevoir'].count() == 0:
+            return IndicateurEntretien.OK
+
+        closest_date = None
+        for op in context['operations_a_prevoir']:
+            if closest_date is None or closest_date < op.revision.date:
+                closest_date = op.revision.date
+
+        context['date_prochain_entretien'] = closest_date
+        if closest_date >= date.today():
+            return IndicateurEntretien.WARN
+        return IndicateurEntretien.NOK
+
+    def calculer_date_prochain_entretien_estime(self, context):
+        """Calcule la date de prochain entretien estimée à partir du programme de maintenance et du nombre de km annuels
+        renseigné"""
+        progs = ProgrammeMaintenance.objects.get_programmes_for_voiture(voiture=context['voiture'])
+        if progs.count() == 0:
+            return None
+
+        # TODO
+
+        return date.today()
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

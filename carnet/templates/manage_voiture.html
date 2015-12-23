@@ -38,21 +38,64 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
-                <h4>{% trans "Entretien" %} :
-                    <span class="text-success">{% bootstrap_icon "ok" %} {% trans "OK !" %} <a
-                            class="button badge">?</a></span>
-                </h4>
+            <div class="col-md-8">
+                <div class="row">
+                    <h4>{% trans "Entretien" %} :
+                        {% if indicateur_entretien == IndicateurEntretien.OK %}
+                            {% if date_prochain_entretien == None %}
+                                <span class="text-warning">{% bootstrap_icon "warning-sign" %} {% trans "Aucun programme enregistré" %} <a
+                                    class="button badge" data-toggle="tooltip" data-placement="right"
+                                    title="{% trans "Aucun programme de maintenance n'a été enregistré pour ce véhicule" %}">?</a></span>
+                            {% else %}
+                                <span class="text-success">{% bootstrap_icon "ok" %} {% trans "OK !" %} <a
+                                    class="button badge" data-toggle="tooltip" data-placement="right"
+                                    title="{% trans "Aucun entretien n'est prévu à ce jour" %}">?</a></span>
+                            {% endif %}
+                        {% elif indicateur_entretien == IndicateurEntretien.WARN %}
+                            <span class="text-warning">{% bootstrap_icon "warning-sign" %} {% trans "Entretien(s) à prévoir" %} <a
+                                class="button badge" data-toggle="tooltip" data-placement="right"
+                                title="{% trans "Un ou plusieurs entretien(s) sont dores et déjà prévue pour une date ultérieure à celle du jour" %}">?</a></span>
+                        {% else %}
+                            <span class="text-danger">{% bootstrap_icon "remove" %} {% trans "Entretien(s) retardé(s)" %} <a
+                                class="button badge" data-toggle="tooltip" data-placement="right"
+                                title="{% trans "Un ou plusieurs entretien(s) sont à effectuer le plus rapidement possible" %}">?</a></span>
+                        {% endif %}
 
-                <a href="{% url 'programme' pk=voiture.pk %}"
-                    class="btn btn-primary navbar-btn">{% trans "Gérer le programme de maintenance" %}</a>
-            </div>
+                    </h4>
+                </div>
 
-            <div class="col-md-4">
-                <h4>{% trans "Prochain entretien estimé" %} :
-                    <span class="text-success">{% bootstrap_icon "ok" %} {% trans "OK !" %} <a
-                            class="button badge">?</a></span>
-                </h4>
+                <div class="row">
+                    {% if indicateur_entretien == IndicateurEntretien.OK %}
+                        <h4>{% trans "Prochain entretien estimé" %} :
+                            {% if date_prochain_entretien == None %}
+                                <span class="text-warning">{% bootstrap_icon "warning-sign" %} {% trans "Aucun programme enregistré" %} <a
+                                    class="button badge" data-toggle="tooltip" data-placement="right"
+                                    title="{% trans "Aucun programme de maintenance n'a été enregistré pour ce véhicule" %}">?</a></span>
+                            {% else %}
+                                <span class="text-success">{{ date_prochain_entretien }} <a
+                                    class="button badge" data-toggle="tooltip" data-placement="right"
+                                    title="{% trans "La date de prochain entretien estimé est calculée sur la base du nombre de kilomètres annuels que vous avez renseigné" %}">?</a></span>
+                            {% endif %}
+                        </h4>
+                    {% else %}
+                        <h4>{% trans "Prochain entretien" %} :
+                            {% if indicateur_entretien == IndicateurEntretien.WARN %}
+                                <span class="text-warning">{{ date_prochain_entretien }} <a
+                                    class="button badge" data-toggle="tooltip" data-placement="right"
+                                    title="{% trans "La date de prochain entretien est la date de la révision à effectuer la plus ancienne" %}">?</a></span>
+                            {% else %}
+                                <span class="text-danger">{{ date_prochain_entretien }} <a
+                                    class="button badge" data-toggle="tooltip" data-placement="right"
+                                    title="{% trans "La date de prochain entretien est la date (déjà dépassée) à laquelle vous auriez dû effectuer des opérations" %}">?</a></span>
+                            {% endif %}
+                        </h4>
+                    {% endif %}
+                </div>
+
+                <div class="row">
+                    <a href="{% url 'programme' pk=voiture.pk %}"
+                        class="btn btn-primary navbar-btn">{% trans "Gérer le programme de maintenance" %}</a>
+                </div>
             </div>
         </div>
 
