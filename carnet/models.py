@@ -1,7 +1,7 @@
-from django.utils import timezone
-from django.utils.formats import localize
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
+from django.utils.formats import localize
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -86,7 +86,7 @@ class Voiture(models.Model):
     date_mise_circulation = models.DateField(verbose_name=_('Date de mise en circulation'))
     moyenne_km_annuel = models.IntegerField(verbose_name=_('Nombre de Km effectués annuellement par la voiture'))
     date_derniere_maj_km = models.DateField(verbose_name=_('Date de dernière mise à jour du kilométrage'))
-    photo = models.ImageField(upload_to=get_image_user_path, blank=True, verbose_name="Photo")
+    photo = models.ImageField(upload_to=get_image_user_path, blank=True, verbose_name=_("Photo"))
     proprietaire = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Propriétaire'))
     prix_achat = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=10,
                                      verbose_name=_("Prix d'achat"))

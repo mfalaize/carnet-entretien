@@ -4,6 +4,7 @@ from datetime import date
 from carnet.forms import VoitureForm, ProgrammeMaintenanceForm, RevisionForm, AjoutOperationFormSet, \
     EditeOperationFormSet
 from carnet.models import Voiture, Operation, ProgrammeMaintenance, Revision
+from dateutil.relativedelta import relativedelta
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect
@@ -122,7 +123,7 @@ class ManageVoiture(TemplateView):
 
         closest_date = None
         for op in context['operations_a_prevoir']:
-            if closest_date is None or closest_date < op.revision.date:
+            if closest_date is None or closest_date > op.revision.date:
                 closest_date = op.revision.date
 
         context['date_prochain_entretien'] = closest_date
@@ -137,9 +138,48 @@ class ManageVoiture(TemplateView):
         if progs.count() == 0:
             return None
 
-        # TODO
+        closest_date = None
+        closest_km = None
 
-        return date.today()
+        for prog in progs:
+            for type_op in prog.types_operations.all():
+
+                # On commence par calculer les dates et kilométrages à partir des valeurs actuelles au cas où il n'y a
+                # pas d'opérations
+                if prog.periodicite_annees is not None:
+                    # FIXME Prendre quelle date en référence ? La date d'achat de la voiture si renseignée ?
+                    date_calculee = date.today() + relativedelta(years=prog.periodicite_annees)
+                    if closest_date is None or closest_date > date_calculee:
+                        closest_date = date_calculee
+                if prog.periodicite_kilometres is not None:
+                    km = context['voiture'].get_estimation_kilometrage() + prog.periodicite_kilometres
+                    if closest_km is None or closest_km > km:
+                        closest_km = km
+
+                # Les opérations étant classées par date décroissante, quand on trouve la première occurrence c'est qu'on
+                # a la plus récente
+                for op in context['dernieres_operations']:
+                    if op.type.pk == type_op.pk:
+                        if prog.periodicite_annees is not None:
+                            date_calculee = op.revision.date + relativedelta(years=prog.periodicite_annees)
+                            if closest_date is None or closest_date > date_calculee:
+                                closest_date = date_calculee
+                        if prog.periodicite_kilometres is not None:
+                            km = op.revision.kilometrage + prog.periodicite_kilometres
+                            if closest_km is None or closest_km > km:
+                                closest_km = km
+                        break
+
+        # Calcul de la date théorique à partir du kilométrage pour voir si elle est supérieure à celle calculée à partir
+        # des périodicités à l'années
+        if closest_km is not None:
+            diff = closest_km - context['voiture'].get_estimation_kilometrage()
+            nb_jours = diff / (context['voiture'].moyenne_km_annuel / 365)
+            date_calculee = date.today() + relativedelta(days=nb_jours)
+            if closest_date is None or closest_date > date_calculee:
+                closest_date = date_calculee
+
+        return closest_date
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
