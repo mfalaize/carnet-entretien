@@ -86,7 +86,7 @@ class Voiture(models.Model):
     date_mise_circulation = models.DateField(verbose_name=_('Date de mise en circulation'))
     moyenne_km_annuel = models.IntegerField(verbose_name=_('Nombre de Km effectués annuellement par la voiture'))
     date_derniere_maj_km = models.DateField(verbose_name=_('Date de dernière mise à jour du kilométrage'))
-    photo = models.ImageField(upload_to=get_image_user_path, blank=True, verbose_name="Photo")
+    photo = models.ImageField(upload_to=get_image_user_path, blank=True, verbose_name=_("Photo"))
     proprietaire = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Propriétaire'))
     prix_achat = models.DecimalField(null=True, blank=True, decimal_places=2, max_digits=10,
                                      verbose_name=_("Prix d'achat"))
