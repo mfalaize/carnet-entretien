@@ -1,8 +1,9 @@
 from datetime import datetime
 
-from carnet.models import Voiture
 from django.contrib.auth.models import User
 from django.test import TestCase
+
+from carnet_auto.models import Voiture
 
 
 class TestCheckEntretien(TestCase):

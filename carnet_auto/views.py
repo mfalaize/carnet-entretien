@@ -1,9 +1,6 @@
 # Create your views here.
 from datetime import date
 
-from carnet.forms import VoitureForm, ProgrammeMaintenanceForm, RevisionForm, AjoutOperationFormSet, \
-    EditeOperationFormSet
-from carnet.models import Voiture, Operation, ProgrammeMaintenance, Revision
 from django.contrib.auth.decorators import login_required
 from django.core.urlresolvers import reverse_lazy
 from django.http import HttpResponseRedirect
@@ -11,6 +8,10 @@ from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView, TemplateView
 from extra_views import CreateWithInlinesView, UpdateWithInlinesView
+
+from carnet_auto.forms import VoitureForm, ProgrammeMaintenanceForm, RevisionForm, AjoutOperationFormSet, \
+    EditeOperationFormSet
+from carnet_auto.models import Voiture, Operation, ProgrammeMaintenance, Revision
 
 
 class Home(ListView):

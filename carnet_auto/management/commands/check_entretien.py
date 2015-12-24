@@ -1,9 +1,10 @@
-from carnet.models import Voiture, Operation, Revision
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.management import BaseCommand
 from django.utils import timezone
+
+from carnet_auto.models import Voiture, Operation, Revision
 
 
 def check_entretien():

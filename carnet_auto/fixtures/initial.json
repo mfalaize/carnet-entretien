@@ -4,21 +4,21 @@
       "libelle": "Type d'huile"
     },
     "pk": 1,
-    "model": "carnet.champsupplementaire"
+    "model": "carnet_auto.champsupplementaire"
   },
   {
     "fields": {
       "libelle": "R\u00e9f\u00e9rence du filtre"
     },
     "pk": 2,
-    "model": "carnet.champsupplementaire"
+    "model": "carnet_auto.champsupplementaire"
   },
   {
     "fields": {
       "libelle": "R\u00e9f\u00e9rence des pneumatiques"
     },
     "pk": 3,
-    "model": "carnet.champsupplementaire"
+    "model": "carnet_auto.champsupplementaire"
   },
   {
     "fields": {
@@ -26,7 +26,7 @@
       "nom": "Contr\u00f4le des niveaux du v\u00e9hicule"
     },
     "pk": 2,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -36,7 +36,7 @@
       "nom": "Vidange de l'huile moteur"
     },
     "pk": 3,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -46,7 +46,7 @@
       "nom": "Remplacement du filtre \u00e0 huile"
     },
     "pk": 4,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -56,7 +56,7 @@
       "nom": "Remplacement du filtre d'habitacle"
     },
     "pk": 5,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -64,7 +64,7 @@
       "nom": "Contr\u00f4le du niveau de l'huile de bo\u00eete de vitesse"
     },
     "pk": 6,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -72,7 +72,7 @@
       "nom": "Contr\u00f4le du niveau du liquide de refroidissement moteur"
     },
     "pk": 7,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -80,7 +80,7 @@
       "nom": "Contr\u00f4le du niveau de liquide de direction assist\u00e9e"
     },
     "pk": 8,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -88,7 +88,7 @@
       "nom": "Contr\u00f4le du niveau de liquide lave-glace"
     },
     "pk": 9,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -96,7 +96,7 @@
       "nom": "Contr\u00f4le du niveau de la batterie et de l'\u00e9tat de charge de la batterie"
     },
     "pk": 10,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -104,7 +104,7 @@
       "nom": "Contr\u00f4le des jeux dans la direction, le train avant et arri\u00e8re"
     },
     "pk": 11,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -112,7 +112,7 @@
       "nom": "Contr\u00f4le de l'\u00e9tat des soufflets de direction et des transmissions"
     },
     "pk": 12,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -120,7 +120,7 @@
       "nom": "Contr\u00f4le du niveau de liquide de freins"
     },
     "pk": 13,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -128,7 +128,7 @@
       "nom": "Contr\u00f4le de l'\u00e9tat et de l'\u00e9tanch\u00e9it\u00e9 du circuit de frein, d'embrayage et de direction assist\u00e9e"
     },
     "pk": 14,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -136,7 +136,7 @@
       "nom": "Contr\u00f4le de l'usure des plaquettes de freins"
     },
     "pk": 15,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -144,7 +144,7 @@
       "nom": "Contr\u00f4le de l'\u00e9tat de pression des pneumatiques"
     },
     "pk": 16,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -152,7 +152,7 @@
       "nom": "Contr\u00f4le de fonctionnement de l'\u00e9quipement de signalisation"
     },
     "pk": 17,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -160,7 +160,7 @@
       "nom": "Contr\u00f4le visuel des amortisseurs avant et arri\u00e8re"
     },
     "pk": 18,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -168,7 +168,7 @@
       "nom": "Contr\u00f4le de l'\u00e9tat du pare-brise, de la lunette arri\u00e8re et des r\u00e9troviseurs"
     },
     "pk": 19,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -176,7 +176,7 @@
       "nom": "Contr\u00f4le de l'\u00e9tat des balais d'essuie-glace avant et arri\u00e8re"
     },
     "pk": 20,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -184,7 +184,7 @@
       "nom": "Contr\u00f4le visuel de la ligne d'\u00e9chappement"
     },
     "pk": 21,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -192,7 +192,7 @@
       "nom": "Contr\u00f4le de c\u00e2bles de boite de vitesses automatique"
     },
     "pk": 22,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -200,7 +200,7 @@
       "nom": "Purge du filtre \u00e0 gazole"
     },
     "pk": 23,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -210,7 +210,7 @@
       "nom": "Remplacement du filtre \u00e0 air"
     },
     "pk": 24,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -220,7 +220,7 @@
       "nom": "Remplacement du filtre \u00e0 gazole"
     },
     "pk": 25,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -228,7 +228,7 @@
       "nom": "Remplacement du liquide de freins"
     },
     "pk": 26,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -236,7 +236,7 @@
       "nom": "Remplacement du liquide de refroidissement"
     },
     "pk": 27,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -244,7 +244,7 @@
       "nom": "Remplacement de la courroie de distribution + galets"
     },
     "pk": 28,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -252,7 +252,7 @@
       "nom": "Remplacer la courroie accessoires + galets"
     },
     "pk": 29,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -260,7 +260,7 @@
       "nom": "Remplacer la pile de la carte antivol"
     },
     "pk": 30,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -268,7 +268,7 @@
       "nom": "Contr\u00f4le et mise \u00e0 niveau du circuit de climatisation"
     },
     "pk": 31,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -276,7 +276,7 @@
       "nom": "Remplacement des airbags et pr\u00e9tensionneurs des ceintures de s\u00e9curit\u00e9"
     },
     "pk": 32,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -284,7 +284,7 @@
       "nom": "Remplacement des capteurs du syst\u00e8me de surveillance de pression de pneumatiques"
     },
     "pk": 33,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -294,7 +294,7 @@
       "nom": "Remplacement des pneumatiques avant"
     },
     "pk": 34,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   },
   {
     "fields": {
@@ -304,6 +304,6 @@
       "nom": "Remplacement des pneumatiques arri\u00e8res"
     },
     "pk": 35,
-    "model": "carnet.typeoperation"
+    "model": "carnet_auto.typeoperation"
   }
 ]

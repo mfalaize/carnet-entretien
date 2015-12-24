@@ -1,9 +1,10 @@
-from carnet.models import Voiture, ProgrammeMaintenance, Revision, Operation
 from django import forms
 from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ModelForm, ValidationError, CheckboxSelectMultiple
 from django.utils.translation import ugettext_lazy as _
 from extra_views import InlineFormSet
+
+from carnet_auto.models import Voiture, ProgrammeMaintenance, Revision, Operation
 
 
 class BootstrapAuthenticationForm(AuthenticationForm):

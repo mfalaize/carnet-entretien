@@ -1,5 +1,6 @@
 from django.conf.urls import url
-from carnet import views
+
+from carnet_auto import views
 
 urlpatterns = [
     url(r'^$', views.Home.as_view(), name='home'),
