@@ -5,11 +5,13 @@ from django.utils.crypto import get_random_string
 from homelab.settings import BASE_DIR
 
 chars = 'abcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*(-_=+)'
-SECRET_KEY = os.environ.get('HOMELAB_SECRET_KEY', get_random_string(50, chars))
+if os.environ.get('HOMELAB_SECRET_KEY', '') == '':
+    os.environ['HOMELAB_SECRET_KEY'] = get_random_string(50, chars)
+SECRET_KEY = os.environ.get('HOMELAB_SECRET_KEY', '')
 
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [os.environ.get('HOMELAB_ALLOWED_HOST', '*')]
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 DATABASES = {
