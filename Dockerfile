@@ -21,4 +21,4 @@ VOLUME conf/
 EXPOSE 80
 
 RUN chmod +x docker_entrypoint.sh
-ENTRYPOINT ./docker_entrypoint.sh
+ENTRYPOINT ["./docker_entrypoint.sh"]
