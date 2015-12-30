@@ -15,7 +15,7 @@ Avant de commencer créez une base de données <code>homelab</code> vide.
 
 Modifiez le fichier <code>config.ini</code> pour y mettre vos propres paramètres.
 
-<code>docker build --rm=true --tag="mfalaize/homelab:latest"</code>
+<code>docker build --rm=true --tag="mfalaize/homelab:latest" .</code>
 
 <code>docker run --name homelab -d -v /opt/homelab/conf:/usr/src/app/conf --link votre_container_db:db -p 80:80 mfalaize/homelab init</code>
 
