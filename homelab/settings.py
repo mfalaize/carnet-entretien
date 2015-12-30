@@ -11,14 +11,52 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 """
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+import configparser
 import os
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+from django.utils.crypto import get_random_string
 
-try:
-    from local_settings import *
-except ImportError as e:
-    pass
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+CONF_FILE = os.path.join(BASE_DIR, os.path.join('conf', 'config.ini'))
+
+# Configuration via le fichier config.ini présent dans le dossier conf
+config = configparser.ConfigParser()
+config.read(CONF_FILE)
+application = config['Application']
+database = config['Database']
+mail = config['Mail']
+
+if application.get('SecretKey', '') == 'doNotTouch' or application.get('SecretKey', '') == '':
+    chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$^&*(-_=+)'
+    application['SecretKey'] = get_random_string(50, chars)
+
+    with open(CONF_FILE, 'w') as ini:
+        config.write(ini)
+
+SECRET_KEY = application.get('SecretKey', '')
+
+DEBUG = application.get('Debug', 'False') == 'True'
+
+ALLOWED_HOSTS = [application.get('AllowedHost', '*')]
+
+DATABASES = {
+    'default': {
+        'ENGINE': database.get('Engine', 'django.db.backends.postgresql_psycopg2'),
+        'NAME': database.get('Name', 'homelab'),
+        'USER': database.get('User', ''),
+        'PASSWORD': database.get('Password', ''),
+        'HOST': database.get('Host', 'db'),
+        'PORT': database.get('Port', '5432')
+    }
+}
+
+EMAIL_USE_TLS = mail.get('UseTls', 'True') == 'True'
+EMAIL_HOST = mail.get('Host', 'localhost')
+EMAIL_PORT = mail.get('Port', '587')
+EMAIL_HOST_USER = mail.get('User', '')
+EMAIL_HOST_PASSWORD = mail.get('Password', '')
+DEFAULT_FROM_EMAIL = mail.get('DefaultFrom', 'homelab@localhost')
+
 
 # Application definition
 
@@ -89,6 +127,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

@@ -14,10 +14,9 @@ RUN apt-get update && apt-get install -y \
 ADD homelab.conf /etc/apache2/sites-available/
 RUN a2dissite 000-default && a2ensite homelab
 
-ADD docker_settings.py local_settings.py
-
 RUN mkdir media static
 VOLUME media/
+VOLUME conf/
 
 EXPOSE 80
 

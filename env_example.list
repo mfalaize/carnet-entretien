@@ -1,6 +1,0 @@
-HOMELAB_DB_USER=postgres
-HOMELAB_DB_PASSWORD=password
-
-HOMELAB_EMAIL_HOST=smtp.gmail.com
-HOMELAB_EMAIL_USER=maxime.falaize@gmail.com
-HOMELAB_EMAIL_PASSWORD=password

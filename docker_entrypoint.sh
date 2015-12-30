@@ -1,7 +1,7 @@
 #!/bin/bash
 # Systématiquement on met à jour les fichiers statiques et la structure de la base de données
 python manage.py collectstatic --noinput
-python manage.py migrate admin
+python manage.py migrate auth
 python manage.py migrate
 
 case "$1" in
@@ -13,7 +13,4 @@ case "$1" in
         ;;
 esac
 
-service apache2 start
-
-# A la fin on lance une console pour pouvoir exécuter des commandes supplémentaires
-/bin/bash
+apachectl -DFOREGROUND
