@@ -1,0 +1,1 @@
+0 8 * * * cd /usr/src/app && python manage.py check_entretien >> check_entretien.log 2>&1

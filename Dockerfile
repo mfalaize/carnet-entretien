@@ -5,7 +5,7 @@ ENV PYTHONUNBUFFERED 1
 
 # Installation des packages
 RUN apt-get update && apt-get install -y \
-    apache2 libapache2-mod-wsgi-py3 \
+    apache2 libapache2-mod-wsgi-py3 cron \
 	--no-install-recommends \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
@@ -13,6 +13,10 @@ RUN apt-get update && apt-get install -y \
 # Activation du site sur apache
 ADD homelab.conf /etc/apache2/sites-available/
 RUN a2dissite 000-default && a2ensite homelab
+
+# Activation des crons
+ADD crontab_root /var/spool/cron/crontabs/root
+RUN chmod 600 /var/spool/cron/crontabs/root && chown root:crontab /var/spool/cron/crontabs/root
 
 RUN mkdir media static
 VOLUME media/
