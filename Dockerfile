@@ -18,8 +18,9 @@ RUN a2dissite 000-default && a2ensite homelab
 ADD crontab_root /var/spool/cron/crontabs/root
 RUN chmod 600 /var/spool/cron/crontabs/root && chown root:crontab /var/spool/cron/crontabs/root
 
-RUN mkdir media static
+RUN mkdir media static logs
 VOLUME media/
+VOLUME logs/
 VOLUME conf/
 
 EXPOSE 80
