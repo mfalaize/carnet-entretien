@@ -1,3 +1,7 @@
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from django.views.generic import TemplateView
+
 from compta.serializers import UserSerializer, GroupSerializer
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
@@ -17,3 +21,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
+
+
+class Index(TemplateView):
+    template_name = 'index.html'
+
+    # @method_decorator(login_required)
+    def dispatch(self, request, *args, **kwargs):
+        return super().dispatch(request, *args, **kwargs)

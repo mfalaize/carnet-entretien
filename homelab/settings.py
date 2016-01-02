@@ -68,6 +68,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'carnet_auto',
+    'compta',
     'bootstrap3',
     'widget_tweaks',
     'djangoformsetjs',

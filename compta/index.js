@@ -1,3 +1,0 @@
-require('react');
-
-alert('hello');

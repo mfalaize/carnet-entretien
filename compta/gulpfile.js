@@ -5,10 +5,11 @@ var browserify = require('browserify');
 var del = require('del');
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
+var babelify = require('babelify');
 
 var paths = {
     js: {
-        index: 'index.js',
+        index: 'templates/index.jsx',
         generated_path: 'static/js/'
     }
 };
@@ -18,7 +19,9 @@ gulp.task('clean', function() {
 });
 
 gulp.task('js', ['clean'], function() {
-    browserify(paths.js.index, { debug: true }).bundle()
+    browserify(paths.js.index, { debug: true })
+        .transform(babelify, { presets: ['react'] })
+        .bundle()
         .pipe(source('bundle.js'))
         .pipe(buffer())
         .pipe(sourcemaps.init({loadMaps: true}))
