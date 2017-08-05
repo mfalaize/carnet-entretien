@@ -1,7 +1,12 @@
-FROM django:python3-onbuild
+FROM python:3.4
 MAINTAINER Maxime Falaize <maxime.falaize@gmail.com>
 
-ENV PYTHONUNBUFFERED 1
+WORKDIR /usr/src/app
+
+COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY . .
 
 # Installation des packages
 RUN apt-get update && apt-get install -y \
@@ -11,17 +16,15 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Activation du site sur apache
-ADD homelab.conf /etc/apache2/sites-available/
+COPY homelab.conf /etc/apache2/sites-available/
 RUN a2dissite 000-default && a2ensite homelab
 
 # Activation des crons
-ADD crontab_root /var/spool/cron/crontabs/root
+COPY crontab_root /var/spool/cron/crontabs/root
 RUN chmod 600 /var/spool/cron/crontabs/root && chown root:crontab /var/spool/cron/crontabs/root
 
-RUN mkdir media static logs
-VOLUME media/
-VOLUME logs/
-VOLUME conf/
+RUN mkdir static
+VOLUME data/
 
 EXPOSE 80
 

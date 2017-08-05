@@ -17,7 +17,7 @@ import os
 from django.utils.crypto import get_random_string
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CONF_FILE = os.path.join(BASE_DIR, os.path.join('conf', 'config.ini'))
+CONF_FILE = os.path.join(BASE_DIR, 'data', 'conf', 'config.ini')
 
 # Configuration via le fichier config.ini présent dans le dossier conf
 config = configparser.ConfigParser()
@@ -41,12 +41,12 @@ ALLOWED_HOSTS = [application.get('AllowedHost', '*')]
 
 DATABASES = {
     'default': {
-        'ENGINE': database.get('Engine', 'django.db.backends.postgresql_psycopg2'),
-        'NAME': database.get('Name', 'homelab'),
+        'ENGINE': database.get('Engine', 'django.db.backends.sqlite3'),
+        'NAME': database.get('Name', os.path.join(BASE_DIR, 'data', 'homelab.db')),
         'USER': database.get('User', ''),
         'PASSWORD': database.get('Password', ''),
-        'HOST': database.get('Host', 'db'),
-        'PORT': database.get('Port', '5432')
+        'HOST': database.get('Host', ''),
+        'PORT': database.get('Port', '')
     }
 }
 
@@ -130,7 +130,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, 'data', 'media')
 
 LOGIN_URL = '/login/'
 LOGOUT_URL = '/logout/'
@@ -201,4 +201,23 @@ BOOTSTRAP3 = {
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
     'PAGE_SIZE': 10
+}
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'WARNING',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'data', 'logs', 'homelab.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'WARNING',
+            'propagate': True,
+        },
+    },
 }

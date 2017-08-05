@@ -4,13 +4,8 @@ python manage.py collectstatic --noinput
 python manage.py migrate auth
 python manage.py migrate
 
-case "$1" in
-    init)
-        # A faire uniquement lors du premier run du container
-        python manage.py loaddata initial
-        # On créé un superuser pour avoir accès à l'application d'administration django
-        echo "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@localhost', 's3cr3t')" | python manage.py shell
-        ;;
-esac
+echo "exec(open('init.py').read())" | python manage.py shell
+
+chown -R www-data:www-data data/
 
 apachectl -DFOREGROUND
