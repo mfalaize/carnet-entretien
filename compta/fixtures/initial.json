@@ -1,0 +1,121 @@
+[
+  {
+    "fields": {
+      "libelle": "Loyer"
+    },
+    "pk": 1,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Electricit\u00e9"
+    },
+    "pk": 2,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Eau"
+    },
+    "pk": 3,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Assurance Auto"
+    },
+    "pk": 4,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Assurance maison"
+    },
+    "pk": 5,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Assurance sant\u00e9"
+    },
+    "pk": 6,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Cartes Bleues"
+    },
+    "pk": 7,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Taxe Fonci\u00e8re"
+    },
+    "pk": 8,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Taxe d'Habitation"
+    },
+    "pk": 9,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Imp\u00f4ts sur le Revenu"
+    },
+    "pk": 10,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Allocations"
+    },
+    "pk": 11,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Nourrice"
+    },
+    "pk": 12,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Alimentation"
+    },
+    "pk": 13,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Internet"
+    },
+    "pk": 14,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "T\u00e9l\u00e9phone"
+    },
+    "pk": 15,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Essence"
+    },
+    "pk": 16,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Chien"
+    },
+    "pk": 17,
+    "model": "compta.categorie"
+  }
+]

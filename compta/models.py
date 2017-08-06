@@ -3,18 +3,43 @@ from django.db import models
 from django.utils.translation import ugettext_lazy as _
 
 
-class Budget(models.Model):
-    utilisateur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Utilisateur'))
-
-
 class Categorie(models.Model):
-    utilisateur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_('Utilisateur'))
     libelle = models.CharField(max_length=256, verbose_name=_('Libellé'))
 
+    def __str__(self):
+        return self.libelle
 
-class BudgetCategorie(models.Model):
+
+class Budget(models.Model):
     categorie = models.ForeignKey(Categorie, verbose_name=_('Catégorie'))
-    budget = models.ForeignKey(Budget, verbose_name=_('Budget'))
-    valeur = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_('Valeur'))
+    budget = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_('Valeur'))
+
+
+class Compte(models.Model):
+    CREDIT_MUTUEL = "CM"
+    CHOIX_BANQUES = (
+        (CREDIT_MUTUEL, "Crédit Mutuel"),
+    )
+    banque = models.CharField(max_length=128, verbose_name=_("Banque"), choices=CHOIX_BANQUES)
+    numero_compte = models.CharField(max_length=127, verbose_name=_("Numéro de compte"))
+    utilisateurs = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateurs"))
+    solde = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Solde"), null=True)
+    login = models.CharField(max_length=128, verbose_name=_("Login"))
+    mot_de_passe = models.CharField(max_length=128, verbose_name=_("Mot de passe"))
+
+    def __str__(self):
+        return self.banque + " " + self.numero_compte
+
+
+class Operation(models.Model):
+    date_operation = models.DateField(verbose_name=_("Date d'opération"))
+    date_valeur = models.DateField(verbose_name=_("Date de valeur"))
+    montant = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Montant"))
+    libelle = models.CharField(max_length=512, verbose_name=_("Libellé"))
+    compte = models.ForeignKey(Compte, verbose_name=_("Compte"))
+    categorie = models.ForeignKey(Categorie, verbose_name=_("Catégorie"), null=True)
+
+    def __str__(self):
+        return self.libelle
 
 
