@@ -124,5 +124,33 @@
     },
     "pk": 18,
     "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Salaire"
+    },
+    "pk": 19,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Epargne"
+    },
+    "pk": 20,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Autres"
+    },
+    "pk": 21,
+    "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Intérets"
+    },
+    "pk": 22,
+    "model": "compta.categorie"
   }
 ]

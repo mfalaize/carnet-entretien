@@ -12,7 +12,27 @@ class Categorie(models.Model):
 
 class Budget(models.Model):
     categorie = models.ForeignKey(Categorie, verbose_name=_('Catégorie'))
-    budget = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_('Valeur'))
+    budget = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_('Budget'))
+    utilisateurs = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateurs"))
+
+    def __str__(self):
+        return self.categorie.libelle
+
+
+class CategorieEpargne(models.Model):
+    """Catégories spécifiques à l'épargne"""
+    libelle = models.CharField(max_length=256, verbose_name=_("Libellé"))
+
+    def __str__(self):
+        return self.libelle
+
+
+class Epargne(models.Model):
+    """Sorte de compte virtuel qui permet d'allouer à une catégorie un solde disponible"""
+    utilisateurs = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateurs"))
+    solde = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Solde"))
+    categorie = models.ForeignKey(CategorieEpargne, verbose_name=_("Catégorie"))
+    pourcentage_alloue = models.IntegerField(verbose_name=_("Pourcentage des versements d'épargne alloué"))
 
 
 class Compte(models.Model):
@@ -21,13 +41,16 @@ class Compte(models.Model):
         (CREDIT_MUTUEL, "Crédit Mutuel"),
     )
     banque = models.CharField(max_length=128, verbose_name=_("Banque"), choices=CHOIX_BANQUES)
-    numero_compte = models.CharField(max_length=127, verbose_name=_("Numéro de compte"))
+    numero_compte = models.CharField(max_length=128, verbose_name=_("Numéro de compte"))
+    libelle = models.CharField(max_length=128, verbose_name=_("Libellé"), null=True)
     utilisateurs = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateurs"))
     solde = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Solde"), null=True)
     login = models.CharField(max_length=128, verbose_name=_("Login"))
     mot_de_passe = models.CharField(max_length=128, verbose_name=_("Mot de passe"))
 
     def __str__(self):
+        if self.libelle is not None:
+            return self.libelle
         return self.banque + " " + self.numero_compte
 
 
@@ -43,3 +66,7 @@ class Operation(models.Model):
         return self.libelle
 
 
+class OperationEpargne(models.Model):
+    operation = models.ForeignKey(Operation, verbose_name=_("Opération réelle initiale"))
+    epargne = models.ForeignKey(Epargne, verbose_name=_("Epargne"))
+    montant = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Montant"))

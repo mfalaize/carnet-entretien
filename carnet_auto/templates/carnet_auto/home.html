@@ -6,7 +6,7 @@
 
 {% block navbar-content %}
     <div class="navbar-left">
-        <a href="{% url 'ajout_voiture' %}"
+        <a href="{% url 'carnet_auto:ajout_voiture' %}"
            class="btn btn-primary navbar-btn">{% trans "Ajouter une voiture" %}</a>
     </div>
 {% endblock %}
@@ -25,7 +25,7 @@
                 </div>
 
                 <div class="panel-body">
-                    <a href="{% url 'voiture' pk=voiture.pk %}" class="thumbnail">
+                    <a href="{% url 'carnet_auto:voiture' pk=voiture.pk %}" class="thumbnail">
                         <img src="{% if voiture.photo %}{% get_media_prefix %}{{ voiture.photo }}{% else %}{% static "img/megane.jpg" %}{% endif %}"/>
                     </a>
                 </div>

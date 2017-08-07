@@ -6,8 +6,8 @@
 
 {% block navbar-content %}
     <div class="navbar-left">
-        <a class="btn btn-default navbar-btn" href="{% url 'home' %}">{% trans "Retour" %}</a>
-        <a href="{% url 'ajout_revision' pk=voiture.pk %}"
+        <a class="btn btn-default navbar-btn" href="{% url 'carnet_auto:home' %}">{% trans "Retour" %}</a>
+        <a href="{% url 'carnet_auto:ajout_revision' pk=voiture.pk %}"
            class="btn btn-primary navbar-btn">{% trans "Enregistrer une révision" %}</a>
     </div>
 {% endblock %}
@@ -29,7 +29,7 @@
 
                     <div class="panel-footer">
                         <div class="text-center">
-                            <a href="{% url 'edite_voiture' pk=voiture.pk %}"
+                            <a href="{% url 'carnet_auto:edite_voiture' pk=voiture.pk %}"
                                class="btn btn-primary btn-sm">{% trans "Editer la voiture" %}</a>
                             <button type="button" data-toggle="modal" data-target="#confirmeSuppression"
                                     class="btn btn-danger btn-sm">{% trans "Supprimer la voiture" %}</button>
@@ -93,7 +93,7 @@
                 </div>
 
                 <div class="row">
-                    <a href="{% url 'programme' pk=voiture.pk %}"
+                    <a href="{% url 'carnet_auto:programme' pk=voiture.pk %}"
                         class="btn btn-primary navbar-btn">{% trans "Gérer le programme de maintenance" %}</a>
                 </div>
             </div>
@@ -127,10 +127,10 @@
                                 <td><span class="label label-warning">{% trans "A prévoir" %}</span></td>
                             {% endif %}
                             <td>
-                                <a href="{% url 'edite_revision' pk=voiture.pk pk_revision=operation.revision.id %}"
+                                <a href="{% url 'carnet_auto:edite_revision' pk=voiture.pk pk_revision=operation.revision.id %}"
                                     class="btn btn-primary btn-xs">{% trans "Editer" %}</a>
                                 <button type="button" data-toggle="modal" data-target="#confirmeSuppressionOperation"
-                                        onclick="$('#confirmeSuppressionOperationForm').attr('action', '{% url 'supprime_operation' pk=voiture.pk pk_operation=operation.pk %}');"
+                                        onclick="$('#confirmeSuppressionOperationForm').attr('action', '{% url 'carnet_auto:supprime_operation' pk=voiture.pk pk_operation=operation.pk %}');"
                                     class="btn btn-danger btn-xs">{% trans "Supprimer" %}</button>
                             </td>
                         </tr>
@@ -172,10 +172,10 @@
                                 <td><span class="label label-warning">{% trans "A prévoir" %}</span></td>
                             {% endif %}
                             <td>
-                                <a href="{% url 'edite_revision' pk=voiture.pk pk_revision=operation.revision.id %}"
+                                <a href="{% url 'carnet_auto:edite_revision' pk=voiture.pk pk_revision=operation.revision.id %}"
                                     class="btn btn-primary btn-xs">{% trans "Editer" %}</a>
                                 <button type="button" data-toggle="modal" data-target="#confirmeSuppressionOperation"
-                                        onclick="$('#confirmeSuppressionOperationForm').attr('action', '{% url 'supprime_operation' pk=voiture.pk pk_operation=operation.pk %}');"
+                                        onclick="$('#confirmeSuppressionOperationForm').attr('action', '{% url 'carnet_auto:supprime_operation' pk=voiture.pk pk_operation=operation.pk %}');"
                                     class="btn btn-danger btn-xs">{% trans "Supprimer" %}</button>
                             </td>
                         </tr>
@@ -193,7 +193,7 @@
 
     <div class="modal fade" role="dialog" id="confirmeSuppression">
         <div class="modal-dialog">
-            <form class="modal-content" method="post" action="{% url 'supprime_voiture' pk=voiture.pk %}">
+            <form class="modal-content" method="post" action="{% url 'carnet_auto:supprime_voiture' pk=voiture.pk %}">
                 {% csrf_token %}
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span

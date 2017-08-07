@@ -7,11 +7,6 @@ from extra_views import InlineFormSet
 from carnet_auto.models import Voiture, ProgrammeMaintenance, Revision, Operation
 
 
-class BootstrapAuthenticationForm(AuthenticationForm):
-    def __init__(self, request=None, *args, **kwargs):
-        super().__init__(request, *args, **kwargs)
-        self.fields['username'].widget.attrs['autofocus'] = True
-
 
 class VoitureForm(ModelForm):
     class Meta:

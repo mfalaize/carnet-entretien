@@ -3,11 +3,11 @@
 {% load static %}
 {% load bootstrap3 %}
 {% load utils %}
-{% block bootstrap3_title %}{% trans "Carnet Entretien Auto" %}{% endblock %}
+{% block bootstrap3_title %}{% trans "Homelab" %}{% endblock %}
 {% block bootstrap3_extra_head %}
     <link href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/css/bootstrap-datepicker.min.css"
           rel="stylesheet">
-    <link href="{% static 'css/carnet.css' %}" rel="stylesheet">
+    <link href="{% static 'css/homelab.css' %}" rel="stylesheet">
 {% endblock %}
 
 {% block bootstrap3_content %}
@@ -16,7 +16,7 @@
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="{% url 'home' %}">{% trans "Carnet Entretien" %}</a>
+                    <a class="navbar-brand" href="{% url 'index' %}">{% trans "Homelab" %}</a>
                 </div>
                 <div class="navbar-collapse collapse">
                     {% block navbar-content %}{% endblock %}
@@ -54,6 +54,6 @@
             });
         </script>
     {% endif %}
-    <script type="text/javascript" src="{% static 'js/carnet.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/homelab.js' %}"></script>
     {% block extra_script %}{% endblock %}
 {% endblock %}

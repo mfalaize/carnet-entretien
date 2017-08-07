@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load utils %}
+
+{% block content %}
+    <div class="container">
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">{% trans "Carnet d'entretien automobile" %}</h3>
+                </div>
+
+                <div class="panel-body">
+                    <a href="{% url 'carnet_auto:home' %}" class="thumbnail">
+                        <img src="{% static "img/megane.jpg" %}" style="height: 200px;"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">{% trans "Comptabilité" %}</h3>
+                </div>
+
+                <div class="panel-body">
+                    <a href="{% url 'compta:home' %}" class="thumbnail">
+                        <img src="{% static "img/compta.jpg" %}" style="height: 200px;"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% if user.is_superuser %}
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">{% trans "Administration" %}</h3>
+                </div>
+
+                <div class="panel-body">
+                    <a href="{% url 'admin:index' %}" class="thumbnail">
+                        <img src="{% static "img/admin.png" %}" style="height: 200px;"/>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+{% endblock %}

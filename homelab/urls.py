@@ -18,12 +18,13 @@ from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth import views as auth
+from portail import views as portail
 
-from carnet_auto.forms import BootstrapAuthenticationForm
+from portail.forms import BootstrapAuthenticationForm
 
 urlpatterns = [
-    url(r'^carnet-auto/', include('carnet_auto.urls')),
-    url(r'^compta/', include('compta.urls')),
+    url(r'^carnet-auto/', include('carnet_auto.urls', namespace='carnet_auto', app_name='carnet_auto')),
+    url(r'^compta/', include('compta.urls', namespace='compta', app_name='compta')),
     url(r'^login/$', auth.login, {'authentication_form': BootstrapAuthenticationForm}, name='login'),
     url(r'^logout/$', auth.logout, {'next_page': 'login'}, name='logout'),
     url(r'^password_change/$', auth.password_change, name='password_change'),
@@ -34,4 +35,5 @@ urlpatterns = [
         auth.password_reset_confirm, name='password_reset_confirm'),
     url(r'^reset/done/$', auth.password_reset_complete, name='password_reset_complete'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^', portail.index, name='index'),
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

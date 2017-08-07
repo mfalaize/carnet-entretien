@@ -7,7 +7,7 @@
 
 {% block navbar-content %}
     <div class="navbar-left">
-        <a class="btn btn-default navbar-btn" href="{% if creation %}{% url 'voiture' pk=pk_voiture %}{% else %}{% url 'voiture' pk=revision.voiture.pk %}{% endif %}">{% trans "Retour" %}</a>
+        <a class="btn btn-default navbar-btn" href="{% if creation %}{% url 'carnet_auto:voiture' pk=pk_voiture %}{% else %}{% url 'carnet_auto:voiture' pk=revision.voiture.pk %}{% endif %}">{% trans "Retour" %}</a>
         {% if edition %}
             <button type="button" data-toggle="modal" data-target="#confirmeSuppression"
                     class="btn btn-danger navbar-btn">{% trans "Supprimer la révision" %}</button>
@@ -18,7 +18,7 @@
 {% block content %}
     <div class="container">
         <div class="row">
-            <form method="post" action="{% if creation %}{% url 'ajout_revision' pk=pk_voiture %}{% else %}{% url 'edite_revision' pk=revision.voiture.pk pk_revision=revision.pk %}{% endif %}">
+            <form method="post" action="{% if creation %}{% url 'carnet_auto:ajout_revision' pk=pk_voiture %}{% else %}{% url 'carnet_auto:edite_revision' pk=revision.voiture.pk pk_revision=revision.pk %}{% endif %}">
                 {% csrf_token %}
                 <div class="col-md-12">
                     <p class="lead text-center">
@@ -95,7 +95,7 @@
     {% if edition %}
         <div class="modal fade" role="dialog" id="confirmeSuppression">
             <div class="modal-dialog">
-                <form class="modal-content" method="post" action="{% url 'supprime_revision' pk=revision.voiture.pk pk_revision=revision.pk %}">
+                <form class="modal-content" method="post" action="{% url 'carnet_auto:supprime_revision' pk=revision.voiture.pk pk_revision=revision.pk %}">
                     {% csrf_token %}
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span

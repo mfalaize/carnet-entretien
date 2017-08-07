@@ -17,7 +17,7 @@ from carnet_auto.models import Voiture, Operation, ProgrammeMaintenance, Revisio
 
 class Home(ListView):
     model = Voiture
-    template_name = 'home.html'
+    template_name = 'carnet_auto/home.html'
     paginate_by = 10
     context_object_name = 'dernieres_operations'
 
@@ -37,7 +37,7 @@ class Home(ListView):
 class AjoutVoiture(CreateView):
     model = Voiture
     form_class = VoitureForm
-    template_name = 'voiture.html'
+    template_name = 'carnet_auto/voiture.html'
     success_url = reverse_lazy('home')
 
     def get_context_data(self, **kwargs):
@@ -58,7 +58,7 @@ class AjoutVoiture(CreateView):
 class EditeVoiture(UpdateView):
     model = Voiture
     form_class = VoitureForm
-    template_name = 'voiture.html'
+    template_name = 'carnet_auto/voiture.html'
     success_url = reverse_lazy('home')
 
     def get_queryset(self):
@@ -92,7 +92,7 @@ class IndicateurEntretien():
 
 
 class ManageVoiture(TemplateView):
-    template_name = 'manage_voiture.html'
+    template_name = 'carnet_auto/manage_voiture.html'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -191,7 +191,7 @@ class ManageProgrammeMaintenance(ListView):
     model = ProgrammeMaintenance
     paginate_by = 20
     context_object_name = 'programmes'
-    template_name = 'manage_programme.html'
+    template_name = 'carnet_auto/manage_programme.html'
 
     def get_queryset(self):
         return ProgrammeMaintenance.objects.get_programmes_for_voiture(voiture_pk=self.kwargs['pk'],
@@ -211,7 +211,7 @@ class ManageProgrammeMaintenance(ListView):
 class AjoutProgrammeMaintenance(CreateView):
     model = ProgrammeMaintenance
     form_class = ProgrammeMaintenanceForm
-    template_name = 'programme.html'
+    template_name = 'carnet_auto/programme.html'
     context_object_name = 'programme'
 
     def get_success_url(self):
@@ -235,7 +235,7 @@ class AjoutProgrammeMaintenance(CreateView):
 class EditeProgrammeMaintenance(UpdateView):
     model = ProgrammeMaintenance
     form_class = ProgrammeMaintenanceForm
-    template_name = 'programme.html'
+    template_name = 'carnet_auto/programme.html'
     pk_url_kwarg = 'pk_programme'
     context_object_name = 'programme'
 
@@ -272,7 +272,7 @@ class AjoutRevision(CreateWithInlinesView):
     model = Revision
     form_class = RevisionForm
     inlines = [AjoutOperationFormSet]
-    template_name = 'revision.html'
+    template_name = 'carnet_auto/revision.html'
     context_object_name = 'revision'
 
     def construct_inlines(self):
@@ -326,7 +326,7 @@ class EditeRevision(UpdateWithInlinesView):
     model = Revision
     form_class = RevisionForm
     inlines = [EditeOperationFormSet]
-    template_name = 'revision.html'
+    template_name = 'carnet_auto/revision.html'
     context_object_name = 'revision'
     pk_url_kwarg = 'pk_revision'
 
