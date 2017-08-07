@@ -59,14 +59,8 @@ class Home(ListView):
         context['total_budget'] = 0
         context['total_depenses'] = 0
         context['total_solde'] = 0
-        operations_mois_en_cours = Operation.objects.filter(compte__utilisateurs=self.request.user, date_operation__month=context['today'].month, categorie__isnull=False)
         for budget in context['budgets']:
-            budget.solde = budget.budget
-            budget.depenses = 0
-            for operation in operations_mois_en_cours:
-                if operation.categorie_id == budget.categorie_id:
-                    budget.solde += operation.montant
-                    budget.depenses += operation.montant
+            budget.calcule_solde(context['today'])
             context['total_budget'] += budget.budget
             context['total_depenses'] += budget.depenses
             context['total_solde'] += budget.solde

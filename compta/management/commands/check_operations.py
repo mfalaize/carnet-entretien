@@ -33,14 +33,16 @@ def check_operations():
             compte.solde = new_solde
             compte.save()
 
-        if not has_changed:
+        if has_changed:
             mails = []
             for user in compte.utilisateurs.all():
                 if user.email is not None:
                     mails.append(user.email)
             if len(mails) > 0:
-                send_mail('[Homelab] De nouvelles opérations ont été mises à jour sur le compte {}{}'.format(compte.banque, compte.numero_compte), "",
-                      settings.DEFAULT_FROM_EMAIL, mails)
+                send_mail(
+                    '[Homelab] De nouvelles opérations ont été mises à jour sur {}'.format(str(compte)),
+                    "",
+                    settings.DEFAULT_FROM_EMAIL, mails)
 
 
 class Command(BaseCommand):

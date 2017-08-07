@@ -1,3 +1,4 @@
+import datetime
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -17,6 +18,17 @@ class Budget(models.Model):
 
     def __str__(self):
         return self.categorie.libelle
+
+    def calcule_solde(self, date=datetime.date.today()):
+        """Calcule les propriétés solde et depenses de l'objet"""
+        operations_mois_en_cours = Operation.objects.filter(compte__utilisateurs__in=self.utilisateurs.all(),
+                                                            date_operation__month=date.month,
+                                                            categorie_id=self.categorie_id)
+        self.solde = self.budget
+        self.depenses = 0
+        for operation in operations_mois_en_cours:
+            self.solde += operation.montant
+            self.depenses -= operation.montant
 
 
 class CategorieEpargne(models.Model):
