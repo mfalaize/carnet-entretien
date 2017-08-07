@@ -9,9 +9,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY . .
 
 # Installation des packages
-RUN apt-get update && apt-get install -y \
+RUN echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/sources.list && \
+    apt-get update && apt-get install -y \
     apache2 libapache2-mod-wsgi-py3 cron \
 	--no-install-recommends \
+	&& apt-get install -y python-certbot-apache -t jessie-backports \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

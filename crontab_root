@@ -1,2 +1,3 @@
 0 8 * * * cd /usr/src/app && python manage.py check_entretien >> data/logs/check_entretien.log 2>&1
 5 8 * * * cd /usr/src/app && python manage.py check_operations >> data/logs/check_operations.log 2>&1
+0 0 1 * * certbot renew

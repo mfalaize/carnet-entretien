@@ -17,7 +17,9 @@ Modifiez le fichier <code>config.ini</code> pour y mettre vos propres paramètre
 
 <code>docker create volume homelab</code>
 
-<code>docker run --name homelab -d -v homelab:/usr/src/app/data -p 80:80 mfalaize/homelab</code>
+<code>docker run --name homelab -d -v homelab:/usr/src/app/data -p 443:443 mfalaize/homelab</code>
+
+<code>docker exec -it homelab certbot --apache</code> pour initier le certificat letsencrypt. Les renouvellements se feront ensuite automatiquement.
 
 Voilà l'application est disponible sur [http://votredomaine](#) ! Vous pouvez vous connecter avec l'utilisateur par défaut : <code>admin/s3cr3t</code>
 
