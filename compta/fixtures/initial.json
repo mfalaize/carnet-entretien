@@ -117,5 +117,12 @@
     },
     "pk": 17,
     "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Hors Budget"
+    },
+    "pk": 18,
+    "model": "compta.categorie"
   }
 ]

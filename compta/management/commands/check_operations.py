@@ -14,9 +14,9 @@ def check_operations():
         bank_class = get_bank_class(compte.banque)
         has_changed = False
 
-        with bank_class() as bank:
-            new_operations = bank.fetch_last_operations(compte.numero_compte)
-            new_solde = bank.fetch_balance(compte.numero_compte)
+        with bank_class(compte.login, compte.mot_de_passe, compte.numero_compte) as bank:
+            new_operations = bank.fetch_last_operations()
+            new_solde = bank.fetch_balance()
 
         for new_operation in new_operations:
             found = False

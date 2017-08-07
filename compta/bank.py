@@ -2,15 +2,15 @@ import datetime
 
 import requests
 from bs4 import BeautifulSoup
-from homelab import settings
 
 from compta.models import Operation, Compte
 
 
 class BankFetcher:
-    def __init__(self, name):
-        # Retrieve configuration from config.ini file
-        self.config = settings.config[name]
+    def __init__(self, login, password, account_id):
+        self.login = login
+        self.password = password
+        self.account_id = account_id
 
     def __enter__(self):
         self.session = requests.session()
@@ -36,20 +36,14 @@ class CreditMutuel(BankFetcher):
 
     csv = ""
 
-    def __init__(self):
-        super().__init__("Crédit Mutuel")
-
-    def fetch_csv(self, account_id):
+    def fetch_csv(self):
         if self.csv != "":
             pass
 
-        user = self.config["user"]
-        password = self.config["password"]
-
         # Authentication
         post_data = {
-            "_cm_user": user,
-            "_cm_pwd": password,
+            "_cm_user": self.login,
+            "_cm_pwd": self.password,
             "flag": "password"
         }
         self.session.post(self.AUTH_URL, post_data)
@@ -65,7 +59,7 @@ class CreditMutuel(BankFetcher):
         for account_label in soup.select("#account-table label"):
             split = account_label.text.split(" ", maxsplit=3)
             account_number = "".join(split[0:3])
-            if account_number == account_id:
+            if account_number == self.account_id:
                 account_check_id = account_label.attrs["for"]
                 account_check = soup.select("#" + account_check_id)[0]
                 account_check_name = account_check.attrs["name"]
@@ -86,8 +80,8 @@ class CreditMutuel(BankFetcher):
         self.csv = r.text
         return self.csv
 
-    def fetch_last_operations(self, account_id):
-        self.fetch_csv(account_id)
+    def fetch_last_operations(self):
+        self.fetch_csv()
         lines = self.csv.splitlines()
         operations = []
 
@@ -102,8 +96,8 @@ class CreditMutuel(BankFetcher):
 
         return operations
 
-    def fetch_balance(self, account_id):
-        self.fetch_csv(account_id)
+    def fetch_balance(self):
+        self.fetch_csv()
         lines = self.csv.splitlines()
         last = lines.pop()
         return float(last.split(self.FIELD_SEPARATOR)[4])
