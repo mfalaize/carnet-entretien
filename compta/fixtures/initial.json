@@ -152,5 +152,43 @@
     },
     "pk": 22,
     "model": "compta.categorie"
+  },
+  {
+    "fields": {
+      "libelle": "Voiture"
+    },
+    "pk": 1,
+    "model": "compta.categorieepargne"
+  },
+  {
+    "fields": {
+      "libelle": "Hightech"
+    },
+    "pk": 2,
+    "model": "compta.categorieepargne"
+  },{
+    "fields": {
+      "libelle": "Vacances"
+    },
+    "pk": 3,
+    "model": "compta.categorieepargne"
+  },{
+    "fields": {
+      "libelle": "Travaux"
+    },
+    "pk": 4,
+    "model": "compta.categorieepargne"
+  },{
+    "fields": {
+      "libelle": "Epargne enfants"
+    },
+    "pk": 5,
+    "model": "compta.categorieepargne"
+  },{
+    "fields": {
+      "libelle": "Epargne"
+    },
+    "pk": 6,
+    "model": "compta.categorieepargne"
   }
 ]

@@ -107,9 +107,15 @@
                                     <input type="hidden" name="operation_id" value="{{ operation.id }}">
                                     <select name="categorie" class="form-control" onchange="$.post('{% url 'compta:edit-categorie' %}', $('#form_edit_categorie{{ operation.id }}').serialize(), function(data) {});">
                                         <option></option>
-                                        {% for categorie in categories %}
-                                            <option value="{{ categorie.id }}">{{ categorie.libelle }}</option>
-                                        {% endfor %}
+                                        {% if operation.compte.epargne %}
+                                            {% for categorie in categories_epargne %}
+                                                <option value="{{ categorie.id }}">{{ categorie.libelle }}</option>
+                                            {% endfor %}
+                                        {% else %}
+                                            {% for categorie in categories %}
+                                                <option value="{{ categorie.id }}">{{ categorie.libelle }}</option>
+                                            {% endfor %}
+                                        {% endif %}
                                     </select>
                                 </form>
                             </td>
@@ -125,6 +131,39 @@
                 <div class="text-center">
                     {% bootstrap_pagination page_obj %}
                 </div>
+            </div>
+        </div>
+
+        <p class="lead text-center">{% trans "Epargne" %}</p>
+
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{% trans "Libellé" %}</th>
+                        <th>{% trans "Solde" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for epargne in epargnes %}
+                        <tr>
+                            <td>{{ epargne.categorie.libelle }}</td>
+                            <td>{{ epargne.solde }}€</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td class="text-center" colspan="3">{% trans "Aucune épargne n'a été créée !" %}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><strong>{% trans 'Total' %}</strong></td>
+                            <td>{{ total_epargnes }}€</td>
+                        </tr>
+                    </tfoot>
+                </table>
             </div>
         </div>
     </div>

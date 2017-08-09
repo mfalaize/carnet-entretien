@@ -6,7 +6,7 @@ from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 
-from compta.models import Operation, Categorie, Compte, Budget
+from compta.models import Operation, Categorie, Compte, Budget, CategorieEpargne, OperationEpargne, Epargne
 from compta.serializers import UserSerializer, GroupSerializer
 from django.contrib.auth.models import User, Group
 from rest_framework import viewsets
@@ -54,6 +54,7 @@ class Home(ListView):
             context['today'] = context['today'].replace(month=int(self.request.GET['mois']), year=int(self.request.GET['annee']))
         context['available_years'] = range(2017, 2025)
         context['categories'] = Categorie.objects.all().order_by('libelle')
+        context['categories_epargne'] = CategorieEpargne.objects.all().order_by('libelle')
         context['comptes'] = Compte.objects.filter(utilisateurs=self.request.user).order_by('libelle')
         context['budgets'] = Budget.objects.filter(utilisateurs=self.request.user).order_by('categorie__libelle')
         context['total_budget'] = 0
@@ -64,6 +65,11 @@ class Home(ListView):
             context['total_budget'] += budget.budget
             context['total_depenses'] += budget.depenses
             context['total_solde'] += budget.solde
+
+        context['epargnes'] = Epargne.objects.filter(utilisateurs=self.request.user)
+        context['total_epargnes'] = 0
+        for epargne in context['epargnes']:
+            context['total_epargnes'] += epargne.solde
         return context
 
 
@@ -75,9 +81,23 @@ def edit_categorie(request):
 
         try:
             operation = Operation.objects.get(pk=operation_id, compte__utilisateurs=request.user)
-            operation.categorie_id = categorie_id if categorie_id != '' else None
-            operation.save()
-        except Operation.DoesNotExist:
+            if operation.compte.epargne:
+                operation.categorie_id = 18 # = Hors Budget
+                operation.save()
+
+                op_epargne = OperationEpargne.objects.get(operation_id=operation_id)
+                op_epargne.epargne_id = categorie_id
+                op_epargne.save()
+
+                epargne = Epargne.objects.get(pk=categorie_id, utilisateurs=request.user)
+                epargne.solde += op_epargne.montant
+                epargne.save()
+
+            else:
+                operation.categorie_id = categorie_id if categorie_id != '' else None
+                operation.save()
+
+        except Operation.DoesNotExist or OperationEpargne.DoesNotExist or Epargne.DoesNotExist:
             raise Http404()
 
         return HttpResponse("OK")

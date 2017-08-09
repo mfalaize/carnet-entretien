@@ -46,6 +46,9 @@ class Epargne(models.Model):
     categorie = models.ForeignKey(CategorieEpargne, verbose_name=_("Catégorie"))
     pourcentage_alloue = models.IntegerField(verbose_name=_("Pourcentage des versements d'épargne alloué"))
 
+    def __str__(self):
+        return self.categorie.libelle
+
 
 class Compte(models.Model):
     CREDIT_MUTUEL = "CM"
@@ -59,6 +62,7 @@ class Compte(models.Model):
     solde = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Solde"), null=True)
     login = models.CharField(max_length=128, verbose_name=_("Login"))
     mot_de_passe = models.CharField(max_length=128, verbose_name=_("Mot de passe"))
+    epargne = models.BooleanField(default=False, verbose_name=_("Le compte est un compte d'épargne"))
 
     def __str__(self):
         if self.libelle is not None:
@@ -80,5 +84,9 @@ class Operation(models.Model):
 
 class OperationEpargne(models.Model):
     operation = models.ForeignKey(Operation, verbose_name=_("Opération réelle initiale"))
-    epargne = models.ForeignKey(Epargne, verbose_name=_("Epargne"))
+    epargne = models.ForeignKey(Epargne, verbose_name=_("Epargne"), null=True)
     montant = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Montant"))
+
+    def __str__(self):
+        return str(self.operation) + " " + str(self.epargne)
+

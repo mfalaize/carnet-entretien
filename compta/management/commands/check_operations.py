@@ -1,15 +1,17 @@
+import decimal
 from django.conf import settings
 from django.core.mail import send_mail
 from django.core.management import BaseCommand
 
 from compta.bank import get_bank_class
-from compta.models import Compte
+from compta.models import Compte, Epargne, OperationEpargne
 
 
 def check_operations():
     """Récupère les dernières opérations bancaires en ligne, inscrit les nouvelles en base et les envoie par mail"""
     comptes = Compte.objects.all()
     for compte in comptes:
+        epargnes = Epargne.objects.filter(utilisateurs__in=compte.utilisateurs.all())
         operations = compte.operation_set.all()
         bank_class = get_bank_class(compte.banque)
         has_changed = False
@@ -28,6 +30,26 @@ def check_operations():
                 new_operation.compte = compte
                 new_operation.save()
                 has_changed = True
+
+                if compte.epargne:
+                    if new_operation.montant >= 0:
+                        for epargne in epargnes:
+                            new_operation.categorie_id = 18  # = Hors Budget
+                            new_operation.save()
+
+                            op = OperationEpargne()
+                            op.epargne = epargne
+                            op.montant = decimal.Decimal(new_operation.montant * epargne.pourcentage_alloue / 100)
+                            op.operation = new_operation
+                            op.save()
+
+                            epargne.solde += op.montant
+                            epargne.save()
+                    else:
+                        op = OperationEpargne()
+                        op.montant = new_operation.montant
+                        op.operation = new_operation
+                        op.save()
 
         if compte.solde != new_solde:
             compte.solde = new_solde
