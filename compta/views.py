@@ -66,7 +66,7 @@ class Home(ListView):
             context['total_depenses'] += budget.depenses
             context['total_solde'] += budget.solde
 
-        context['epargnes'] = Epargne.objects.filter(utilisateurs=self.request.user)
+        context['epargnes'] = Epargne.objects.filter(utilisateurs=self.request.user).order_by('categorie__libelle')
         context['total_epargnes'] = 0
         for epargne in context['epargnes']:
             context['total_epargnes'] += epargne.solde
