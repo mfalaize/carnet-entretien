@@ -36,7 +36,7 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th>{% trans "Libellé" %}</th>
+                        <th>{% trans "Libellé" %} <button class="btn btn-default" onclick="$('.budget').toggleClass('hidden');">{% trans 'Voir/Cacher les budgets soldés' %}</button></th>
                         <th>{% trans "Budgeté actuellement" %}</th>
                         <th>{% trans "Dépenses" %}</th>
                         <th>{% trans "Restant" %}</th>
@@ -44,7 +44,7 @@
                     </thead>
                     <tbody>
                     {% for budget in budgets %}
-                        <tr>
+                        <tr {% if budget.solde == 0 %}class="budget hidden"{% endif %}>
                             <td>{{ budget.categorie.libelle }}</td>
                             <td>{{ budget.budget }}€</td>
                             <td>{{ budget.depenses }}€</td>
