@@ -1,15 +1,19 @@
+import base64
 import datetime
 
 import requests
+from Crypto.Cipher import AES
 from bs4 import BeautifulSoup
+from django.conf import settings
 
-from compta.models import Operation, Compte
+from compta.models import Operation, Identifiant
 
 
 class BankFetcher:
     def __init__(self, login, password, account_id):
         self.login = login
-        self.password = password
+        obj = AES.new(settings.SECRET_KEY[:32])
+        self.password = obj.decrypt(base64.b64decode(password)).decode()
         self.account_id = account_id
 
     def __enter__(self):
@@ -19,10 +23,10 @@ class BankFetcher:
     def __exit__(self, exc_type, exc_val, exc_tb):
         self.session.close()
 
-    def fetch_csv(self, account_id):
+    def fetch_csv(self):
         pass
 
-    def fetch_last_operations(self, account_id):
+    def fetch_last_operations(self):
         pass
 
 
@@ -104,6 +108,6 @@ class CreditMutuel(BankFetcher):
 
 
 def get_bank_class(code):
-    if code == Compte.CREDIT_MUTUEL:
+    if code == Identifiant.CREDIT_MUTUEL:
         return CreditMutuel
     return None

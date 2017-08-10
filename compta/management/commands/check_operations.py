@@ -13,10 +13,10 @@ def check_operations():
     for compte in comptes:
         epargnes = Epargne.objects.filter(utilisateurs__in=compte.utilisateurs.all())
         operations = compte.operation_set.all()
-        bank_class = get_bank_class(compte.banque)
+        bank_class = get_bank_class(compte.identifiant.banque)
         has_changed = False
 
-        with bank_class(compte.login, compte.mot_de_passe, compte.numero_compte) as bank:
+        with bank_class(compte.identifiant.login, compte.identifiant.mot_de_passe, compte.numero_compte) as bank:
             new_operations = bank.fetch_last_operations()
             new_solde = bank.fetch_balance()
 

@@ -1,4 +1,7 @@
+import base64
 import datetime
+
+from Crypto.Cipher import AES
 from django.conf import settings
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
@@ -50,18 +53,31 @@ class Epargne(models.Model):
         return self.categorie.libelle
 
 
-class Compte(models.Model):
+class Identifiant(models.Model):
     CREDIT_MUTUEL = "CM"
     CHOIX_BANQUES = (
         (CREDIT_MUTUEL, "Crédit Mutuel"),
     )
     banque = models.CharField(max_length=128, verbose_name=_("Banque"), choices=CHOIX_BANQUES)
+    login = models.CharField(max_length=128, verbose_name=_("Login"))
+    mot_de_passe = models.CharField(max_length=128, verbose_name=_("Mot de passe"))
+    utilisateur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateur"))
+    encrypted = models.BooleanField(default=False, verbose_name=_("Le mot de passe a été crypté"))
+
+    def clean(self):
+        super().clean()
+        if not self.encrypted:
+            obj = AES.new(settings.SECRET_KEY[:32])
+            self.mot_de_passe = base64.b64encode(obj.encrypt(self.mot_de_passe)).decode()
+            self.encrypted = True
+
+
+class Compte(models.Model):
+    identifiant = models.ForeignKey(Identifiant, verbose_name=_("Identifiant"), null=True)
     numero_compte = models.CharField(max_length=128, verbose_name=_("Numéro de compte"))
     libelle = models.CharField(max_length=128, verbose_name=_("Libellé"), null=True)
     utilisateurs = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateurs"))
     solde = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Solde"), null=True)
-    login = models.CharField(max_length=128, verbose_name=_("Login"))
-    mot_de_passe = models.CharField(max_length=128, verbose_name=_("Mot de passe"))
     epargne = models.BooleanField(default=False, verbose_name=_("Le compte est un compte d'épargne"))
 
     def __str__(self):
@@ -89,4 +105,3 @@ class OperationEpargne(models.Model):
 
     def __str__(self):
         return str(self.operation) + " " + str(self.epargne)
-
