@@ -29,7 +29,6 @@ def check_operations():
             if not found:
                 new_operation.compte = compte
                 new_operation.save()
-                has_changed = True
 
                 if compte.epargne:
                     if new_operation.montant >= 0:
@@ -50,6 +49,9 @@ def check_operations():
                         op.montant = new_operation.montant
                         op.operation = new_operation
                         op.save()
+                        has_changed = True
+                else:
+                    has_changed = True
 
         if compte.solde != new_solde:
             compte.solde = new_solde
@@ -62,7 +64,7 @@ def check_operations():
                     mails.append(user.email)
             if len(mails) > 0:
                 send_mail(
-                    '[Homelab] De nouvelles opérations ont été mises à jour sur {}'.format(str(compte)),
+                    '[Homelab] De nouvelles opérations sont à catégoriser sur {}'.format(str(compte)),
                     "",
                     settings.DEFAULT_FROM_EMAIL, mails)
 
