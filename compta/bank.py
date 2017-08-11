@@ -29,6 +29,9 @@ class BankFetcher:
     def fetch_last_operations(self):
         pass
 
+    def fetch_balance(self):
+        pass
+
 
 class CreditMutuel(BankFetcher):
     BASE_URL = "https://www.creditmutuel.fr"

@@ -70,6 +70,13 @@ class Home(ListView):
         context['total_epargnes'] = 0
         for epargne in context['epargnes']:
             context['total_epargnes'] += epargne.solde
+
+        # Vérification que le total des comptes épargnes est égal au total_epargne
+        context['total_epargne_reel'] = 0
+        for compte in context['comptes']:
+            if compte.epargne:
+                context['total_epargne_reel'] += compte.solde
+                
         return context
 
 

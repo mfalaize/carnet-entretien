@@ -159,8 +159,8 @@
                     </tbody>
                     <tfoot>
                         <tr>
-                            <td><strong>{% trans 'Total' %}</strong></td>
-                            <td>{{ total_epargnes }}€</td>
+                            <td class="{% if total_epargnes != total_epargne_reel %}danger{% else %}success{% endif %}"><strong>{% trans 'Total' %}</strong></td>
+                            <td class="{% if total_epargnes != total_epargne_reel %}danger{% else %}success{% endif %}">{{ total_epargnes }}€</td>
                         </tr>
                     </tfoot>
                 </table>
