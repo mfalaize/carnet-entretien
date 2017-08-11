@@ -18,6 +18,7 @@ class Budget(models.Model):
     categorie = models.ForeignKey(Categorie, verbose_name=_('Catégorie'))
     budget = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_('Budget'))
     utilisateurs = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateurs"))
+    solde_en_une_fois = models.BooleanField(default=False, verbose_name=_("Soldé en une fois"))
 
     def __str__(self):
         return self.categorie.libelle

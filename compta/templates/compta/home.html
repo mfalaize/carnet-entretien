@@ -36,7 +36,7 @@
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th>{% trans "Libellé" %} <button class="btn btn-default" onclick="$('.budget').toggleClass('hidden');">{% trans 'Voir/Cacher les budgets soldés' %}</button></th>
+                        <th>{% trans "Libellé" %} <button class="btn btn-default" onclick="$('.budget').toggleClass('hidden');">{% trans 'Voir/Cacher les budgets cachés' %}</button></th>
                         <th>{% trans "Budgeté actuellement" %}</th>
                         <th>{% trans "Dépenses" %}</th>
                         <th>{% trans "Restant" %}</th>
@@ -44,7 +44,9 @@
                     </thead>
                     <tbody>
                     {% for budget in budgets %}
-                        <tr {% if budget.solde == 0 %}class="budget hidden"{% endif %}>
+                        <tr {% if budget.solde == 0 or budget.solde_en_une_fois and budget.depenses == 0 %}class="budget hidden"
+                            {% elif budget.solde_en_une_fois and budget.depenses > 0 and budget.solde > 0 %}class="warning"
+                            {% elif budget.solde_en_une_fois and budget.depenses > 0 and budget.solde < 0 %}class="danger"{% endif %}>
                             <td>{{ budget.categorie.libelle }}</td>
                             <td>{{ budget.budget }}€</td>
                             <td>{{ budget.depenses }}€</td>
@@ -158,9 +160,11 @@
                     {% endfor %}
                     </tbody>
                     <tfoot>
-                        <tr>
-                            <td class="{% if total_epargnes != total_epargne_reel %}danger{% else %}success{% endif %}"><strong>{% trans 'Total' %}</strong></td>
-                            <td class="{% if total_epargnes != total_epargne_reel %}danger{% else %}success{% endif %}">{{ total_epargnes }}€</td>
+                        <tr {% if total_epargnes != total_epargne_reel and total_epargne_reel|subtract:total_epargnes > 0 %}class="warning"
+                            {% elif total_epargnes != total_epargne_reel and total_epargne_reel|subtract:total_epargnes < 0 %}class="danger"
+                            {% else %}class="success"{% endif %}>
+                            <td><strong>{% trans 'Total' %}</strong></td>
+                            <td>{{ total_epargnes }}€</td>
                         </tr>
                     </tfoot>
                 </table>
