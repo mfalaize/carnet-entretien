@@ -8,6 +8,11 @@
     <div class="container">
         <p class="lead text-center">{% trans "Budget" %} {{ today|date:"F Y" }}</p>
         <p class="lead text-center">{% trans "Revenus du mois" %} : <span class="text-success">{{ revenus_personnels_du_mois }}€</span></p>
+        {% for compte in comptes %}
+            {% if contributions_totales|get_item:compte.pk > 0 %}
+                <p class="lead text-center">{% trans "Part d'investissement sur" %} {{ compte.libelle }} : <span class="text-success">{{ contributions_pourcentages|get_item:compte.pk }}%</span></p>
+            {% endif %}
+        {% endfor %}
         <div class="text-center">{% trans 'Changer de mois' %} : <form class="form-inline" action="{% url 'compta:home' %}" method="get">
                 <select class="form-control" name="mois">
                     <option value="1" {% if today.month == 1 %}selected{% endif %}>{% trans 'janvier' %}</option>

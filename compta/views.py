@@ -80,13 +80,26 @@ class Home(ListView):
         # Vérification que le total des comptes épargnes est égal au total_epargne
         context['total_epargne_reel'] = 0
         context['revenus_personnels_du_mois'] = 0
+        context['contributions'] = {}
+        context['contributions_totales'] = {}
+        context['contributions_pourcentages'] = {}
         for compte in context['comptes']:
             if compte.epargne:
                 context['total_epargne_reel'] += compte.solde
             for operation in compte.operation_set.filter(date_operation__month=context['today'].month):
                 if operation.recette:
                     context['revenus_personnels_du_mois'] += operation.montant
-                
+
+            context['contributions'][compte.pk] = 0
+            context['contributions_totales'][compte.pk] = 0
+            context['contributions_pourcentages'][compte.pk] = 0
+            for operation in compte.operation_set.filter(contributeur_id__isnull=False):
+                if operation.contributeur_id == self.request.user.pk:
+                    context['contributions'][compte.pk] += operation.montant
+                context['contributions_totales'][compte.pk] += operation.montant
+            if context['contributions_totales'][compte.pk] > 0:
+                context['contributions_pourcentages'][compte.pk] += int(int(context['contributions'][compte.pk]) / int(context['contributions_totales'][compte.pk]) * 100)
+
         return context
 
 
