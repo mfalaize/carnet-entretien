@@ -11,3 +11,8 @@ def subtract(value, arg):
 @register.filter
 def remove_spaces(value):
     return str(value).replace(" ", "")
+
+
+@register.filter
+def get_item(dictionary, key):
+    return dictionary.get(key)

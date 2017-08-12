@@ -32,12 +32,14 @@
             </form>
         </div>
 
+        {% for compte in comptes_associes %}
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
                 <table class="table table-striped">
+                    <caption class="text-center">{{ compte.libelle }}</caption>
                     <thead>
                     <tr>
-                        <th>{% trans "Libellé" %} <button class="btn btn-default" onclick="$('.budget').toggleClass('hidden');">{% trans 'Voir/Cacher les budgets cachés' %}</button></th>
+                        <th>{% trans "Libellé" %} <button class="btn btn-default" onclick="$('.budget_{{ compte.pk }}').toggleClass('hidden');">{% trans 'Voir/Cacher les budgets cachés' %}</button></th>
                         <th>{% trans "Budgeté actuellement" %}</th>
                         <th>{% trans "Dépenses" %}</th>
                         <th>{% trans "Restant" %}</th>
@@ -45,7 +47,8 @@
                     </thead>
                     <tbody>
                     {% for budget in budgets %}
-                        <tr {% if budget.solde == 0 or budget.solde_en_une_fois and budget.depenses == 0 %}class="budget hidden"
+                        {% if budget.compte_associe_id == compte.pk %}
+                        <tr {% if budget.solde == 0 or budget.solde_en_une_fois and budget.depenses == 0 %}class="budget_{{ compte.pk }} hidden"
                             {% elif budget.solde_en_une_fois and budget.depenses > 0 and budget.solde > 0 %}class="warning"
                             {% elif budget.solde_en_une_fois and budget.depenses > 0 and budget.solde < 0 %}class="danger"{% endif %}>
                             <td>{{ budget.categorie.libelle }}</td>
@@ -57,6 +60,7 @@
                                 <td><span class="text-danger">{{ budget.solde }}€</span></td>
                             {% endif %}
                         </tr>
+                        {% endif %}
                     {% empty %}
                         <tr>
                             <td class="text-center" colspan="3">{% trans "Aucun budget n'a été créé !" %}</td>
@@ -66,18 +70,19 @@
                     <tfoot>
                         <tr>
                             <td><strong>{% trans 'Total' %}</strong></td>
-                            <td>{{ total_budget }}€</td>
-                            <td>{{ total_depenses }}€</td>
+                            <td>{{ total_budget|get_item:compte.pk }}€</td>
+                            <td>{{ total_depenses|get_item:compte.pk }}€</td>
                             {% if total_solde >= 0 %}
-                                <td><span class="text-success">{{ total_solde }}€</span></td>
+                                <td><span class="text-success">{{ total_solde|get_item:compte.pk }}€</span></td>
                             {% else %}
-                                <td><span class="text-danger">{{ total_solde }}€</span></td>
+                                <td><span class="text-danger">{{ total_solde|get_item:compte.pk }}€</span></td>
                             {% endif %}
                         </tr>
                     </tfoot>
                 </table>
             </div>
         </div>
+        {% endfor %}
 
         <p class="lead text-center">{% trans "Opérations à catégoriser" %}</p>
 

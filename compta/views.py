@@ -57,14 +57,20 @@ class Home(ListView):
         context['categories_epargne'] = CategorieEpargne.objects.all().order_by('libelle')
         context['comptes'] = Compte.objects.filter(utilisateurs=self.request.user).order_by('libelle')
         context['budgets'] = Budget.objects.filter(compte_associe__utilisateurs=self.request.user).order_by('categorie__libelle')
-        context['total_budget'] = 0
-        context['total_depenses'] = 0
-        context['total_solde'] = 0
+        context['comptes_associes'] = Compte.objects.filter(utilisateurs=self.request.user, budget__isnull=False).distinct().order_by('libelle')
+        context['total_budget'] = {}
+        context['total_depenses'] = {}
+        context['total_solde'] = {}
+        for compte in context['comptes_associes']:
+            context['total_budget'][compte.pk] = 0
+            context['total_depenses'][compte.pk] = 0
+            context['total_solde'][compte.pk] = 0
+
         for budget in context['budgets']:
             budget.calcule_solde(context['today'])
-            context['total_budget'] += budget.budget
-            context['total_depenses'] += budget.depenses
-            context['total_solde'] += budget.solde
+            context['total_budget'][budget.compte_associe_id] += budget.budget
+            context['total_depenses'][budget.compte_associe_id] += budget.depenses
+            context['total_solde'][budget.compte_associe_id] += budget.solde
 
         context['epargnes'] = Epargne.objects.filter(utilisateurs=self.request.user).order_by('categorie__libelle')
         context['total_epargnes'] = 0
