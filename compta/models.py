@@ -14,27 +14,6 @@ class Categorie(models.Model):
         return self.libelle
 
 
-class Budget(models.Model):
-    categorie = models.ForeignKey(Categorie, verbose_name=_('Catégorie'))
-    budget = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_('Budget'))
-    utilisateurs = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateurs"))
-    solde_en_une_fois = models.BooleanField(default=False, verbose_name=_("Soldé en une fois"))
-
-    def __str__(self):
-        return self.categorie.libelle
-
-    def calcule_solde(self, date=datetime.date.today()):
-        """Calcule les propriétés solde et depenses de l'objet"""
-        operations_mois_en_cours = Operation.objects.filter(compte__utilisateurs__in=self.utilisateurs.all(),
-                                                            date_operation__month=date.month,
-                                                            categorie_id=self.categorie_id)
-        self.solde = self.budget
-        self.depenses = 0
-        for operation in operations_mois_en_cours:
-            self.solde += operation.montant
-            self.depenses -= operation.montant
-
-
 class CategorieEpargne(models.Model):
     """Catégories spécifiques à l'épargne"""
     libelle = models.CharField(max_length=256, verbose_name=_("Libellé"))
@@ -74,7 +53,7 @@ class Identifiant(models.Model):
 
 
 class Compte(models.Model):
-    identifiant = models.ForeignKey(Identifiant, verbose_name=_("Identifiant"), null=True)
+    identifiant = models.ForeignKey(Identifiant, verbose_name=_("Identifiant"))
     numero_compte = models.CharField(max_length=128, verbose_name=_("Numéro de compte"))
     libelle = models.CharField(max_length=128, verbose_name=_("Libellé"), null=True)
     utilisateurs = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateurs"))
@@ -87,13 +66,36 @@ class Compte(models.Model):
         return self.banque + " " + self.numero_compte
 
 
+class Budget(models.Model):
+    categorie = models.ForeignKey(Categorie, verbose_name=_('Catégorie'))
+    budget = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_('Budget'))
+    compte_associe = models.ForeignKey(Compte, verbose_name=_("Compte associé"))
+    solde_en_une_fois = models.BooleanField(default=False, verbose_name=_("Soldé en une fois"))
+
+    def __str__(self):
+        return self.categorie.libelle
+
+    def calcule_solde(self, date=datetime.date.today()):
+        """Calcule les propriétés solde et depenses de l'objet"""
+        operations_mois_en_cours = Operation.objects.filter(compte__utilisateurs__in=self.compte_associe.utilisateurs.all(),
+                                                            date_operation__month=date.month,
+                                                            budget_id=self.pk)
+        self.solde = self.budget
+        self.depenses = 0
+        for operation in operations_mois_en_cours:
+            self.solde += operation.montant
+            self.depenses -= operation.montant
+
+
 class Operation(models.Model):
     date_operation = models.DateField(verbose_name=_("Date d'opération"))
     date_valeur = models.DateField(verbose_name=_("Date de valeur"))
     montant = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Montant"))
     libelle = models.CharField(max_length=512, verbose_name=_("Libellé"))
     compte = models.ForeignKey(Compte, verbose_name=_("Compte"))
-    categorie = models.ForeignKey(Categorie, verbose_name=_("Catégorie"), null=True)
+    budget = models.ForeignKey(Budget, verbose_name=_("Budget"), null=True)
+    hors_budget = models.BooleanField(default=False, verbose_name=_("Hors Budget"))
+    recette = models.BooleanField(default=False, verbose_name=_("Recette"))
 
     def __str__(self):
         return self.libelle

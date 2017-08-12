@@ -33,7 +33,7 @@ def check_operations():
                 if compte.epargne:
                     if new_operation.montant >= 0:
                         for epargne in epargnes:
-                            new_operation.categorie_id = 18  # = Hors Budget
+                            new_operation.hors_budget = True
                             new_operation.save()
 
                             op = OperationEpargne()

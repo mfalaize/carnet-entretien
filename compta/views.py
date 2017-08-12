@@ -44,7 +44,7 @@ class Home(ListView):
     context_object_name = 'operations_a_categoriser'
 
     def get_queryset(self):
-        return Operation.objects.filter(compte__utilisateurs=self.request.user, categorie__isnull=True).order_by(
+        return Operation.objects.filter(compte__utilisateurs=self.request.user, budget__isnull=True, hors_budget=False, recette=False).order_by(
             'date_operation')
 
     def get_context_data(self, **kwargs):
@@ -56,7 +56,7 @@ class Home(ListView):
         context['categories'] = Categorie.objects.all().order_by('libelle')
         context['categories_epargne'] = CategorieEpargne.objects.all().order_by('libelle')
         context['comptes'] = Compte.objects.filter(utilisateurs=self.request.user).order_by('libelle')
-        context['budgets'] = Budget.objects.filter(utilisateurs=self.request.user).order_by('categorie__libelle')
+        context['budgets'] = Budget.objects.filter(compte_associe__utilisateurs=self.request.user).order_by('categorie__libelle')
         context['total_budget'] = 0
         context['total_depenses'] = 0
         context['total_solde'] = 0
@@ -73,9 +73,13 @@ class Home(ListView):
 
         # Vérification que le total des comptes épargnes est égal au total_epargne
         context['total_epargne_reel'] = 0
+        context['revenus_personnels_du_mois'] = 0
         for compte in context['comptes']:
             if compte.epargne:
                 context['total_epargne_reel'] += compte.solde
+            for operation in compte.operation_set.filter(date_operation__month=context['today'].month):
+                if operation.recette:
+                    context['revenus_personnels_du_mois'] += operation.montant
                 
         return context
 
@@ -89,7 +93,8 @@ def edit_categorie(request):
         try:
             operation = Operation.objects.get(pk=operation_id, compte__utilisateurs=request.user)
             if operation.compte.epargne:
-                operation.categorie_id = 18 # = Hors Budget
+                operation.hors_budget = True
+                operation.recette = False
                 operation.save()
 
                 op_epargne = OperationEpargne.objects.get(operation_id=operation_id)
@@ -100,8 +105,20 @@ def edit_categorie(request):
                 epargne.solde += op_epargne.montant
                 epargne.save()
 
+            elif categorie_id == '-1':
+                operation.budget_id = None
+                operation.hors_budget = True
+                operation.recette = False
+                operation.save()
+            elif categorie_id == '-2':
+                operation.budget_id = None
+                operation.hors_budget = False
+                operation.recette = True
+                operation.save()
             else:
-                operation.categorie_id = categorie_id if categorie_id != '' else None
+                operation.budget_id = categorie_id if categorie_id != '' else None
+                operation.hors_budget = False
+                operation.recette = False
                 operation.save()
 
         except Operation.DoesNotExist or OperationEpargne.DoesNotExist or Epargne.DoesNotExist:

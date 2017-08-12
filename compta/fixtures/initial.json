@@ -29,14 +29,14 @@
   },
   {
     "fields": {
-      "libelle": "Assurance maison"
+      "libelle": "Assurance Habitation"
     },
     "pk": 5,
     "model": "compta.categorie"
   },
   {
     "fields": {
-      "libelle": "Assurance sant\u00e9"
+      "libelle": "Assurance Sant\u00e9"
     },
     "pk": 6,
     "model": "compta.categorie"
@@ -71,13 +71,6 @@
   },
   {
     "fields": {
-      "libelle": "Allocations"
-    },
-    "pk": 11,
-    "model": "compta.categorie"
-  },
-  {
-    "fields": {
       "libelle": "Nourrice"
     },
     "pk": 12,
@@ -92,7 +85,8 @@
   },
   {
     "fields": {
-      "libelle": "Internet"
+      "libelle": "Internet",
+      "type": "1"
     },
     "pk": 14,
     "model": "compta.categorie"
@@ -120,37 +114,9 @@
   },
   {
     "fields": {
-      "libelle": "Hors Budget"
-    },
-    "pk": 18,
-    "model": "compta.categorie"
-  },
-  {
-    "fields": {
-      "libelle": "Salaire"
-    },
-    "pk": 19,
-    "model": "compta.categorie"
-  },
-  {
-    "fields": {
-      "libelle": "Epargne"
-    },
-    "pk": 20,
-    "model": "compta.categorie"
-  },
-  {
-    "fields": {
       "libelle": "Autres"
     },
     "pk": 21,
-    "model": "compta.categorie"
-  },
-  {
-    "fields": {
-      "libelle": "Intérets"
-    },
-    "pk": 22,
     "model": "compta.categorie"
   },
   {
