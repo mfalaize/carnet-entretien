@@ -77,7 +77,7 @@ class Budget(models.Model):
 
     def calcule_solde(self, date=datetime.date.today()):
         """Calcule les propriétés solde et depenses de l'objet"""
-        operations_mois_en_cours = Operation.objects.filter(compte__utilisateurs__in=self.compte_associe.utilisateurs.all(),
+        operations_mois_en_cours = Operation.objects.filter(compte_id=self.compte_associe.pk,
                                                             date_operation__month=date.month,
                                                             budget_id=self.pk)
         self.solde = self.budget
@@ -96,6 +96,7 @@ class Operation(models.Model):
     budget = models.ForeignKey(Budget, verbose_name=_("Budget"), null=True)
     hors_budget = models.BooleanField(default=False, verbose_name=_("Hors Budget"))
     recette = models.BooleanField(default=False, verbose_name=_("Recette"))
+    contributeur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Contributeur"), null=True)
 
     def __str__(self):
         return self.libelle

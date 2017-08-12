@@ -44,8 +44,8 @@ class Home(ListView):
     context_object_name = 'operations_a_categoriser'
 
     def get_queryset(self):
-        return Operation.objects.filter(compte__utilisateurs=self.request.user, budget__isnull=True, hors_budget=False, recette=False).order_by(
-            'date_operation')
+        return Operation.objects.filter(compte__utilisateurs=self.request.user, budget__isnull=True, hors_budget=False,
+                                        recette=False, contributeur_id__isnull=True).order_by('date_operation')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -95,6 +95,7 @@ def edit_categorie(request):
             if operation.compte.epargne:
                 operation.hors_budget = True
                 operation.recette = False
+                operation.contributeur_id = None
                 operation.save()
 
                 op_epargne = OperationEpargne.objects.get(operation_id=operation_id)
@@ -109,16 +110,26 @@ def edit_categorie(request):
                 operation.budget_id = None
                 operation.hors_budget = True
                 operation.recette = False
+                operation.contributeur_id = None
                 operation.save()
             elif categorie_id == '-2':
                 operation.budget_id = None
                 operation.hors_budget = False
                 operation.recette = True
+                operation.contributeur_id = None
+                operation.save()
+            elif int(categorie_id) < -1000:
+                contributeur_id = -(int(categorie_id) + 1000)
+                operation.budget_id = None
+                operation.hors_budget = False
+                operation.recette = False
+                operation.contributeur_id = contributeur_id
                 operation.save()
             else:
                 operation.budget_id = categorie_id if categorie_id != '' else None
                 operation.hors_budget = False
                 operation.recette = False
+                operation.contributeur_id = None
                 operation.save()
 
         except Operation.DoesNotExist or OperationEpargne.DoesNotExist or Epargne.DoesNotExist:

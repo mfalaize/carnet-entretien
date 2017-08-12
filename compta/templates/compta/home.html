@@ -117,6 +117,11 @@
                                         {% else %}
                                             <option value="-1">{% trans 'Hors Budget' %}</option>
                                             <option value="-2">{% trans 'Recette' %}</option>
+                                            {% if operation.compte.utilisateurs.count > 1 %}
+                                                {% for utilisateur in operation.compte.utilisateurs.all %}
+                                                    <option value="{{ -1000|subtract:utilisateur.pk|remove_spaces }}">{% trans 'Contribution' %} {{ utilisateur.first_name }}</option>
+                                                {% endfor %}
+                                            {% endif %}
                                             {% for budget in budgets %}
                                                 {% if budget.compte_associe_id == operation.compte_id %}
                                                     <option value="{{ budget.id }}">{{ budget.categorie.libelle }}</option>
