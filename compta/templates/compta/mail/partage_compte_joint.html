@@ -1,0 +1,30 @@
+{% load i18n %}
+<table>
+    <caption>{% blocktrans %}Répartition {{ compte.libelle }} pour un budget prévu de {{ total_budget }}€{% endblocktrans %}</caption>
+    <thead>
+    <tr>
+        <th>{% trans "Personne" %}</th>
+        <th>{% trans "Salaire" %}</th>
+        <th>{% trans "Part" %}</th>
+        <th>{% trans "A verser" %}</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for utilisateur in utilisateurs %}
+        <tr>
+            <td>{{ utilisateur.first_name }}</td>
+            <td>{{ utilisateur.revenus_personnels }}€</td>
+            <td>{{ utilisateur.part }}%</td>
+            <td>{{ utilisateur.a_verser }}€</td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td><strong>{% trans 'Total' %}</strong></td>
+            <td>{{ total_salaire }}€</td>
+            <td>{{ total_part }}%</td>
+            <td>{{ total_a_verser }}€</td>
+        </tr>
+    </tfoot>
+</table>

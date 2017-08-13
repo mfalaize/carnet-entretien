@@ -3,7 +3,9 @@ import datetime
 
 from Crypto.Cipher import AES
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.db import models
+from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
 
 
@@ -109,3 +111,16 @@ class OperationEpargne(models.Model):
 
     def __str__(self):
         return str(self.operation) + " " + str(self.epargne)
+
+
+def get_revenus_personnels(utilisateur, date=datetime.date.today()):
+    try:
+        return Operation.objects.filter(
+            date_operation__month=date.month, recette=True,
+            compte__utilisateurs=utilisateur).annotate(
+            revenus_personnels=Sum('montant')).values('revenus_personnels')[0]['revenus_personnels']
+    except IndexError:
+        return 0
+
+UserModel = get_user_model()
+UserModel.add_to_class('revenus_personnels', property(get_revenus_personnels))

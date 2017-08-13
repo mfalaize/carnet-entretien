@@ -97,7 +97,7 @@ class Home(ListView):
                 context['revenus_personnels_autres_utilisateurs'][compte.pk] = 0
             part = 1 if context['revenus_personnels_autres_utilisateurs'][compte.pk] == 0 else context['revenus_personnels_du_mois'] / (context['revenus_personnels_du_mois'] + context['revenus_personnels_autres_utilisateurs'][compte.pk])
             try:
-                context['a_verser_sur_compte_joint'][compte.pk] = int(part * context['total_budget'][compte.pk])
+                context['a_verser_sur_compte_joint'][compte.pk] = int(part * (context['total_budget'][compte.pk] - compte.solde))
             except KeyError or ZeroDivisionError:
                 context['a_verser_sur_compte_joint'][compte.pk] = 0
 
