@@ -55,9 +55,9 @@ class Identifiant(models.Model):
 class Compte(models.Model):
     identifiant = models.ForeignKey(Identifiant, verbose_name=_("Identifiant"))
     numero_compte = models.CharField(max_length=128, verbose_name=_("Numéro de compte"))
-    libelle = models.CharField(max_length=128, verbose_name=_("Libellé"), null=True)
+    libelle = models.CharField(max_length=128, verbose_name=_("Libellé"), null=True, blank=True)
     utilisateurs = models.ManyToManyField(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateurs"))
-    solde = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Solde"), null=True)
+    solde = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Solde"), null=True, blank=True)
     epargne = models.BooleanField(default=False, verbose_name=_("Le compte est un compte d'épargne"))
 
     def __str__(self):
@@ -93,10 +93,10 @@ class Operation(models.Model):
     montant = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Montant"))
     libelle = models.CharField(max_length=512, verbose_name=_("Libellé"))
     compte = models.ForeignKey(Compte, verbose_name=_("Compte"))
-    budget = models.ForeignKey(Budget, verbose_name=_("Budget"), null=True)
+    budget = models.ForeignKey(Budget, verbose_name=_("Budget"), null=True, blank=True)
     hors_budget = models.BooleanField(default=False, verbose_name=_("Hors Budget"))
     recette = models.BooleanField(default=False, verbose_name=_("Recette"))
-    contributeur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Contributeur"), null=True)
+    contributeur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Contributeur"), null=True, blank=True)
 
     def __str__(self):
         return self.libelle
@@ -104,7 +104,7 @@ class Operation(models.Model):
 
 class OperationEpargne(models.Model):
     operation = models.ForeignKey(Operation, verbose_name=_("Opération réelle initiale"))
-    epargne = models.ForeignKey(Epargne, verbose_name=_("Epargne"), null=True)
+    epargne = models.ForeignKey(Epargne, verbose_name=_("Epargne"), null=True, blank=True)
     montant = models.DecimalField(max_digits=8, decimal_places=2, verbose_name=_("Montant"))
 
     def __str__(self):

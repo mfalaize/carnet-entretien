@@ -11,6 +11,7 @@
         {% for compte in comptes %}
             {% if contributions_totales|get_item:compte.pk > 0 %}
                 <p class="lead text-center">{% trans "Part d'investissement sur" %} {{ compte.libelle }} : <span class="text-success">{{ contributions_pourcentages|get_item:compte.pk }}%</span></p>
+                <p class="lead text-center">{% trans "A verser pour le mois suivant sur " %} {{ compte.libelle }} : <span class="text-success">{{ a_verser_sur_compte_joint|get_item:compte.pk }}€</span></p>
             {% endif %}
         {% endfor %}
         <div class="text-center">{% trans 'Changer de mois' %} : <form class="form-inline" action="{% url 'compta:home' %}" method="get">

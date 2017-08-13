@@ -1,5 +1,6 @@
 import datetime
 from django.contrib.auth.decorators import login_required
+from django.db.models import Sum
 from django.http import Http404
 from django.http import HttpResponse
 from django.utils.decorators import method_decorator
@@ -79,16 +80,26 @@ class Home(ListView):
 
         # Vérification que le total des comptes épargnes est égal au total_epargne
         context['total_epargne_reel'] = 0
-        context['revenus_personnels_du_mois'] = 0
+        context['revenus_personnels_du_mois'] = next(iter(Operation.objects.filter(date_operation__month=context['today'].month, recette=True, compte__utilisateurs=self.request.user).aggregate(Sum('montant')).values()))
+        if context['revenus_personnels_du_mois'] is None:
+            context['revenus_personnels_du_mois'] = 0
+        context['revenus_personnels_autres_utilisateurs'] = {}
+        context['a_verser_sur_compte_joint'] = {}
         context['contributions'] = {}
         context['contributions_totales'] = {}
         context['contributions_pourcentages'] = {}
         for compte in context['comptes']:
             if compte.epargne:
                 context['total_epargne_reel'] += compte.solde
-            for operation in compte.operation_set.filter(date_operation__month=context['today'].month):
-                if operation.recette:
-                    context['revenus_personnels_du_mois'] += operation.montant
+
+            context['revenus_personnels_autres_utilisateurs'][compte.pk] = next(iter(Operation.objects.filter(date_operation__month=context['today'].month, recette=True).exclude(compte__utilisateurs=self.request.user).aggregate(Sum('montant')).values()))
+            if context['revenus_personnels_autres_utilisateurs'][compte.pk] is None:
+                context['revenus_personnels_autres_utilisateurs'][compte.pk] = 0
+            part = 1 if context['revenus_personnels_autres_utilisateurs'][compte.pk] == 0 else context['revenus_personnels_du_mois'] / (context['revenus_personnels_du_mois'] + context['revenus_personnels_autres_utilisateurs'][compte.pk])
+            try:
+                context['a_verser_sur_compte_joint'][compte.pk] = int(part * context['total_budget'][compte.pk])
+            except KeyError or ZeroDivisionError:
+                context['a_verser_sur_compte_joint'][compte.pk] = 0
 
             context['contributions'][compte.pk] = 0
             context['contributions_totales'][compte.pk] = 0
