@@ -57,8 +57,8 @@
                         <tr {% if budget.hidden %}class="budget_{{ compte.pk }} hidden"
                             {% elif budget.warning %}class="warning"
                             {% elif budget.danger %}class="danger"{% endif %}>
-                            <td>{{ budget.categorie.libelle }}</td>
-                            <td>{{ budget.budget }}€ <a href="{% url 'compta:edite-budget' pk=budget.pk %}">{% bootstrap_icon "edit" %}</a></td>
+                            <td>{{ budget.categorie.libelle }} <a data-toggle="tooltip" data-placement="right" title="{% trans 'Voir les opérations' %}" href="javascript: void(0)" onclick="$('.view-operations-{{ budget.pk }}').toggleClass('hidden');">{% bootstrap_icon 'zoom-in' %}</a> </td>
+                            <td>{{ budget.budget }}€ <a data-toggle="tooltip" data-placement="right" title="{% trans 'Modifier le budget' %}" href="{% url 'compta:edite-budget' pk=budget.pk %}">{% bootstrap_icon "edit" %}</a></td>
                             <td>{{ budget.depenses }}€{% if budget.warning or budget.danger %} <a data-toggle="tooltip" data-placement="right" title="{% trans 'Appliquer la nouvelle dépense au budget' %}" href="#" onclick="$('#apply_budget{{ budget.id }}').click();">{% bootstrap_icon "ok" %}</a>
                                 <form action="{% url 'compta:apply-budget' %}" method="post">
                                     {% csrf_token %}
@@ -74,6 +74,13 @@
                                 <td><span class="text-danger">{{ budget.solde }}€</span></td>
                             {% endif %}
                         </tr>
+                            {% for operation in budget.operations %}
+                                <tr class="hidden view-operations-{{ budget.pk }}">
+                                <td style="padding-left: 50px;" colspan="2">{{ operation.libelle }}</td>
+                                <td>{{ operation.date_operation }}</td>
+                                <td>{{ operation.montant }}€</td>
+                                </tr>
+                            {% endfor %}
                         {% endif %}
                     {% empty %}
                         <tr>
