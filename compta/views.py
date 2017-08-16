@@ -140,6 +140,7 @@ def edit_categorie(request):
                 operation.hors_budget = True
                 operation.recette = False
                 operation.contributeur_id = None
+                operation.avance = False
                 operation.save()
 
                 op_epargne = OperationEpargne.objects.get(operation_id=operation_id)
@@ -155,25 +156,29 @@ def edit_categorie(request):
                 operation.hors_budget = True
                 operation.recette = False
                 operation.contributeur_id = None
+                operation.avance = False
                 operation.save()
             elif categorie_id == '-2':
                 operation.budget_id = None
                 operation.hors_budget = False
                 operation.recette = True
                 operation.contributeur_id = None
+                operation.avance = False
                 operation.save()
-            elif categorie_id != '' and int(categorie_id) < -1000:
-                contributeur_id = -(int(categorie_id) + 1000)
+            elif categorie_id != '' and int(categorie_id[1:]) < -1000:
+                contributeur_id = -(int(categorie_id[1:]) + 1000)
                 operation.budget_id = None
                 operation.hors_budget = False
                 operation.recette = False
                 operation.contributeur_id = contributeur_id
+                operation.avance = True if categorie_id[0:1] == 'a' else False
                 operation.save()
             else:
                 operation.budget_id = categorie_id if categorie_id != '' else None
                 operation.hors_budget = False
                 operation.recette = False
                 operation.contributeur_id = None
+                operation.avance = False
                 operation.save()
 
         except Operation.DoesNotExist or OperationEpargne.DoesNotExist or Epargne.DoesNotExist:

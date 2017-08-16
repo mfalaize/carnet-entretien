@@ -140,13 +140,14 @@
                                             <option value="-2">{% trans 'Recette' %}</option>
                                             {% if operation.compte.utilisateurs.count > 1 %}
                                                 {% for utilisateur in operation.compte.utilisateurs.all %}
-                                                    <option value="{{ -1000|subtract:utilisateur.pk|remove_spaces }}">{% trans 'Contribution' %} {{ utilisateur.first_name }}</option>
+                                                    <option value="c{{ -1000|subtract:utilisateur.pk|remove_spaces }}">{% trans 'Contribution' %} {{ utilisateur.first_name }}</option>
+                                                {% endfor %}
+                                                {% for utilisateur in operation.compte.utilisateurs.all %}
+                                                    <option value="a{{ -1000|subtract:utilisateur.pk|remove_spaces }}">{% trans 'Contribution (avances)' %} {{ utilisateur.first_name }}</option>
                                                 {% endfor %}
                                             {% endif %}
-                                            {% for budget in budgets %}
-                                                {% if budget.compte_associe_id == operation.compte_id %}
-                                                    <option value="{{ budget.id }}">{{ budget.categorie.libelle }}</option>
-                                                {% endif %}
+                                            {% for budget in operation.compte.budget_set.all %}
+                                                <option value="{{ budget.id }}">{{ budget.categorie.libelle }}</option>
                                             {% endfor %}
                                         {% endif %}
                                     </select>
