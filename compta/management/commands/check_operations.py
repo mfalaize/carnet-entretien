@@ -29,7 +29,7 @@ def generate_mail(compte):
                 if total_salaire > 0:
                     for utilisateur in utilisateurs:
                         utilisateur.part = int(utilisateur.revenus_personnels / total_salaire * 100)
-                        utilisateur.a_verser = int(utilisateur.revenus_personnels / total_salaire * total_budget)
+                        utilisateur.a_verser = int(utilisateur.revenus_personnels / total_salaire * total_budget) - int(compte.solde)
                         total_part += utilisateur.part
                         total_a_verser += utilisateur.a_verser
 
