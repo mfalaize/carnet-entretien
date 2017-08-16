@@ -86,7 +86,7 @@
                             <td><strong>{% trans 'Total' %}</strong></td>
                             <td>{{ total_budget|get_item:compte.pk }}€</td>
                             <td>{{ total_depenses|get_item:compte.pk }}€</td>
-                            {% if total_solde >= 0 %}
+                            {% if total_solde|get_item:compte.pk >= 0 %}
                                 <td><span class="text-success">{{ total_solde|get_item:compte.pk }}€</span></td>
                             {% else %}
                                 <td><span class="text-danger">{{ total_solde|get_item:compte.pk }}€</span></td>
