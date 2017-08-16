@@ -173,6 +173,10 @@ def edit_categorie(request):
     if request.method == 'POST':
         operation_id = request.POST['operation_id']
         categorie_id = request.POST['categorie']
+        try:
+            want_redirect = request.POST['redirect'] == 'true'
+        except KeyError:
+            want_redirect = False
 
         try:
             operation = Operation.objects.get(pk=operation_id, compte__utilisateurs=request.user)
@@ -202,7 +206,7 @@ def edit_categorie(request):
                 operation.recette = True
                 operation.contributeur_id = None
                 operation.save()
-            elif int(categorie_id) < -1000:
+            elif categorie_id != '' and int(categorie_id) < -1000:
                 contributeur_id = -(int(categorie_id) + 1000)
                 operation.budget_id = None
                 operation.hors_budget = False
@@ -219,6 +223,8 @@ def edit_categorie(request):
         except Operation.DoesNotExist or OperationEpargne.DoesNotExist or Epargne.DoesNotExist:
             raise Http404()
 
+        if want_redirect:
+            return redirect('compta:home')
         return HttpResponse("OK")
 
     return HttpResponse("NOK", status=400)

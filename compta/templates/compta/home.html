@@ -76,7 +76,14 @@
                         </tr>
                             {% for operation in budget.operations %}
                                 <tr class="hidden view-operations-{{ budget.pk }}">
-                                <td style="padding-left: 50px;" colspan="2">{{ operation.libelle }}</td>
+                                <td style="padding-left: 50px;" colspan="2">{{ operation.libelle }} <a href="#" data-toggle="tooltip" data-placement="right" title="{% trans 'Réinitialiser la catégorisation' %}" onclick="$('#form-edit-categorie-budget-{{ operation.pk }}').submit();">{% bootstrap_icon 'repeat' %}</a>
+                                <form id="form-edit-categorie-budget-{{ operation.pk }}" action="{% url 'compta:edit-categorie' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="operation_id" value="{{ operation.pk }}">
+                                    <input type="hidden" name="categorie" value="">
+                                    <input type="hidden" name="redirect" value="true">
+                                    <input type="submit" class="hidden" id="apply_budget{{ budget.id }}"/>
+                                </form></td>
                                 <td>{{ operation.date_operation }}</td>
                                 <td>{{ operation.montant }}€</td>
                                 </tr>
@@ -131,9 +138,9 @@
                                 <td><span class="text-danger">{{ operation.montant }}€</span></td>
                             {% endif %}
                             <td>
-                                <form id="form_edit_categorie{{ operation.id }}">
+                                <form id="form_edit_categorie{{ operation.pk }}">
                                     {% csrf_token %}
-                                    <input type="hidden" name="operation_id" value="{{ operation.id }}">
+                                    <input type="hidden" name="operation_id" value="{{ operation.pk }}">
                                     <select name="categorie" class="form-control" onchange="$.post('{% url 'compta:edit-categorie' %}', $('#form_edit_categorie{{ operation.id }}').serialize(), function(data) {});">
                                         <option></option>
                                         {% if operation.compte.epargne %}
