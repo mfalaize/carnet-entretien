@@ -42,7 +42,7 @@
         <div class="row">
             <div class="col-md-offset-1 col-md-10">
                 <table class="table table-striped">
-                    <caption class="text-center">{{ compte.libelle }}</caption>
+                    <caption class="text-center">{{ compte.libelle }} : {{ compte.solde }}€</caption>
                     <thead>
                     <tr>
                         <th>{% trans "Libellé" %} <button class="btn btn-default" onclick="$('.budget_{{ compte.pk }}').toggleClass('hidden');">{% trans 'Voir/Cacher les budgets cachés' %}</button></th>
