@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load utils %}
+
+{% block navbar-content %}
+    <div class="navbar-left">
+        <a class="btn btn-default navbar-btn" href="{% url 'compta:home' %}">{% trans "Retour" %}</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <form enctype="multipart/form-data" method="post" action="{% if creation %}{% url 'compta:ajout-budget' %}{% elif edition %}{% url 'compta:edite-budget' pk=budget.pk %}{% endif %}">
+                {% csrf_token %}
+                <div class="col-md-12">
+                    <p class="lead text-center">{% if creation %}{% trans "Ajout d'un budget" %}{% else %}
+                        {% trans "Edition d'un budget" %}{% endif %}</p>
+
+                    <div class="form-horizontal">
+                        {% bootstrap_form_errors form %}
+                        {% bootstrap_field form.categorie layout='horizontal' %}
+                        {% bootstrap_field form.compte_associe layout='horizontal' %}
+                        {% bootstrap_field form.budget layout='horizontal' %}
+                        {% bootstrap_field form.solde_en_une_fois layout='horizontal' %}
+                    </div>
+
+                    <div class="pull-right">
+                        <button type="submit" class="btn btn-primary">{% trans "Valider la saisie" %}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}

@@ -3,10 +3,14 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.http import Http404
 from django.http import HttpResponse
+from django.shortcuts import redirect
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import ListView
 from django.views.generic import TemplateView
+from django.views.generic import UpdateView
 
+from compta.forms import BudgetForm
 from compta.models import Operation, Categorie, Compte, Budget, CategorieEpargne, OperationEpargne, Epargne
 from compta.serializers import UserSerializer, GroupSerializer
 from django.contrib.auth.models import User, Group
@@ -37,6 +41,38 @@ class Index(TemplateView):
         return super().dispatch(request, *args, **kwargs)
 
 
+@login_required
+def apply_budget(request):
+    if request.method == 'POST':
+        budget_id = request.POST['budget_id']
+        budget_value = request.POST['budget_value'].replace(',', '.')
+
+        try:
+            if budget_value is not None:
+                budget = Budget.objects.get(pk=budget_id)
+                budget.budget = budget_value
+                budget.save()
+        except Budget.DoesNotExist:
+            raise Http404()
+
+        return redirect('compta:home')
+
+    return HttpResponse("NOK", status=400)
+
+
+@method_decorator(login_required, name='dispatch')
+class EditeBudget(UpdateView):
+    model = Budget
+    form_class = BudgetForm
+    template_name = 'compta/budget.html'
+    success_url = reverse_lazy('compta:home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['edition'] = True
+        return context
+
+
 @method_decorator(login_required, name='dispatch')
 class Home(ListView):
     model = Operation
@@ -52,13 +88,16 @@ class Home(ListView):
         context = super().get_context_data(**kwargs)
         context['today'] = datetime.date.today()
         if self.request.GET and self.request.GET['mois'] and self.request.GET['annee']:
-            context['today'] = context['today'].replace(month=int(self.request.GET['mois']), year=int(self.request.GET['annee']))
+            context['today'] = context['today'].replace(month=int(self.request.GET['mois']),
+                                                        year=int(self.request.GET['annee']))
         context['available_years'] = range(2017, 2025)
         context['categories'] = Categorie.objects.all().order_by('libelle')
         context['categories_epargne'] = CategorieEpargne.objects.all().order_by('libelle')
         context['comptes'] = Compte.objects.filter(utilisateurs=self.request.user).order_by('libelle')
-        context['budgets'] = Budget.objects.filter(compte_associe__utilisateurs=self.request.user).order_by('categorie__libelle')
-        context['comptes_associes'] = Compte.objects.filter(utilisateurs=self.request.user, budget__isnull=False).distinct().order_by('libelle')
+        context['budgets'] = Budget.objects.filter(compte_associe__utilisateurs=self.request.user).order_by(
+            'categorie__libelle')
+        context['comptes_associes'] = Compte.objects.filter(utilisateurs=self.request.user,
+                                                            budget__isnull=False).distinct().order_by('libelle')
         context['total_budget'] = {}
         context['total_depenses'] = {}
         context['total_solde'] = {}
@@ -72,6 +111,9 @@ class Home(ListView):
             context['total_budget'][budget.compte_associe_id] += budget.budget
             context['total_depenses'][budget.compte_associe_id] += budget.depenses
             context['total_solde'][budget.compte_associe_id] += budget.solde
+            budget.hidden = budget.solde == 0 or budget.solde_en_une_fois and budget.depenses == 0
+            budget.warning = budget.solde_en_une_fois and budget.depenses > 0 and budget.solde > 0
+            budget.danger = budget.solde_en_une_fois and budget.depenses > 0 and budget.solde < 0
 
         context['epargnes'] = Epargne.objects.filter(utilisateurs=self.request.user).order_by('categorie__libelle')
         context['total_epargnes'] = 0
@@ -80,7 +122,9 @@ class Home(ListView):
 
         # Vérification que le total des comptes épargnes est égal au total_epargne
         context['total_epargne_reel'] = 0
-        context['revenus_personnels_du_mois'] = next(iter(Operation.objects.filter(date_operation__month=context['today'].month, recette=True, compte__utilisateurs=self.request.user).aggregate(Sum('montant')).values()))
+        context['revenus_personnels_du_mois'] = next(iter(
+            Operation.objects.filter(date_operation__month=context['today'].month, recette=True,
+                                     compte__utilisateurs=self.request.user).aggregate(Sum('montant')).values()))
         if context['revenus_personnels_du_mois'] is None:
             context['revenus_personnels_du_mois'] = 0
         context['revenus_personnels_autres_utilisateurs'] = {}
@@ -92,12 +136,21 @@ class Home(ListView):
             if compte.epargne:
                 context['total_epargne_reel'] += compte.solde
 
-            context['revenus_personnels_autres_utilisateurs'][compte.pk] = next(iter(Operation.objects.filter(date_operation__month=context['today'].month, recette=True).exclude(compte__utilisateurs=self.request.user).aggregate(Sum('montant')).values()))
+            context['revenus_personnels_autres_utilisateurs'][compte.pk] = next(iter(
+                Operation.objects.filter(date_operation__month=context['today'].month, recette=True).exclude(
+                    compte__utilisateurs=self.request.user).aggregate(Sum('montant')).values()))
             if context['revenus_personnels_autres_utilisateurs'][compte.pk] is None:
                 context['revenus_personnels_autres_utilisateurs'][compte.pk] = 0
-            part = 1 if context['revenus_personnels_autres_utilisateurs'][compte.pk] == 0 else context['revenus_personnels_du_mois'] / (context['revenus_personnels_du_mois'] + context['revenus_personnels_autres_utilisateurs'][compte.pk])
+            part = 1 if context['revenus_personnels_autres_utilisateurs'][compte.pk] == 0 else context[
+                                                                                                   'revenus_personnels_du_mois'] / (
+                                                                                                   context[
+                                                                                                       'revenus_personnels_du_mois'] +
+                                                                                                   context[
+                                                                                                       'revenus_personnels_autres_utilisateurs'][
+                                                                                                       compte.pk])
             try:
-                context['a_verser_sur_compte_joint'][compte.pk] = int(part * (context['total_budget'][compte.pk] - compte.solde))
+                context['a_verser_sur_compte_joint'][compte.pk] = int(
+                    part * (context['total_budget'][compte.pk] - compte.solde))
             except KeyError or ZeroDivisionError:
                 context['a_verser_sur_compte_joint'][compte.pk] = 0
 
@@ -109,7 +162,8 @@ class Home(ListView):
                     context['contributions'][compte.pk] += operation.montant
                 context['contributions_totales'][compte.pk] += operation.montant
             if context['contributions_totales'][compte.pk] > 0:
-                context['contributions_pourcentages'][compte.pk] += int(int(context['contributions'][compte.pk]) / int(context['contributions_totales'][compte.pk]) * 100)
+                context['contributions_pourcentages'][compte.pk] += int(
+                    int(context['contributions'][compte.pk]) / int(context['contributions_totales'][compte.pk]) * 100)
 
         return context
 
@@ -168,4 +222,3 @@ def edit_categorie(request):
         return HttpResponse("OK")
 
     return HttpResponse("NOK", status=400)
-

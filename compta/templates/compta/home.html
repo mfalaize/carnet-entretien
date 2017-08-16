@@ -54,12 +54,20 @@
                     <tbody>
                     {% for budget in budgets %}
                         {% if budget.compte_associe_id == compte.pk %}
-                        <tr {% if budget.solde == 0 or budget.solde_en_une_fois and budget.depenses == 0 %}class="budget_{{ compte.pk }} hidden"
-                            {% elif budget.solde_en_une_fois and budget.depenses > 0 and budget.solde > 0 %}class="warning"
-                            {% elif budget.solde_en_une_fois and budget.depenses > 0 and budget.solde < 0 %}class="danger"{% endif %}>
+                        <tr {% if budget.hidden %}class="budget_{{ compte.pk }} hidden"
+                            {% elif budget.warning %}class="warning"
+                            {% elif budget.danger %}class="danger"{% endif %}>
                             <td>{{ budget.categorie.libelle }}</td>
-                            <td>{{ budget.budget }}€</td>
-                            <td>{{ budget.depenses }}€</td>
+                            <td>{{ budget.budget }}€ <a href="{% url 'compta:edite-budget' pk=budget.pk %}">{% bootstrap_icon "edit" %}</a></td>
+                            <td>{{ budget.depenses }}€{% if budget.warning or budget.danger %} <a data-toggle="tooltip" data-placement="right" title="{% trans 'Appliquer la nouvelle dépense au budget' %}" href="#" onclick="$('#apply_budget{{ budget.id }}').click();">{% bootstrap_icon "ok" %}</a>
+                                <form action="{% url 'compta:apply-budget' %}" method="post">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="budget_id" value="{{ budget.id }}">
+                                    <input type="hidden" name="budget_value" value="{{ budget.depenses }}">
+                                    <input type="submit" class="hidden" id="apply_budget{{ budget.id }}"/>
+                                </form>
+                                {% endif %}
+                                </td>
                             {% if budget.solde >= 0 %}
                                 <td><span class="text-success">{{ budget.solde }}€</span></td>
                             {% else %}

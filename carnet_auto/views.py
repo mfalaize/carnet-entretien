@@ -38,7 +38,7 @@ class AjoutVoiture(CreateView):
     model = Voiture
     form_class = VoitureForm
     template_name = 'carnet_auto/voiture.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('carnet_auto:home')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -59,7 +59,7 @@ class EditeVoiture(UpdateView):
     model = Voiture
     form_class = VoitureForm
     template_name = 'carnet_auto/voiture.html'
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('carnet_auto:home')
 
     def get_queryset(self):
         # On vérifie que la voiture correspond bien à une voiture de l'utilisateur
@@ -77,7 +77,7 @@ class EditeVoiture(UpdateView):
 
 class SupprimeVoiture(DeleteView):
     model = Voiture
-    success_url = reverse_lazy('home')
+    success_url = reverse_lazy('carnet_auto:home')
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -215,7 +215,7 @@ class AjoutProgrammeMaintenance(CreateView):
     context_object_name = 'programme'
 
     def get_success_url(self):
-        return reverse_lazy('programme', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('carnet_auto:programme', kwargs={'pk': self.kwargs['pk']})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -240,7 +240,7 @@ class EditeProgrammeMaintenance(UpdateView):
     context_object_name = 'programme'
 
     def get_success_url(self):
-        return reverse_lazy('programme', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('carnet_auto:programme', kwargs={'pk': self.kwargs['pk']})
 
     def get_queryset(self):
         # On vérifie que la voiture correspond bien à une voiture de l'utilisateur
@@ -261,7 +261,7 @@ class SupprimeProgrammeMaintenance(DeleteView):
     pk_url_kwarg = 'pk_programme'
 
     def get_success_url(self):
-        return reverse_lazy('programme', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('carnet_auto:programme', kwargs={'pk': self.kwargs['pk']})
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -299,7 +299,7 @@ class AjoutRevision(CreateWithInlinesView):
         return {'kilometrage': voiture.get_estimation_kilometrage()}
 
     def get_success_url(self):
-        return reverse_lazy('voiture', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('carnet_auto:voiture', kwargs={'pk': self.kwargs['pk']})
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -331,7 +331,7 @@ class EditeRevision(UpdateWithInlinesView):
     pk_url_kwarg = 'pk_revision'
 
     def get_success_url(self):
-        return reverse_lazy('voiture', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('carnet_auto:voiture', kwargs={'pk': self.kwargs['pk']})
 
     def get_queryset(self):
         # On vérifie que la voiture correspond bien à une voiture de l'utilisateur
@@ -352,7 +352,7 @@ class SupprimeRevision(DeleteView):
     pk_url_kwarg = 'pk_revision'
 
     def get_success_url(self):
-        return reverse_lazy('voiture', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('carnet_auto:voiture', kwargs={'pk': self.kwargs['pk']})
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):
@@ -364,7 +364,7 @@ class SupprimeOperation(DeleteView):
     pk_url_kwarg = 'pk_operation'
 
     def get_success_url(self):
-        return reverse_lazy('voiture', kwargs={'pk': self.kwargs['pk']})
+        return reverse_lazy('carnet_auto:voiture', kwargs={'pk': self.kwargs['pk']})
 
     @method_decorator(login_required)
     def dispatch(self, request, *args, **kwargs):

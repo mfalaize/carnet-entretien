@@ -1,11 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm
 from django.forms import ModelForm, ValidationError, CheckboxSelectMultiple
 from django.utils.translation import ugettext_lazy as _
 from extra_views import InlineFormSet
 
 from carnet_auto.models import Voiture, ProgrammeMaintenance, Revision, Operation
-
 
 
 class VoitureForm(ModelForm):
@@ -24,7 +22,8 @@ class VoitureForm(ModelForm):
         cleaned_data = super().clean()
 
         # La date d'achat doit être inférieure à la date de mise en circulation
-        if cleaned_data['date_achat'] is not None and cleaned_data['date_achat'] < cleaned_data['date_mise_circulation']:
+        if cleaned_data['date_achat'] is not None and cleaned_data['date_achat'] < cleaned_data[
+            'date_mise_circulation']:
             raise ValidationError(_("La date d'achat ne peut pas précéder la date de mise en circulation"))
 
         return cleaned_data

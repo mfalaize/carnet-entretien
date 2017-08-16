@@ -1,6 +1,7 @@
-from compta import views
 from django.conf.urls import url, include
 from rest_framework import routers
+
+from compta import views
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
@@ -12,5 +13,8 @@ urlpatterns = [
     # url(r'^', include(router.urls)),
     url(r'^$', views.Home.as_view(), name='home'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^edit-categorie$', views.edit_categorie, name='edit-categorie')
+    url(r'^edit-categorie$', views.edit_categorie, name='edit-categorie'),
+    url(r'^ajout-budget/$', views.EditeBudget.as_view(), name='ajout-budget'),
+    url(r'^edite-budget/(?P<pk>[0-9]+)/$', views.EditeBudget.as_view(), name='edite-budget'),
+    url(r'^apply-budget/$', views.apply_budget, name='apply-budget')
 ]
