@@ -15,35 +15,19 @@ def generate_mail(compte):
     # Dernier jour du mois, on envoie un mail pour les comptes joints afin de fournir les sommes à y déposer
     if date.today().day == calendar.monthrange(date.today().year, date.today().month)[1]:
         if compte.utilisateurs.count() > 1:
-            budgets = Budget.objects.filter(compte_associe=compte)
-            total_budget = 0
-            for budget in budgets:
-                total_budget += budget.budget
-            if total_budget > 0:
-                utilisateurs = compte.utilisateurs.all()
-                total_salaire = 0
-                total_part = 0
-                total_a_verser = 0
-                for utilisateur in utilisateurs:
-                    total_salaire += utilisateur.revenus_personnels
-                if total_salaire > 0:
-                    for utilisateur in utilisateurs:
-                        utilisateur.part = int(utilisateur.revenus_personnels / total_salaire * 100)
-                        utilisateur.a_verser = int(utilisateur.revenus_personnels / total_salaire * total_budget) - int(compte.solde)
-                        total_part += utilisateur.part
-                        total_a_verser += utilisateur.a_verser
+            compte.calculer_parts()
+            if compte.total_salaire > 0:
+                html_content = get_template('compta/mail/partage_compte_joint.html').render(locals())
 
-                    html_content = get_template('compta/mail/partage_compte_joint.html').render(locals())
-
-                    mails = []
-                    for user in utilisateurs:
-                        if user.email is not None:
-                            mails.append(user.email)
-                    if len(mails) > 0:
-                        send_mail(
-                            '[Homelab] Sommes à verser sur {}'.format(str(compte)),
-                            "",
-                            settings.DEFAULT_FROM_EMAIL, mails, html_message=html_content)
+                mails = []
+                for user in compte.utilisateurs:
+                    if user.email is not None:
+                        mails.append(user.email)
+                if len(mails) > 0:
+                    send_mail(
+                        '[Homelab] Sommes à verser sur {}'.format(str(compte)),
+                        "",
+                        settings.DEFAULT_FROM_EMAIL, mails, html_message=html_content)
 
 
 def check_operations():

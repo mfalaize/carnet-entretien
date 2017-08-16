@@ -16,3 +16,8 @@ def remove_spaces(value):
 @register.filter
 def get_item(dictionary, key):
     return dictionary.get(key)
+
+
+@register.filter
+def times(value, arg):
+    return value * arg

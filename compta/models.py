@@ -67,6 +67,50 @@ class Compte(models.Model):
             return self.libelle
         return self.banque + " " + self.numero_compte
 
+    def calculer_parts(self, date=datetime.date.today()):
+        """Remplis les propriétés total_budget, total_depenses, total_solde, total_salaire, total_part, total_a_verser, utilisateurs, budgets
+        ainsi que les propriétés de chaque utilisateur du compte revenus_personnels, avances, part, a_verser et les propriétés de chaque
+        budget depenses et solde"""
+        self.budgets = Budget.objects.filter(compte_associe=self).order_by('categorie__libelle')
+        self.utilisateurs_list = self.utilisateurs.all()
+
+        self.total_budget = 0
+        self.total_depenses = 0
+        self.total_solde = 0
+        self.total_contributions = 0
+        self.total_part_contributions = 0
+        self.total_avances = 0
+        self.total_salaire = 0
+        self.total_part = 0
+        self.total_a_verser = 0
+
+        for budget in self.budgets:
+            budget.calcule_solde(date)
+            self.total_budget += budget.budget
+            self.total_depenses += budget.depenses
+            self.total_solde += budget.solde
+
+        if self.total_budget > 0:
+            for utilisateur in self.utilisateurs_list:
+                utilisateur.revenus_personnels = utilisateur.get_revenus_personnels(date)
+                utilisateur.contributions = utilisateur.get_contributions(self)
+                utilisateur.avances = utilisateur.get_avances(self, date)
+
+                self.total_salaire += utilisateur.revenus_personnels
+                self.total_contributions += utilisateur.contributions
+                self.total_avances += utilisateur.avances
+
+            if self.total_salaire > 0:
+                for utilisateur in self.utilisateurs_list:
+                    utilisateur.part = utilisateur.revenus_personnels / self.total_salaire
+                    utilisateur.a_verser = utilisateur.part * (self.total_budget - self.solde) - utilisateur.avances
+                    if self.total_contributions > 0:
+                        utilisateur.part_contribution = utilisateur.contributions / self.total_contributions
+                        self.total_part_contributions += utilisateur.part_contribution
+
+                    self.total_part += utilisateur.part
+                    self.total_a_verser += utilisateur.a_verser
+
 
 class Budget(models.Model):
     categorie = models.ForeignKey(Categorie, verbose_name=_('Catégorie'))
@@ -100,6 +144,7 @@ class Operation(models.Model):
     hors_budget = models.BooleanField(default=False, verbose_name=_("Hors Budget"))
     recette = models.BooleanField(default=False, verbose_name=_("Recette"))
     contributeur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Contributeur"), null=True, blank=True)
+    avance = models.BooleanField(default=False, verbose_name=_("Avance"))
 
     def __str__(self):
         return self.libelle
@@ -115,13 +160,36 @@ class OperationEpargne(models.Model):
 
 
 def get_revenus_personnels(utilisateur, date=datetime.date.today()):
-    try:
-        return Operation.objects.filter(
-            date_operation__month=date.month, recette=True,
-            compte__utilisateurs=utilisateur).annotate(
-            revenus_personnels=Sum('montant')).values('revenus_personnels')[0]['revenus_personnels']
-    except IndexError:
+    value = Operation.objects.filter(
+        date_operation__month=date.month, recette=True,
+        compte__utilisateurs=utilisateur).aggregate(
+        revenus_personnels=Sum('montant'))['revenus_personnels']
+    if value is None:
         return 0
+    return value
+
+
+def get_avances(utilisateur, compte, date=datetime.date.today()):
+    value = Operation.objects.filter(
+        date_operation__month=date.month, contributeur=utilisateur, avance=True,
+        compte__utilisateurs=utilisateur, compte=compte).aggregate(
+        avances=Sum('montant'))['avances']
+    if value is None:
+        return 0
+    return value
+
+
+def get_contributions(utilisateur, compte):
+    value = Operation.objects.filter(
+        contributeur=utilisateur,
+        compte__utilisateurs=utilisateur, compte=compte).aggregate(
+        contributions=Sum('montant'))['contributions']
+    if value is None:
+        return 0
+    return value
+
 
 UserModel = get_user_model()
-UserModel.add_to_class('revenus_personnels', property(get_revenus_personnels))
+UserModel.add_to_class('get_revenus_personnels', get_revenus_personnels)
+UserModel.add_to_class('get_avances', get_avances)
+UserModel.add_to_class('get_contributions', get_contributions)

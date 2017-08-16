@@ -94,76 +94,32 @@ class Home(ListView):
         context['categories'] = Categorie.objects.all().order_by('libelle')
         context['categories_epargne'] = CategorieEpargne.objects.all().order_by('libelle')
         context['comptes'] = Compte.objects.filter(utilisateurs=self.request.user).order_by('libelle')
-        context['budgets'] = Budget.objects.filter(compte_associe__utilisateurs=self.request.user).order_by(
-            'categorie__libelle')
-        context['comptes_associes'] = Compte.objects.filter(utilisateurs=self.request.user,
-                                                            budget__isnull=False).distinct().order_by('libelle')
-        context['total_budget'] = {}
-        context['total_depenses'] = {}
-        context['total_solde'] = {}
-        for compte in context['comptes_associes']:
-            context['total_budget'][compte.pk] = 0
-            context['total_depenses'][compte.pk] = 0
-            context['total_solde'][compte.pk] = 0
-
-        for budget in context['budgets']:
-            budget.calcule_solde(context['today'])
-            context['total_budget'][budget.compte_associe_id] += budget.budget
-            context['total_depenses'][budget.compte_associe_id] += budget.depenses
-            context['total_solde'][budget.compte_associe_id] += budget.solde
-            budget.hidden = budget.solde == 0 or budget.solde_en_une_fois and budget.depenses == 0
-            budget.warning = budget.solde_en_une_fois and budget.depenses > 0 and budget.solde > 0
-            budget.danger = budget.solde_en_une_fois and budget.depenses > 0 and budget.solde < 0
-
         context['epargnes'] = Epargne.objects.filter(utilisateurs=self.request.user).order_by('categorie__libelle')
+
+        self.request.user.revenus_personnels = self.request.user.get_revenus_personnels(context['today'])
+
         context['total_epargnes'] = 0
+        context['total_epargne_reel'] = 0
+
         for epargne in context['epargnes']:
             context['total_epargnes'] += epargne.solde
 
-        # Vérification que le total des comptes épargnes est égal au total_epargne
-        context['total_epargne_reel'] = 0
-        context['revenus_personnels_du_mois'] = next(iter(
-            Operation.objects.filter(date_operation__month=context['today'].month, recette=True,
-                                     compte__utilisateurs=self.request.user).aggregate(Sum('montant')).values()))
-        if context['revenus_personnels_du_mois'] is None:
-            context['revenus_personnels_du_mois'] = 0
-        context['revenus_personnels_autres_utilisateurs'] = {}
-        context['a_verser_sur_compte_joint'] = {}
-        context['contributions'] = {}
-        context['contributions_totales'] = {}
-        context['contributions_pourcentages'] = {}
         for compte in context['comptes']:
+            compte.calculer_parts(context['today'])
+
+            for user in compte.utilisateurs_list:
+                if user.pk == self.request.user.pk:
+                    compte.utilisateur = user
+                    break
+
+            # Vérification que le total des comptes épargnes est égal au total_epargne
             if compte.epargne:
                 context['total_epargne_reel'] += compte.solde
 
-            context['revenus_personnels_autres_utilisateurs'][compte.pk] = next(iter(
-                Operation.objects.filter(date_operation__month=context['today'].month, recette=True).exclude(
-                    compte__utilisateurs=self.request.user).aggregate(Sum('montant')).values()))
-            if context['revenus_personnels_autres_utilisateurs'][compte.pk] is None:
-                context['revenus_personnels_autres_utilisateurs'][compte.pk] = 0
-            part = 1 if context['revenus_personnels_autres_utilisateurs'][compte.pk] == 0 else context[
-                                                                                                   'revenus_personnels_du_mois'] / (
-                                                                                                   context[
-                                                                                                       'revenus_personnels_du_mois'] +
-                                                                                                   context[
-                                                                                                       'revenus_personnels_autres_utilisateurs'][
-                                                                                                       compte.pk])
-            try:
-                context['a_verser_sur_compte_joint'][compte.pk] = int(
-                    part * (context['total_budget'][compte.pk] - compte.solde))
-            except KeyError or ZeroDivisionError:
-                context['a_verser_sur_compte_joint'][compte.pk] = 0
-
-            context['contributions'][compte.pk] = 0
-            context['contributions_totales'][compte.pk] = 0
-            context['contributions_pourcentages'][compte.pk] = 0
-            for operation in compte.operation_set.filter(contributeur_id__isnull=False):
-                if operation.contributeur_id == self.request.user.pk:
-                    context['contributions'][compte.pk] += operation.montant
-                context['contributions_totales'][compte.pk] += operation.montant
-            if context['contributions_totales'][compte.pk] > 0:
-                context['contributions_pourcentages'][compte.pk] += int(
-                    int(context['contributions'][compte.pk]) / int(context['contributions_totales'][compte.pk]) * 100)
+            for budget in compte.budgets:
+                budget.hidden = budget.solde == 0 or budget.solde_en_une_fois and budget.depenses == 0
+                budget.warning = budget.solde_en_une_fois and budget.depenses > 0 and budget.solde > 0
+                budget.danger = budget.solde_en_une_fois and budget.depenses > 0 and budget.solde < 0
 
         return context
 
