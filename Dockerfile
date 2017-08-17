@@ -24,7 +24,7 @@ COPY 000-default.conf /etc/apache2/sites-available/
 COPY crontab_root /var/spool/cron/crontabs/root
 RUN chmod 600 /var/spool/cron/crontabs/root && chown root:crontab /var/spool/cron/crontabs/root
 
-RUN mkdir static data/logs data/media
+RUN mkdir -p static data/logs data/media
 VOLUME data/
 
 EXPOSE 80 443
