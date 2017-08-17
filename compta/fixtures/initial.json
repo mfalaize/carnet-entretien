@@ -85,7 +85,7 @@
   },
   {
     "fields": {
-      "libelle": "Internet",
+      "libelle": "Internet"
     },
     "pk": 14,
     "model": "compta.categorie"
