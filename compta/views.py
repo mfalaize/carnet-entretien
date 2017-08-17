@@ -125,6 +125,8 @@ class Home(ListView):
         for epargne in context['epargnes']:
             context['total_epargnes'] += epargne.solde
 
+        context['comptes_budget'] = list()
+
         for compte in context['comptes']:
             compte.calculer_parts(context['today'])
 
@@ -141,6 +143,9 @@ class Home(ListView):
                 budget.hidden = budget.solde == 0 or budget.solde_en_une_fois and budget.depenses == 0
                 budget.warning = budget.solde_en_une_fois and budget.depenses > 0 and budget.solde > 0
                 budget.danger = budget.solde_en_une_fois and budget.depenses > 0 and budget.solde < 0
+
+            if compte.budgets:
+                context['comptes_budget'].append(compte)
 
         return context
 
