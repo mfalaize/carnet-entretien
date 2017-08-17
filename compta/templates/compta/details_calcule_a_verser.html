@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load utils %}
+
+{% block navbar-content %}
+    <div class="navbar-left">
+        <a class="btn btn-default navbar-btn" href="{% url 'compta:home' %}">{% trans "Retour" %}</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-offset-3 col-md-6">
+                <table class="table table-striped">
+                    <caption class="text-center">{% blocktrans with libelle=compte.libelle budget=compte.total_budget solde=compte.solde %}Répartition {{ libelle }} (solde = {{ solde }}€) pour un budget prévu de {{ budget }}€{% endblocktrans %}</caption>
+                    <thead>
+                    <tr>
+                        <th>{% trans "Personne" %}</th>
+                        <th>{% trans "Salaire" %}</th>
+                        <th>{% trans "Part" %}</th>
+                        <th>{% trans "Avances" %}</th>
+                        <th>{% trans "A verser" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for utilisateur in compte.utilisateurs_list %}
+                        <tr>
+                            <td>{{ utilisateur.first_name }}</td>
+                            <td>{{ utilisateur.revenus_personnels }}€</td>
+                            <td>{{ utilisateur.part|times:100|floatformat:2 }}%</td>
+                            <td>{{ utilisateur.avances }}€</td>
+                            <td>{{ utilisateur.a_verser }}€ <span data-toggle="tooltip" data-placement="right" title="{{ utilisateur.formule_calcule_a_verser }}">{% bootstrap_icon 'zoom-in' %}</span></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td><strong>{% trans 'Total' %}</strong></td>
+                            <td>{{ compte.total_salaire }}€</td>
+                            <td>{{ compte.total_part|times:100|floatformat:2 }}%</td>
+                            <td>{{ compte.total_avances }}€</td>
+                            <td>{{ compte.total_a_verser }}€</td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

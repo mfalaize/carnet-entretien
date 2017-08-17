@@ -17,10 +17,10 @@ def generate_mail(compte):
         if compte.utilisateurs.count() > 1:
             compte.calculer_parts()
             if compte.total_salaire > 0:
-                html_content = get_template('compta/mail/partage_compte_joint.html').render(locals())
+                html_content = get_template('compta/details_calcule_a_verser.html').render(locals())
 
                 mails = []
-                for user in compte.utilisateurs:
+                for user in compte.utilisateurs_list:
                     if user.email is not None:
                         mails.append(user.email)
                 if len(mails) > 0:

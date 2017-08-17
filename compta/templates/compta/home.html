@@ -229,7 +229,7 @@
                                 </tr>
                                 <tr>
                                     <td>{% trans "A verser pour le mois suivant sur " %} {{ compte.libelle }}</td>
-                                    <td>{{ compte.utilisateur.a_verser }}€</td>
+                                    <td>{{ compte.utilisateur.a_verser }}€ <a data-toggle="tooltip" data-placement="right" title="{% trans 'Voir les détails du calcul' %}" href="{% url 'compta:details-calcule-a-verser' pk=compte.pk %}">{% bootstrap_icon 'zoom-in' %}</a></td>
                                 </tr>
                             {% endif %}
                         {% endfor %}

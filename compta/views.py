@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.db.models import Sum
 from django.http import Http404
 from django.http import HttpResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import CreateView
@@ -92,6 +92,13 @@ class EditeBudget(UpdateView):
 class SupprimeBudget(DeleteView):
     model = Budget
     success_url = reverse_lazy('compta:home')
+
+
+@login_required
+def details_calcule_a_verser(request, pk):
+    compte = get_object_or_404(Compte, pk=pk, utilisateurs=request.user)
+    compte.calculer_parts()
+    return render(request, 'compta/details_calcule_a_verser.html', locals())
 
 
 @method_decorator(login_required, name='dispatch')

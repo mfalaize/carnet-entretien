@@ -104,6 +104,7 @@ class Compte(models.Model):
                 for utilisateur in self.utilisateurs_list:
                     utilisateur.part = utilisateur.revenus_personnels / self.total_salaire
                     utilisateur.a_verser = utilisateur.part * (self.total_budget - self.solde) - utilisateur.avances
+                    utilisateur.formule_calcule_a_verser = str(utilisateur.part) + ' [part utilisateur] x (' + str(self.total_budget) + ' [budget total] - ' + str(self.solde) + ' [solde du compte]) - ' + str(utilisateur.avances) + " [avances de l'utilisateur]"
                     if self.total_contributions > 0:
                         utilisateur.part_contribution = utilisateur.contributions / self.total_contributions
                         self.total_part_contributions += utilisateur.part_contribution
