@@ -17,10 +17,10 @@ Modifiez le fichier <code>config.ini</code> pour y mettre vos propres paramètre
 
 <code>docker volume create homelab</code>
 
-<code>docker run --name homelab -d -v homelab:/usr/src/app/data -p 443:443 mfalaize/homelab</code>
+<code>docker run --name homelab -d -v homelab:/usr/src/app/data -p 80:80 -p 443:443 mfalaize/homelab</code>
 
 <code>docker exec -it homelab certbot --apache</code> pour initier le certificat letsencrypt. Les renouvellements se feront ensuite automatiquement.
 
-Voilà l'application est disponible sur [http://votredomaine](#) ! Vous pouvez vous connecter avec l'utilisateur par défaut : <code>admin/s3cr3t</code>
+Voilà l'application est disponible sur [https://votredomaine](#) ! Vous pouvez vous connecter avec l'utilisateur par défaut : <code>admin/s3cr3t</code>
 
-Pour changer le mot de passe de l'utilisateur et ajouter des utilisateurs rendez-vous sur l'application admin de Django via l'URL [http://votredomaine/admin/](#).
+Pour changer le mot de passe de l'utilisateur et ajouter des utilisateurs rendez-vous sur l'application admin de Django via l'URL [https://votredomaine/admin/](#).

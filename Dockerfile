@@ -18,8 +18,7 @@ RUN echo "deb http://ftp.debian.org/debian jessie-backports main" >> /etc/apt/so
     && rm -rf /var/lib/apt/lists/*
 
 # Activation du site sur apache
-COPY homelab.conf /etc/apache2/sites-available/
-RUN a2dissite 000-default && a2ensite homelab
+COPY 000-default.conf /etc/apache2/sites-available/
 
 # Activation des crons
 COPY crontab_root /var/spool/cron/crontabs/root
@@ -28,7 +27,7 @@ RUN chmod 600 /var/spool/cron/crontabs/root && chown root:crontab /var/spool/cro
 RUN mkdir static data/logs data/media
 VOLUME data/
 
-EXPOSE 80
+EXPOSE 80 443
 
 RUN chmod +x docker_entrypoint.sh
 ENTRYPOINT ["./docker_entrypoint.sh"]
