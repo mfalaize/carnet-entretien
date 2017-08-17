@@ -194,7 +194,7 @@
                             <td><strong>{% trans 'Total' %}</strong></td>
                             <td>{{ total_epargnes }}€
                             {% if total_epargnes != total_epargne_reel %}
-                                <span class="text-danger" data-toggle="tooltip" data-placement="right" title="{% blocktrans %}Le total calculé {{ total_epargne }}€ ne correspond pas à la somme totale des comptes épargnes {{ total_epargne_reel }}€{% endblocktrans %}">{% bootstrap_icon 'warning_sign' %}</span>
+                                <span class="text-danger" data-toggle="tooltip" data-placement="right" title="{% blocktrans %}Le total calculé {{ total_epargnes }}€ ne correspond pas à la somme totale des comptes épargnes {{ total_epargne_reel }}€{% endblocktrans %}">{% bootstrap_icon 'warning-sign' %}</span>
                             {% else %}
                                 <span class="text-success" data-toggle="tooltip" data-placement="right" title="{% trans 'Le total calculé correspond bien à la somme totale des comptes épargnes' %}">{% bootstrap_icon 'ok' %}</span>
                             {% endif %}</td>
