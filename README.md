@@ -15,7 +15,7 @@ Modifiez le fichier <code>config.ini</code> pour y mettre vos propres paramètre
 
 <code>docker build --rm=true --tag="mfalaize/homelab:latest" .</code>
 
-<code>docker create volume homelab</code>
+<code>docker volume create homelab</code>
 
 <code>docker run --name homelab -d -v homelab:/usr/src/app/data -p 443:443 mfalaize/homelab</code>
 
