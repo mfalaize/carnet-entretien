@@ -4,6 +4,13 @@
 {% load bootstrap3 %}
 {% load utils %}
 
+{% block navbar-content %}
+    <div class="navbar-left">
+        <a href="{% url 'compta:ajout-budget' %}"
+           class="btn btn-primary navbar-btn">{% trans "Ajouter un budget" %}</a>
+    </div>
+{% endblock %}
+
 {% block content %}
     <div class="container">
         <p class="lead text-center">{% trans "Budget" %} {{ today|date:"F Y" }}</p>

@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
+from django.views.generic import CreateView
+from django.views.generic import DeleteView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 from django.views.generic import UpdateView
@@ -61,6 +63,19 @@ def apply_budget(request):
 
 
 @method_decorator(login_required, name='dispatch')
+class AjoutBudget(CreateView):
+    model = Budget
+    form_class = BudgetForm
+    template_name = 'compta/budget.html'
+    success_url = reverse_lazy('compta:home')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['creation'] = True
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
 class EditeBudget(UpdateView):
     model = Budget
     form_class = BudgetForm
@@ -71,6 +86,12 @@ class EditeBudget(UpdateView):
         context = super().get_context_data(**kwargs)
         context['edition'] = True
         return context
+
+
+@method_decorator(login_required, name='dispatch')
+class SupprimeBudget(DeleteView):
+    model = Budget
+    success_url = reverse_lazy('compta:home')
 
 
 @method_decorator(login_required, name='dispatch')
