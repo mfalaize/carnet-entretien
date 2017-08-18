@@ -7,10 +7,10 @@ cd ${HOMELAB_PATH}
 wget -O master.tar.gz "https://github.com/mfalaize/homelab/archive/master.tar.gz" && tar -xzf master.tar.gz --strip-components=1
 
 cd docker/homelab
-docker build -t mfalaize/homelab .
+docker build --no-cache -t mfalaize/homelab .
 
 cd ../haproxy
-docker build -t mfalaize/homelab-haproxy .
+docker build --no-cache -t mfalaize/homelab-haproxy .
 
 docker volume create homelab
 docker volume create haproxy-config
