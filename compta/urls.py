@@ -18,5 +18,6 @@ urlpatterns = [
     url(r'^edite-budget/(?P<pk>[0-9]+)/$', views.EditeBudget.as_view(), name='edite-budget'),
     url(r'^supprime-budget/(?P<pk>[0-9]+)/$', views.SupprimeBudget.as_view(), name='supprime-budget'),
     url(r'^apply-budget/$', views.apply_budget, name='apply-budget'),
-    url(r'^compte/(?P<pk>[0-9]+)/details-calcule-a-verser$', views.details_calcule_a_verser, name='details-calcule-a-verser')
+    url(r'^compte/(?P<pk>[0-9]+)/details-calcule-a-verser$', views.details_calcule_a_verser, name='details-calcule-a-verser'),
+    url(r'^set-revenus$', views.set_revenus, name='set-revenus')
 ]

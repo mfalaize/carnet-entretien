@@ -1,6 +1,7 @@
 import datetime
+
 from django.contrib.auth.decorators import login_required
-from django.db.models import Sum
+from django.contrib.auth.models import User, Group
 from django.http import Http404
 from django.http import HttpResponse
 from django.shortcuts import redirect, render, get_object_or_404
@@ -11,12 +12,11 @@ from django.views.generic import DeleteView
 from django.views.generic import ListView
 from django.views.generic import TemplateView
 from django.views.generic import UpdateView
+from rest_framework import viewsets
 
 from compta.forms import BudgetForm
 from compta.models import Operation, Categorie, Compte, Budget, CategorieEpargne, OperationEpargne, Epargne
 from compta.serializers import UserSerializer, GroupSerializer
-from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -101,6 +101,31 @@ def details_calcule_a_verser(request, pk):
     return render(request, 'compta/details_calcule_a_verser.html', locals())
 
 
+@login_required
+def set_revenus(request):
+    if request.method == 'POST':
+        revenus = float(request.POST['revenus'])
+        operation_id_saisie_manuelle = request.POST['operation_id_saisie_manuelle']
+
+        operation = Operation() if operation_id_saisie_manuelle == '' else Operation.objects.get(pk=int(operation_id_saisie_manuelle))
+        operation.libelle = 'Revenus ' + request.user.get_full_name()
+        operation.date_operation = datetime.date.today()
+        operation.date_valeur = operation.date_operation
+        operation.montant = revenus
+        operation.compte = Compte.objects.get(utilisateurs=request.user)
+        operation.budget_id = None
+        operation.hors_budget = False
+        operation.recette = request.user
+        operation.contributeur_id = None
+        operation.avance = False
+        operation.saisie_manuelle = True
+        operation.save()
+
+        return redirect('compta:home')
+
+    return HttpResponse("NOK", status=400)
+
+
 @method_decorator(login_required, name='dispatch')
 class Home(ListView):
     model = Operation
@@ -110,7 +135,7 @@ class Home(ListView):
 
     def get_queryset(self):
         return Operation.objects.filter(compte__utilisateurs=self.request.user, budget__isnull=True, hors_budget=False,
-                                        recette=False, contributeur_id__isnull=True).order_by('date_operation')
+                                        recette_id__isnull=True, contributeur_id__isnull=True).order_by('date_operation')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -125,6 +150,7 @@ class Home(ListView):
         context['epargnes'] = Epargne.objects.filter(utilisateurs=self.request.user).order_by('categorie__libelle')
 
         self.request.user.revenus_personnels = self.request.user.get_revenus_personnels(context['today'])
+        self.request.user.revenus_personnels_saisis_manuellement = self.request.user.get_revenus_personnels_saisis_manuellement(context['today'])
 
         context['total_epargnes'] = 0
         context['total_epargne_reel'] = 0
@@ -169,11 +195,16 @@ def edit_categorie(request):
 
         try:
             operation = Operation.objects.get(pk=operation_id, compte__utilisateurs=request.user)
+            # On remet les valeurs par défaut pour etre sur de remettre les valeurs si l'opération a changé de catégorie plusieurs fois
+            operation.budget_id = None
+            operation.hors_budget = False
+            operation.recette_id = None
+            operation.contributeur_id = None
+            operation.avance = False
+            operation.saisie_manuelle = False
+
             if operation.compte.epargne:
                 operation.hors_budget = True
-                operation.recette = False
-                operation.contributeur_id = None
-                operation.avance = False
                 operation.save()
 
                 op_epargne = OperationEpargne.objects.get(operation_id=operation_id)
@@ -185,33 +216,18 @@ def edit_categorie(request):
                 epargne.save()
 
             elif categorie_id == '-1':
-                operation.budget_id = None
                 operation.hors_budget = True
-                operation.recette = False
-                operation.contributeur_id = None
-                operation.avance = False
                 operation.save()
             elif categorie_id == '-2':
-                operation.budget_id = None
-                operation.hors_budget = False
-                operation.recette = True
-                operation.contributeur_id = None
-                operation.avance = False
+                operation.recette = request.user
                 operation.save()
             elif categorie_id != '' and int(categorie_id[1:]) < -1000:
                 contributeur_id = -(int(categorie_id[1:]) + 1000)
-                operation.budget_id = None
-                operation.hors_budget = False
-                operation.recette = False
                 operation.contributeur_id = contributeur_id
                 operation.avance = True if categorie_id[0:1] == 'a' else False
                 operation.save()
             else:
                 operation.budget_id = categorie_id if categorie_id != '' else None
-                operation.hors_budget = False
-                operation.recette = False
-                operation.contributeur_id = None
-                operation.avance = False
                 operation.save()
 
         except Operation.DoesNotExist or OperationEpargne.DoesNotExist or Epargne.DoesNotExist:

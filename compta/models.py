@@ -93,6 +93,7 @@ class Compte(models.Model):
         if self.total_budget > 0:
             for utilisateur in self.utilisateurs_list:
                 utilisateur.revenus_personnels = utilisateur.get_revenus_personnels(date)
+                utilisateur.revenus_personnels_saisis_manuellement = utilisateur.get_revenus_personnels_saisis_manuellement(date)
                 utilisateur.contributions = utilisateur.get_contributions(self)
                 utilisateur.avances = utilisateur.get_avances(self, date)
 
@@ -143,9 +144,10 @@ class Operation(models.Model):
     compte = models.ForeignKey(Compte, verbose_name=_("Compte"))
     budget = models.ForeignKey(Budget, verbose_name=_("Budget"), null=True, blank=True)
     hors_budget = models.BooleanField(default=False, verbose_name=_("Hors Budget"))
-    recette = models.BooleanField(default=False, verbose_name=_("Recette"))
+    recette = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Revenus pour cette personne"), related_name="recettes", null=True, blank=True)
     contributeur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Contributeur"), null=True, blank=True)
     avance = models.BooleanField(default=False, verbose_name=_("Avance"))
+    saisie_manuelle = models.BooleanField(default=False, verbose_name=_("Saisie manuellement"))
 
     def __str__(self):
         return self.libelle
@@ -162,12 +164,21 @@ class OperationEpargne(models.Model):
 
 def get_revenus_personnels(utilisateur, date=datetime.date.today()):
     value = Operation.objects.filter(
-        date_operation__month=date.month, recette=True,
+        date_operation__month=date.month, recette=utilisateur,
         compte__utilisateurs=utilisateur).aggregate(
         revenus_personnels=Sum('montant'))['revenus_personnels']
     if value is None:
         return 0
     return value
+
+
+def get_revenus_personnels_saisis_manuellement(utilisateur, date=datetime.date.today()):
+    try:
+        return Operation.objects.get(
+            date_operation__month=date.month, recette=utilisateur,
+            compte__utilisateurs=utilisateur, saisie_manuelle=True)
+    except Operation.DoesNotExist:
+        return None
 
 
 def get_avances(utilisateur, compte, date=datetime.date.today()):
@@ -194,3 +205,4 @@ UserModel = get_user_model()
 UserModel.add_to_class('get_revenus_personnels', get_revenus_personnels)
 UserModel.add_to_class('get_avances', get_avances)
 UserModel.add_to_class('get_contributions', get_contributions)
+UserModel.add_to_class('get_revenus_personnels_saisis_manuellement', get_revenus_personnels_saisis_manuellement)

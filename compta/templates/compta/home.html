@@ -215,7 +215,7 @@
                     <tbody>
                         <tr>
                             <td>{% trans 'Revenus du mois' %}</td>
-                            <td>{{ request.user.revenus_personnels }}€</td>
+                            <td>{{ request.user.revenus_personnels }}€ {% if request.user.revenus_personnels == 0 or request.user.revenus_personnels_saisis_manuellement %}<a href="#" data-toggle="tooltip" data-placement="right" title="{% trans "Déclarer/Modifier ses revenus (en mode manuel)" %}" onclick="event.preventDefault(); $('#show_modal_revenus').click();">{% bootstrap_icon 'edit' %}</a>{% endif %}</td>
                         </tr>
                         {% for compte in comptes %}
                             {% if compte.total_contributions > 0 %}
@@ -229,7 +229,7 @@
                                 </tr>
                                 <tr>
                                     <td>{% trans "A verser pour le mois suivant sur " %} {{ compte.libelle }}</td>
-                                    <td>{{ compte.utilisateur.a_verser }}€ <a data-toggle="tooltip" data-placement="right" title="{% trans 'Voir les détails du calcul' %}" href="{% url 'compta:details-calcule-a-verser' pk=compte.pk %}">{% bootstrap_icon 'zoom-in' %}</a></td>
+                                    <td>{{ compte.utilisateur.a_verser|floatformat:0 }}€ <a data-toggle="tooltip" data-placement="right" title="{% trans 'Voir les détails du calcul' %}" href="{% url 'compta:details-calcule-a-verser' pk=compte.pk %}">{% bootstrap_icon 'zoom-in' %}</a></td>
                                 </tr>
                             {% endif %}
                         {% endfor %}
@@ -238,4 +238,31 @@
             </div>
         </div>
     </div>
+
+    {% if request.user.revenus_personnels == 0 or request.user.revenus_personnels_saisis_manuellement %}
+    <button data-toggle="modal" data-target="#set_revenus" id="show_modal_revenus" class="hidden"></button>
+    <div class="modal fade" role="dialog" id="set_revenus">
+        <div class="modal-dialog">
+            <form class="modal-content" method="post" action="{% url 'compta:set-revenus' %}">
+                {% csrf_token %}
+                <input type="hidden" name="operation_id_saisie_manuelle" value="{{ request.user.revenus_personnels_saisis_manuellement.pk }}">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">{% trans "Déclaration de revenus" %}</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="input-revenus">{% trans 'Revenus' %} : </label>
+                        <input class="form-control" type="number" name="revenus" id="input-revenus" placeholder="{% trans 'Revenus' %}">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{% trans "Annuler" %}</button>
+                    <button type="submit" class="btn btn-primary">{% trans "Valider" %}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
 {% endblock %}

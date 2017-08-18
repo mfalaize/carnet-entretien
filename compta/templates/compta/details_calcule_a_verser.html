@@ -32,7 +32,7 @@
                             <td>{{ utilisateur.revenus_personnels }}€</td>
                             <td>{{ utilisateur.part|times:100|floatformat:2 }}%</td>
                             <td>{{ utilisateur.avances }}€</td>
-                            <td>{{ utilisateur.a_verser }}€ <span data-toggle="tooltip" data-placement="right" title="{{ utilisateur.formule_calcule_a_verser }}">{% bootstrap_icon 'zoom-in' %}</span></td>
+                            <td>{{ utilisateur.a_verser|floatformat:0 }}€ <span data-toggle="tooltip" data-placement="right" title="{{ utilisateur.formule_calcule_a_verser }}">{% bootstrap_icon 'zoom-in' %}</span></td>
                         </tr>
                     {% endfor %}
                     </tbody>
@@ -42,7 +42,7 @@
                             <td>{{ compte.total_salaire }}€</td>
                             <td>{{ compte.total_part|times:100|floatformat:2 }}%</td>
                             <td>{{ compte.total_avances }}€</td>
-                            <td>{{ compte.total_a_verser }}€</td>
+                            <td>{{ compte.total_a_verser|floatformat:0 }}€</td>
                         </tr>
                     </tfoot>
                 </table>
