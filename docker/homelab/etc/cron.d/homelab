@@ -1,0 +1,2 @@
+0 10 * * * root cd /usr/src/app && python manage.py check_entretien >> data/logs/check_entretien.log 2>&1
+5 10 * * * root cd /usr/src/app && python manage.py check_operations >> data/logs/check_operations.log 2>&1

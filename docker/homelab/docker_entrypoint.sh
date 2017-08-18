@@ -1,4 +1,6 @@
-#!/bin/bash
+#!/bin/sh
+set -e
+
 # Systématiquement on met à jour les fichiers statiques et la structure de la base de données
 python manage.py collectstatic --noinput
 python manage.py migrate

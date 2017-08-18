@@ -5,22 +5,24 @@ Site web Django contenant plusieurs applications pour la gestion de la vie quoti
 
 ###Installation via Docker
 
-<code>git clone https://github.com/mfalaize/homelab /opt/homelab</code>
+<code>wget https://raw.githubusercontent.com/mfalaize/homelab/master/docker_install.sh</code>
 
-<code>cd /opt/homelab</code>
+<code>chmod +x docker_install.sh</code>
 
-<code>cp data/conf/config_template.ini data/conf/config.ini</code>
+<code>sudo ./docker_install.sh</code>
 
-Modifiez le fichier <code>config.ini</code> pour y mettre vos propres paramètres.
+###Activation du HTTPS
 
-<code>docker build --rm=true --tag="mfalaize/homelab:latest" .</code>
+<code>wget https://raw.githubusercontent.com/mfalaize/homelab/master/cert_install.sh</code>
 
-<code>docker volume create homelab</code>
+<code>chmod +x cert_install.sh</code>
 
-<code>docker run --name homelab -d -v homelab:/usr/src/app/data -p 80:80 -p 443:443 mfalaize/homelab</code>
-
-<code>docker exec -it homelab certbot --apache</code> pour initier le certificat letsencrypt. Les renouvellements se feront ensuite automatiquement.
+<code>sudo ./cert_install.sh votredomaine votremail</code>
 
 Voilà l'application est disponible sur [https://votredomaine](#) ! Vous pouvez vous connecter avec l'utilisateur par défaut : <code>admin/s3cr3t</code>
 
 Pour changer le mot de passe de l'utilisateur et ajouter des utilisateurs rendez-vous sur l'application admin de Django via l'URL [https://votredomaine/admin/](#).
+
+###Mise à jour via Docker
+
+Reéexcuter la procédure de [Installation via Docker](#installation-via-docker).

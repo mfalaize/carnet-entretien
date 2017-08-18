@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cd /usr/local/etc/haproxy
+cat fullchain.pem privkey.pem > cert.pem
