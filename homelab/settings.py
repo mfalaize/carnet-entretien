@@ -22,9 +22,18 @@ CONF_FILE = os.path.join(BASE_DIR, 'data', 'conf', 'config.ini')
 # Configuration via le fichier config.ini présent dans le dossier conf
 config = configparser.ConfigParser()
 config.read(CONF_FILE)
-application = config['Application']
-database = config['Database']
-mail = config['Mail']
+try:
+    application = config['Application']
+except KeyError:
+    application = {}
+try:
+    database = config['Database']
+except KeyError:
+    database = {}
+try:
+    mail = config['Mail']
+except KeyError:
+    mail = {}
 
 if application.get('SecretKey', '') == 'doNotTouch' or application.get('SecretKey', '') == '':
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$^&*(-_=+)'
