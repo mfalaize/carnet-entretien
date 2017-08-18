@@ -1,6 +1,6 @@
 FROM haproxy:1.7
 
-COPY haproxy.cfg /usr/local/etc/haproxy/
+COPY . /
 
 # Installation des packages
 RUN apt-get update && apt-get install -y --no-install-recommends cron \

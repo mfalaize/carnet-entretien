@@ -2,6 +2,7 @@
 HOMELAB_PATH=/opt/homelab
 
 rm -Rf ${HOMELAB_PATH}
+mkdir -p ${HOMELAB_PATH}
 cd ${HOMELAB_PATH}
 wget -O master.tar.gz "https://github.com/mfalaize/homelab/archive/master.tar.gz" && tar -xzf master.tar.gz --strip-components=1
 
