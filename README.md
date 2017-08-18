@@ -3,7 +3,7 @@ HomeLab
 
 Site web Django contenant plusieurs applications pour la gestion de la vie quotidienne
 
-###Installation via Docker
+### Installation via Docker
 
 <code>wget https://raw.githubusercontent.com/mfalaize/homelab/master/docker_install.sh</code>
 
@@ -11,7 +11,7 @@ Site web Django contenant plusieurs applications pour la gestion de la vie quoti
 
 <code>sudo ./docker_install.sh</code>
 
-###Activation du HTTPS
+### Activation du HTTPS
 
 <code>wget https://raw.githubusercontent.com/mfalaize/homelab/master/cert_install.sh</code>
 
@@ -23,6 +23,6 @@ Voilà l'application est disponible sur [https://votredomaine](#) ! Vous pouvez 
 
 Pour changer le mot de passe de l'utilisateur et ajouter des utilisateurs rendez-vous sur l'application admin de Django via l'URL [https://votredomaine/admin/](#).
 
-###Mise à jour via Docker
+### Mise à jour via Docker
 
 Reéexcuter la procédure de [Installation via Docker](#installation-via-docker).
