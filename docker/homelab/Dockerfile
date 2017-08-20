@@ -14,6 +14,8 @@ RUN wget -O master.tar.gz "https://github.com/mfalaize/homelab/archive/master.ta
 
 COPY . /
 
+RUN chmod 600 /etc/cron.d/homelab
+
 VOLUME data/
 
 EXPOSE 80
