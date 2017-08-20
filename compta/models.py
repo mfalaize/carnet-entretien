@@ -90,6 +90,8 @@ class Compte(models.Model):
             self.total_depenses += budget.depenses
             self.total_solde += budget.solde
 
+        self.solde_restant = self.solde - self.total_solde
+
         if self.total_budget > 0:
             for utilisateur in self.utilisateurs_list:
                 utilisateur.revenus_personnels = utilisateur.get_revenus_personnels(date)

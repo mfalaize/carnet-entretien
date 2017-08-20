@@ -146,10 +146,6 @@
                                 <td>{{ operation.montant }}€</td>
                                 </tr>
                             {% endfor %}
-                    {% empty %}
-                        <tr>
-                            <td class="text-center" colspan="3">{% trans "Aucun budget n'a été créé !" %}</td>
-                        </tr>
                     {% endfor %}
                     </tbody>
                     <tfoot>
@@ -158,6 +154,11 @@
                             <td>{{ compte.total_budget }}€</td>
                             <td>{{ compte.total_depenses }}€</td>
                             <td><span class="{% if compte.total_solde >= 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.total_solde }}€</span></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"></td>
+                            <td><strong>{% trans 'Solde restant' %}</strong></td>
+                            <td><span class="{% if compte.solde_restant >= 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.solde_restant }}€</span></td>
                         </tr>
                     </tfoot>
                 </table>
