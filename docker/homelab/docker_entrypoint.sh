@@ -8,4 +8,7 @@ python manage.py init_database
 
 chown -R www-data:www-data data/
 
+# Activation du service de cron si non actif
+service cron status || service cron start
+
 apachectl -DFOREGROUND
