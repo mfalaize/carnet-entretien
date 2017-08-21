@@ -221,7 +221,7 @@ def edit_categorie(request):
             elif categorie_id == '-2':
                 operation.recette = request.user
                 operation.save()
-            elif categorie_id != '' and int(categorie_id[1:]) < -1000:
+            elif categorie_id[1:] != '' and int(categorie_id[1:]) < -1000:
                 contributeur_id = -(int(categorie_id[1:]) + 1000)
                 operation.contributeur_id = contributeur_id
                 operation.avance = True if categorie_id[0:1] == 'a' else False
