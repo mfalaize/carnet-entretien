@@ -83,14 +83,18 @@ class Compte(models.Model):
         self.total_salaire = 0
         self.total_part = 0
         self.total_a_verser = 0
+        self.solde_restant = self.solde
 
         for budget in self.budgets:
             budget.calcule_solde(date)
             self.total_budget += budget.budget
             self.total_depenses += budget.depenses
             self.total_solde += budget.solde
-
-        self.solde_restant = self.solde - self.total_solde
+            if budget.solde >= 0:
+                self.solde_restant -= budget.solde
+            else:
+                # On enlève les soldes négatifs car c'est de l'argent qui n'est plus disponible car déjà dépensé
+                self.solde_restant += budget.solde
 
         if self.total_budget > 0:
             for utilisateur in self.utilisateurs_list:
