@@ -18,7 +18,7 @@
                 <div class="navbar-header">
                     <a class="navbar-brand" href="{% url 'index' %}">{% trans "Homelab" %}</a>
                 </div>
-                <div class="navbar-collapse collapse">
+                <div>
                     {% block navbar-content %}{% endblock %}
                     <div class="navbar-right">
                     <span class="navbar-text">{% blocktrans with name=user.get_full_name %}Bonjour {{ name }}
