@@ -14,7 +14,7 @@ from django.views.generic import TemplateView
 from django.views.generic import UpdateView
 from rest_framework import viewsets
 
-from compta.forms import BudgetForm
+from compta.forms import BudgetForm, OperationCategoriesForm
 from compta.models import Operation, Categorie, Compte, Budget, CategorieEpargne, OperationEpargne, Epargne
 from compta.serializers import UserSerializer, GroupSerializer
 
@@ -177,64 +177,55 @@ class Home(ListView):
                 budget.warning = budget.solde_en_une_fois and budget.depenses > 0 and budget.solde > 0
                 budget.danger = budget.solde_en_une_fois and budget.depenses > 0 and budget.solde < 0
 
+                for operation in budget.operations:
+                    operation.create_hidden_empty_form(redirect=True)
+
             if compte.budgets:
                 context['comptes_budget'].append(compte)
 
+        for operation in context['operations_a_categoriser']:
+            operation.create_form(categories_epargne=context['categories_epargne'])
+
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
+class Operations(ListView):
+    model = Operation
+    template_name = 'compta/operations.html'
+    paginate_by = 10
+    context_object_name = 'operations'
+
+    def get_queryset(self):
+        return Operation.objects.filter(compte__utilisateurs=self.request.user, compte=self.kwargs['pk']).order_by('-date_operation')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['compte'] = get_object_or_404(Compte, pk=self.kwargs['pk'], utilisateurs=self.request.user)
+        context['categories_epargne'] = CategorieEpargne.objects.all().order_by('libelle')
+
+        for operation in context['operations']:
+            operation.create_form(categories_epargne=context['categories_epargne'])
         return context
 
 
 @login_required
 def edit_categorie(request):
     if request.method == 'POST':
-        operation_id = request.POST['operation_id']
-        categorie_id = request.POST['categorie']
-        try:
-            want_redirect = request.POST['redirect'] == 'true'
-        except KeyError:
-            want_redirect = False
+        form = OperationCategoriesForm(request.POST, render_initial=False)
+        if form.is_valid():
+            operation_id = form.cleaned_data['operation_id']
+            categorie_id = form.cleaned_data['categorie']
+            want_redirect = form.cleaned_data['redirect']
 
-        try:
-            operation = Operation.objects.get(pk=operation_id, compte__utilisateurs=request.user)
-            # On remet les valeurs par défaut pour etre sur de remettre les valeurs si l'opération a changé de catégorie plusieurs fois
-            operation.budget_id = None
-            operation.hors_budget = False
-            operation.recette_id = None
-            operation.contributeur_id = None
-            operation.avance = False
-            operation.saisie_manuelle = False
+            try:
+                operation = Operation.objects.get(pk=operation_id, compte__utilisateurs=request.user)
+                operation.save_categorie(categorie_id, request.user)
+            except Operation.DoesNotExist or OperationEpargne.DoesNotExist or Epargne.DoesNotExist:
+                raise Http404()
 
-            if operation.compte.epargne:
-                operation.hors_budget = True
-                operation.save()
-
-                op_epargne = OperationEpargne.objects.get(operation_id=operation_id)
-                op_epargne.epargne_id = categorie_id
-                op_epargne.save()
-
-                epargne = Epargne.objects.get(pk=categorie_id, utilisateurs=request.user)
-                epargne.solde += op_epargne.montant
-                epargne.save()
-
-            elif categorie_id == '-1':
-                operation.hors_budget = True
-                operation.save()
-            elif categorie_id == '-2':
-                operation.recette = request.user
-                operation.save()
-            elif categorie_id[1:] != '' and int(categorie_id[1:]) < -1000:
-                contributeur_id = -(int(categorie_id[1:]) + 1000)
-                operation.contributeur_id = contributeur_id
-                operation.avance = True if categorie_id[0:1] == 'a' else False
-                operation.save()
-            else:
-                operation.budget_id = categorie_id if categorie_id != '' else None
-                operation.save()
-
-        except Operation.DoesNotExist or OperationEpargne.DoesNotExist or Epargne.DoesNotExist:
-            raise Http404()
-
-        if want_redirect:
-            return redirect('compta:home')
-        return HttpResponse("OK")
+            if want_redirect:
+                return redirect('compta:home')
+            return HttpResponse("OK")
 
     return HttpResponse("NOK", status=400)

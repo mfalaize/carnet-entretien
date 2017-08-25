@@ -7,7 +7,17 @@
 {% block navbar-content %}
     <div class="navbar-left">
         <a href="{% url 'compta:ajout-budget' %}"
-           class="btn btn-primary navbar-btn">{% trans "Ajouter un budget" %}</a>
+                class="btn btn-primary navbar-btn">{% trans "Ajouter un budget" %}</a>
+        <ul class="nav navbar-nav">
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{% trans 'Voir le détail des comptes' %} <span class="caret"></span></a>
+                  <ul class="dropdown-menu">
+                      {% for compte in comptes %}
+                          <li><a href="{% url 'compta:operations' pk=compte.pk %}">{{ compte.libelle }}</a></li>
+                      {% endfor %}
+                  </ul>
+            </li>
+        </ul>
     </div>
 {% endblock %}
 
@@ -36,31 +46,11 @@
                             <td>{{ operation.date_operation }}</td>
                             <td><span class="{% if operation.montant >= 0 %}text-success{% else %}text-danger{% endif %}">{{ operation.montant }}€</span></td>
                             <td>
-                                <form id="form_edit_categorie{{ operation.pk }}">
+                                <form>
                                     {% csrf_token %}
-                                    <input type="hidden" name="operation_id" value="{{ operation.pk }}">
-                                    <select name="categorie" class="form-control" onchange="$.post('{% url 'compta:edit-categorie' %}', $('#form_edit_categorie{{ operation.id }}').serialize(), function(data) {});">
-                                        <option></option>
-                                        {% if operation.compte.epargne %}
-                                            {% for categorie in categories_epargne %}
-                                                <option value="{{ categorie.id }}">{{ categorie.libelle }}</option>
-                                            {% endfor %}
-                                        {% else %}
-                                            <option value="-1">{% trans 'Hors Budget' %}</option>
-                                            <option value="-2">{% trans 'Recette' %}</option>
-                                            {% if operation.compte.utilisateurs.count > 1 %}
-                                                {% for utilisateur in operation.compte.utilisateurs.all %}
-                                                    <option value="c{{ -1000|subtract:utilisateur.pk|remove_spaces }}">{% trans 'Contribution' %} {{ utilisateur.first_name }}</option>
-                                                {% endfor %}
-                                                {% for utilisateur in operation.compte.utilisateurs.all %}
-                                                    <option value="a{{ -1000|subtract:utilisateur.pk|remove_spaces }}">{% trans 'Contribution (avances)' %} {{ utilisateur.first_name }}</option>
-                                                {% endfor %}
-                                            {% endif %}
-                                            {% for budget in operation.compte.budget_set.all %}
-                                                <option value="{{ budget.id }}">{{ budget.categorie.libelle }}</option>
-                                            {% endfor %}
-                                        {% endif %}
-                                    </select>
+                                    {% bootstrap_field operation.categorie_form.operation_id show_label=False layout='inline' %}
+                                    {% bootstrap_field operation.categorie_form.redirect show_label=False layout='inline' %}
+                                    {% bootstrap_field operation.categorie_form.categorie show_label=False layout='inline' %}
                                 </form>
                             </td>
                         </tr>
@@ -137,9 +127,9 @@
                                 <td style="padding-left: 50px;" colspan="2">{{ operation.libelle }} <a href="#" data-toggle="tooltip" data-placement="right" title="{% trans 'Réinitialiser la catégorisation' %}" onclick="$('#form-edit-categorie-budget-{{ operation.pk }}').submit();">{% bootstrap_icon 'repeat' %}</a>
                                 <form id="form-edit-categorie-budget-{{ operation.pk }}" action="{% url 'compta:edit-categorie' %}" method="post">
                                     {% csrf_token %}
-                                    <input type="hidden" name="operation_id" value="{{ operation.pk }}">
-                                    <input type="hidden" name="categorie" value="">
-                                    <input type="hidden" name="redirect" value="true">
+                                    {% bootstrap_field operation.categorie_form.operation_id show_label=False layout='inline' %}
+                                    {% bootstrap_field operation.categorie_form.redirect show_label=False layout='inline' %}
+                                    {% bootstrap_field operation.categorie_form.categorie show_label=False layout='inline' %}
                                     <input type="submit" class="hidden" id="apply_budget{{ budget.id }}"/>
                                 </form></td>
                                 <td>{{ operation.date_operation }}</td>
@@ -275,4 +265,14 @@
         </div>
     </div>
     {% endif %}
+{% endblock %}
+
+{% block extra_script %}
+    <script type="text/javascript">
+        $(function () {
+            $(document).on('change', "select[name='categorie']", function() {
+                $.post('{% url 'compta:edit-categorie' %}', $(this.closest("form")).serialize(), function(data) {});
+            });
+        });
+    </script>
 {% endblock %}

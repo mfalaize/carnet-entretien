@@ -16,9 +16,15 @@
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
                 <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-toggle" aria-expanded="false">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                  </button>
                     <a class="navbar-brand" href="{% url 'index' %}">{% trans "Homelab" %}</a>
                 </div>
-                <div>
+                <div class="collapse navbar-collapse" id="navbar-toggle">
                     {% block navbar-content %}{% endblock %}
                     <div class="navbar-right">
                     <span class="navbar-text">{% blocktrans with name=user.get_full_name %}Bonjour {{ name }}

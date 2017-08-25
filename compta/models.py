@@ -158,6 +158,76 @@ class Operation(models.Model):
     def __str__(self):
         return self.libelle
 
+    def create_form(self, categories_epargne, redirect=False):
+        post = {'categories_epargne': categories_epargne, 'operation': self, 'redirect': redirect}
+        from compta.forms import OperationCategoriesForm
+        self.categorie_form = OperationCategoriesForm(post)
+
+    def create_hidden_empty_form(self, redirect=False):
+        post = {'categories_epargne': None, 'operation_id': self.pk, 'redirect': redirect}
+        from compta.forms import OperationCategoriesForm
+        self.categorie_form = OperationCategoriesForm(post)
+
+    def raz_categorie(self):
+        self.budget_id = None
+        self.hors_budget = False
+        self.recette_id = None
+        self.contributeur_id = None
+        self.avance = False
+        self.saisie_manuelle = False
+
+    def load_categorie(self):
+        self.categorie_id = None
+
+        if self.compte.epargne and self.hors_budget:
+            # FIXME : charge plusieurs opérations épargne pour les sommes venant s'ajouter à l'épargne
+            op_epargne = OperationEpargne.objects.get(operation_id=self.pk)
+            self.categorie_id = op_epargne.epargne_id
+
+        if self.hors_budget:
+            self.categorie_id = "-1"
+
+        elif self.recette is not None:
+            self.categorie_id = "-2"
+
+        elif self.contributeur_id is not None:
+            self.categorie_id = "a" if self.avance else "c"
+            self.categorie_id += str(-self.contributeur_id - 1000).replace(" ", "")
+
+        else:
+            self.categorie_id = self.budget_id
+
+    def save_categorie(self, categorie_id, user):
+        # On remet les valeurs par défaut pour etre sur de remettre les valeurs si l'opération a changé de catégorie plusieurs fois
+        self.raz_categorie()
+
+        if self.compte.epargne:
+            self.hors_budget = True
+            self.save()
+
+            op_epargne = OperationEpargne.objects.get(operation_id=self.pk)
+            op_epargne.epargne_id = categorie_id
+            op_epargne.save()
+
+            epargne = Epargne.objects.get(pk=categorie_id, utilisateurs=user)
+            epargne.solde += op_epargne.montant
+            epargne.save()
+
+        elif categorie_id == '-1':
+            self.hors_budget = True
+            self.save()
+        elif categorie_id == '-2':
+            self.recette = user
+            self.save()
+        elif categorie_id[1:] != '' and int(categorie_id[1:]) < -1000:
+            contributeur_id = -(int(categorie_id[1:]) + 1000)
+            self.contributeur_id = contributeur_id
+            self.avance = True if categorie_id[0:1] == 'a' else False
+            self.save()
+        else:
+            self.budget_id = categorie_id if categorie_id != '' else None
+            self.save()
+
 
 class OperationEpargne(models.Model):
     operation = models.ForeignKey(Operation, verbose_name=_("Opération réelle initiale"))
