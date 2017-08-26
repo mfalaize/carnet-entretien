@@ -8,8 +8,9 @@
     <div class="navbar-left">
         <a class="btn btn-default navbar-btn" href="{% url 'compta:home' %}">{% trans "Retour" %}</a>
         {% if edition %}
-            <button type="button" data-toggle="modal" data-target="#confirmeSuppression"
-                                    class="btn btn-danger btn-sm">{% trans "Supprimer le budget" %}</button>
+            {# FIXME: La suppression supprime en cascade les opérations assignées au budget #}
+{#            <button type="button" data-toggle="modal" data-target="#confirmeSuppression"#}
+{#                                    class="btn btn-danger btn-sm">{% trans "Supprimer le budget" %}</button>#}
         {% endif %}
     </div>
 {% endblock %}
