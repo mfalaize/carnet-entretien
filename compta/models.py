@@ -96,6 +96,11 @@ class Compte(models.Model):
                 # On enlève les soldes négatifs car c'est de l'argent qui n'est plus disponible car déjà dépensé
                 self.solde_restant += budget.solde
 
+        # On enlève au solde_restant la sommes des opérations qui constituent des avances sur des opérations en attente (chèque ou grosse somme versée)
+        avances = Operation.objects.filter(compte=self, avance_debit=True).aggregate(avances=Sum('montant'))['avances']
+        if avances is not None:
+            self.solde_restant -= avances
+
         if self.total_budget > 0:
             for utilisateur in self.utilisateurs_list:
                 utilisateur.revenus_personnels = utilisateur.get_revenus_personnels(date)
@@ -152,8 +157,9 @@ class Operation(models.Model):
     hors_budget = models.BooleanField(default=False, verbose_name=_("Hors Budget"))
     recette = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Revenus pour cette personne"), related_name="recettes", null=True, blank=True)
     contributeur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Contributeur"), null=True, blank=True)
-    avance = models.BooleanField(default=False, verbose_name=_("Avance"))
+    avance = models.BooleanField(default=False, verbose_name=_("Avance sur budget"))
     saisie_manuelle = models.BooleanField(default=False, verbose_name=_("Saisie manuellement"))
+    avance_debit = models.BooleanField(default=False, verbose_name=_("Avance pour débit(s) futur(s)"))
 
     def __str__(self):
         return self.libelle
@@ -175,6 +181,7 @@ class Operation(models.Model):
         self.contributeur_id = None
         self.avance = False
         self.saisie_manuelle = False
+        self.avance_debit = False
 
     def load_categorie(self):
         self.categorie_id = None
@@ -189,6 +196,9 @@ class Operation(models.Model):
 
         elif self.recette is not None:
             self.categorie_id = "-2"
+
+        elif self.avance_debit:
+            self.categorie_id = "-3"
 
         elif self.contributeur_id is not None:
             self.categorie_id = "a" if self.avance else "c"
@@ -218,6 +228,9 @@ class Operation(models.Model):
             self.save()
         elif categorie_id == '-2':
             self.recette = user
+            self.save()
+        elif categorie_id == '-3':
+            self.avance_debit = True
             self.save()
         elif categorie_id[1:] != '' and int(categorie_id[1:]) < -1000:
             contributeur_id = -(int(categorie_id[1:]) + 1000)

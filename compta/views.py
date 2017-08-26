@@ -108,16 +108,13 @@ def set_revenus(request):
         operation_id_saisie_manuelle = request.POST['operation_id_saisie_manuelle']
 
         operation = Operation() if operation_id_saisie_manuelle == '' else Operation.objects.get(pk=int(operation_id_saisie_manuelle))
+        operation.raz_categorie()
         operation.libelle = 'Revenus ' + request.user.get_full_name()
         operation.date_operation = datetime.date.today()
         operation.date_valeur = operation.date_operation
         operation.montant = revenus
         operation.compte = Compte.objects.get(utilisateurs=request.user)
-        operation.budget_id = None
-        operation.hors_budget = False
         operation.recette = request.user
-        operation.contributeur_id = None
-        operation.avance = False
         operation.saisie_manuelle = True
         operation.save()
 
@@ -135,7 +132,7 @@ class Home(ListView):
 
     def get_queryset(self):
         return Operation.objects.filter(compte__utilisateurs=self.request.user, budget__isnull=True, hors_budget=False,
-                                        recette_id__isnull=True, contributeur_id__isnull=True).order_by('date_operation')
+                                        recette_id__isnull=True, contributeur_id__isnull=True, avance_debit=False).order_by('date_operation')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

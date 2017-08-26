@@ -61,6 +61,7 @@ class OperationCategoriesForm(forms.Form):
             else:
                 self.fields['categorie'].choices += (("-1", _("Hors Budget")),)
                 self.fields['categorie'].choices += (("-2", _("Revenue")),)
+                self.fields['categorie'].choices += (("-3", _("Avance pour débit(s) futur(s)")),)
                 if operation.compte.utilisateurs.count() > 1:
                     for utilisateur in operation.compte.utilisateurs.all():
                         self.fields['categorie'].choices += (("c" + str(-1000 - utilisateur.pk).replace(' ', ''),
