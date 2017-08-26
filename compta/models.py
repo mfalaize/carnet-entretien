@@ -180,11 +180,11 @@ class Operation(models.Model):
         self.categorie_id = None
 
         if self.compte.epargne and self.hors_budget:
-            # FIXME : charge plusieurs opérations épargne pour les sommes venant s'ajouter à l'épargne
-            op_epargne = OperationEpargne.objects.get(operation_id=self.pk)
-            self.categorie_id = op_epargne.epargne_id
+            if self.montant < 0:
+                op_epargne = OperationEpargne.objects.get(operation_id=self.pk)
+                self.categorie_id = op_epargne.epargne_id
 
-        if self.hors_budget:
+        elif self.hors_budget:
             self.categorie_id = "-1"
 
         elif self.recette is not None:
