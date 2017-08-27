@@ -94,9 +94,9 @@ class Compte(models.Model):
                 self.solde_restant -= budget.solde
 
         # On enlève au solde_restant la sommes des opérations qui constituent des avances sur des opérations en attente (chèque ou grosse somme versée)
-        avances = Operation.objects.filter(compte=self, avance_debit=True).aggregate(avances=Sum('montant'))['avances']
-        if avances is not None:
-            self.solde_restant -= avances
+        self.avances_sur_debits_futurs = Operation.objects.filter(compte=self, avance_debit=True).aggregate(avances=Sum('montant'))['avances']
+        if self.avances_sur_debits_futurs is not None:
+            self.solde_restant -= self.avances_sur_debits_futurs
 
         if self.total_budget > 0:
             for utilisateur in self.utilisateurs_list:

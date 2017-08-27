@@ -145,8 +145,14 @@
                             <td>{{ compte.total_depenses }}€</td>
                             <td><span class="{% if compte.total_solde >= 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.total_solde }}€</span></td>
                         </tr>
+                        {% if compte.avances_sur_debits_futurs != None %}
                         <tr>
-                            <td colspan="3" class="text-right"><strong>{% trans 'Solde restant (moins avances sur débits futurs)' %}</strong></td>
+                            <td colspan="3" class="text-right"><strong>{% trans 'Avances sur débits futurs' %}</strong></td>
+                            <td><span class="{% if compte.avances_sur_debits_futurs >= 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.avances_sur_debits_futurs }}€</span></td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                            <td colspan="3" class="text-right"><strong>{% trans 'Solde restant' %}</strong></td>
                             <td><span class="{% if compte.solde_restant >= 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.solde_restant }}€</span></td>
                         </tr>
                         {% if not compte.epargne and compte.utilisateurs.count == 1 %}
