@@ -180,6 +180,7 @@
                     <thead>
                     <tr>
                         <th>{% trans "Libellé" %}</th>
+                        <th>{% trans "Pourcentage alloué" %}</th>
                         <th>{% trans "Solde" %}</th>
                     </tr>
                     </thead>
@@ -187,6 +188,7 @@
                     {% for epargne in epargnes %}
                         <tr>
                             <td>{{ epargne.categorie.libelle }} <a data-toggle="tooltip" data-placement="right" title="{% trans 'Voir les opérations' %}" href="{% url 'compta:voir-operations-epargnes' categorie_id=epargne.pk %}">{% bootstrap_icon 'zoom-in' %}</a></td>
+                            <td>{{ epargne.pourcentage_alloue }}%</td>
                             <td>{{ epargne.solde }}€</td>
                         </tr>
                     {% empty %}
@@ -198,6 +200,12 @@
                     <tfoot>
                         <tr>
                             <td><strong>{% trans 'Total' %}</strong></td>
+                            <td>{{ total_pourcentage_epargne }}%
+                            {% if total_pourcentage_epargne != 100 %}
+                                <span class="text-danger" data-toggle="tooltip" data-placement="right" title="{% trans 'Le total doit être égal à 100%' %}">{% bootstrap_icon 'warning-sign' %}</span>
+                            {% else %}
+                                <span class="text-success" data-toggle="tooltip" data-placement="right" title="{% trans 'Le total est bien égal à 100%' %}">{% bootstrap_icon 'ok' %}</span>
+                            {% endif %}</td>
                             <td>{{ total_epargnes }}€
                             {% if total_epargnes != total_epargne_reel %}
                                 <span class="text-danger" data-toggle="tooltip" data-placement="right" title="{% blocktrans %}Le total calculé {{ total_epargnes }}€ ne correspond pas à la somme totale des comptes épargnes {{ total_epargne_reel }}€{% endblocktrans %}">{% bootstrap_icon 'warning-sign' %}</span>

@@ -151,9 +151,11 @@ class Home(ListView):
 
         context['total_epargnes'] = 0
         context['total_epargne_reel'] = 0
+        context['total_pourcentage_epargne'] = 0
 
         for epargne in context['epargnes']:
             context['total_epargnes'] += epargne.solde
+            context['total_pourcentage_epargne'] += epargne.pourcentage_alloue
 
         context['comptes_budget'] = list()
 
