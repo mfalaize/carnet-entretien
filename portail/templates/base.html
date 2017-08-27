@@ -22,7 +22,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                   </button>
-                    <a class="navbar-brand" href="{% url 'index' %}">{% trans "Homelab" %}</a>
+                    <a class="navbar-brand" href="{% url 'index' %}"><span class="navbar-title">{% trans "Homelab" %}<br><sup><small>v{{ APP_VERSION }}</small></sup></span></a>
                 </div>
                 <div class="collapse navbar-collapse" id="navbar-toggle">
                     {% block navbar-content %}{% endblock %}

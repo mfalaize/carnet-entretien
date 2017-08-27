@@ -14,7 +14,10 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import configparser
 import os
 
+from dealer.git import git
 from django.utils.crypto import get_random_string
+
+APP_VERSION = git.tag
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CONF_FILE = os.path.join(BASE_DIR, 'data', 'conf', 'config.ini')
@@ -108,6 +111,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'homelab.context_processors.app_version',
             ],
             'loaders': [
                 'django.template.loaders.filesystem.Loader',
