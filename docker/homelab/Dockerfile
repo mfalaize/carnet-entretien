@@ -3,8 +3,6 @@ MAINTAINER Maxime Falaize <maxime.falaize@gmail.com>
 
 WORKDIR /usr/src/app
 
-RUN
-
 RUN apt-get update && apt-get install -y --no-install-recommends git-core \
     && git clone "https://github.com/mfalaize/homelab.git" \
     && pip install --no-cache-dir -r requirements.txt \
