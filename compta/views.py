@@ -187,6 +187,25 @@ class Home(ListView):
 
 
 @method_decorator(login_required, name='dispatch')
+class OperationsEpargne(ListView):
+    model = OperationEpargne
+    template_name = 'compta/operations_epargne.html'
+    paginate_by = 10
+    context_object_name = 'operations'
+
+    def get_queryset(self):
+        return OperationEpargne.objects.filter(epargne__utilisateurs=self.request.user, epargne_id=self.kwargs['categorie_id'])\
+            .order_by('-operation__date_operation')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['epargne'] = get_object_or_404(Epargne, pk=self.kwargs['categorie_id'], utilisateurs=self.request.user)
+        for operation in context['operations']:
+            operation.part = operation.montant / operation.operation.montant
+        return context
+
+
+@method_decorator(login_required, name='dispatch')
 class Operations(ListView):
     model = Operation
     template_name = 'compta/operations.html'

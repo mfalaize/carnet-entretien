@@ -186,7 +186,7 @@
                     <tbody>
                     {% for epargne in epargnes %}
                         <tr>
-                            <td>{{ epargne.categorie.libelle }}</td>
+                            <td>{{ epargne.categorie.libelle }} <a data-toggle="tooltip" data-placement="right" title="{% trans 'Voir les opérations' %}" href="{% url 'compta:voir-operations-epargnes' categorie_id=epargne.pk %}">{% bootstrap_icon 'zoom-in' %}</a></td>
                             <td>{{ epargne.solde }}€</td>
                         </tr>
                     {% empty %}

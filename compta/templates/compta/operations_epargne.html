@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load utils %}
+
+{% block navbar-content %}
+    <div class="navbar-left">
+        <a class="btn btn-default navbar-btn" href="{% url 'compta:home' %}">{% trans "Retour" %}</a>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <p class="lead text-center">{{ epargne.categorie.libelle }} : <span class="{% if epargne.solde >= 0 %}text-success{% else %}text-danger{% endif %}">{{ epargne.solde }}€</span></p>
+
+        <div class="row">
+            <div class="col-md-offset-1 col-md-10">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>{% trans "Compte" %}</th>
+                        <th>{% trans "Libellé" %}</th>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "Montant" %}</th>
+                        <th>{% trans "Montant de l'opération initiale" %}</th>
+                        <th>{% trans "Pourcentage de l'opération initiale" %}</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for operation in operations %}
+                        <tr>
+                            <td>{{ operation.operation.compte.libelle }}</td>
+                            <td>{{ operation.operation.libelle }}</td>
+                            <td>{{ operation.operation.date_operation }}</td>
+                            <td><span class="{% if operation.montant >= 0 %}text-success{% else %}text-danger{% endif %}">{{ operation.montant }}€</span></td>
+                            <td><span class="{% if operation.operation.montant >= 0 %}text-success{% else %}text-danger{% endif %}">{{ operation.operation.montant }}€</span></td>
+                            <td>{{ operation.part|times:100|floatformat:0 }}%</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+                <div class="text-center">
+                    {% bootstrap_pagination page_obj %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
