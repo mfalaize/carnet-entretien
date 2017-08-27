@@ -136,7 +136,7 @@ class Budget(models.Model):
         """Calcule les propriétés solde, operations et depenses de l'objet"""
         operations_mois_en_cours = Operation.objects.filter(compte_id=self.compte_associe.pk,
                                                             date_operation__month=date.month,
-                                                            budget_id=self.pk)
+                                                            budget_id=self.pk).order_by('-date_operation')
         self.operations = operations_mois_en_cours
         self.solde = self.budget
         self.depenses = 0
