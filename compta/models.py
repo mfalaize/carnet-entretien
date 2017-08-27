@@ -95,8 +95,9 @@ class Compte(models.Model):
 
         # On enlève au solde_restant la sommes des opérations qui constituent des avances sur des opérations en attente (chèque ou grosse somme versée)
         self.avances_sur_debits_futurs = Operation.objects.filter(compte=self, avance_debit=True).aggregate(avances=Sum('montant'))['avances']
-        if self.avances_sur_debits_futurs is not None:
-            self.solde_restant -= self.avances_sur_debits_futurs
+        if self.avances_sur_debits_futurs is None:
+            self.avances_sur_debits_futurs = 0
+        self.solde_restant -= self.avances_sur_debits_futurs
 
         if self.total_budget > 0:
             for utilisateur in self.utilisateurs_list:
@@ -112,8 +113,8 @@ class Compte(models.Model):
             if self.total_salaire > 0:
                 for utilisateur in self.utilisateurs_list:
                     utilisateur.part = utilisateur.revenus_personnels / self.total_salaire
-                    utilisateur.a_verser = utilisateur.part * (self.total_budget - self.solde) - utilisateur.avances
-                    utilisateur.formule_calcule_a_verser = str(utilisateur.part) + ' [part utilisateur] x (' + str(self.total_budget) + ' [budget total] - ' + str(self.solde) + ' [solde du compte]) - ' + str(utilisateur.avances) + " [avances de l'utilisateur]"
+                    utilisateur.a_verser = utilisateur.part * (self.total_budget - self.solde + self.avances_sur_debits_futurs) - utilisateur.avances
+                    utilisateur.formule_calcule_a_verser = str(utilisateur.part) + ' [part utilisateur] x (' + str(self.total_budget) + ' [budget total] - ' + str(self.solde) + ' [solde du compte] + ' + str(self.avances_sur_debits_futurs) + ' [avances sur débits futurs]) - ' + str(utilisateur.avances) + " [avances de l'utilisateur]"
                     if self.total_contributions > 0:
                         utilisateur.part_contribution = utilisateur.contributions / self.total_contributions
                         self.total_part_contributions += utilisateur.part_contribution
@@ -156,7 +157,7 @@ class Operation(models.Model):
     contributeur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Contributeur"), null=True, blank=True)
     avance = models.BooleanField(default=False, verbose_name=_("Avance sur budget"))
     saisie_manuelle = models.BooleanField(default=False, verbose_name=_("Saisie manuellement"))
-    avance_debit = models.BooleanField(default=False, verbose_name=_("Avance pour débit(s) futur(s)"))
+    avance_debit = models.BooleanField(default=False, verbose_name=_("Avance sur débit(s) futur(s)"))
 
     def __str__(self):
         return self.libelle
