@@ -73,3 +73,5 @@ class OperationCategoriesForm(forms.Form):
                     self.fields['categorie'].choices += ((budget.pk, budget.categorie.libelle),)
         else:
             self.fields['operation_id'].initial = post.get('operation_id')
+
+        self.fields['categorie'].choices = sorted(self.fields['categorie'].choices, key=lambda x: x[1])
