@@ -1,5 +1,6 @@
 import base64
 import datetime
+import decimal
 
 from Crypto.Cipher import AES
 from django.conf import settings
@@ -181,11 +182,24 @@ class Operation(models.Model):
         self.saisie_manuelle = False
         self.avance_debit = False
 
+    def raz_epargne(self):
+        if self.compte.epargne:
+            # On supprime les opérations épargnes correspondantes
+            operations_epargnes = OperationEpargne.objects.filter(operation_id=self.pk)
+            for op in operations_epargnes:
+                if op.epargne is not None:
+                    op.epargne.solde -= op.montant
+                    op.epargne.save()
+                op.delete()
+
+
     def load_categorie(self):
         self.categorie_id = None
 
         if self.compte.epargne and self.hors_budget:
-            if self.montant < 0:
+            if OperationEpargne.objects.filter(operation_id=self.pk).count() > 1:
+                self.categorie_id = "-1"
+            else:
                 op_epargne = OperationEpargne.objects.get(operation_id=self.pk)
                 self.categorie_id = op_epargne.epargne_id
 
@@ -208,18 +222,38 @@ class Operation(models.Model):
     def save_categorie(self, categorie_id, user):
         # On remet les valeurs par défaut pour etre sur de remettre les valeurs si l'opération a changé de catégorie plusieurs fois
         self.raz_categorie()
+        self.raz_epargne()
+
+        if categorie_id == '':
+            self.save()
+            return
 
         if self.compte.epargne:
             self.hors_budget = True
             self.save()
 
-            op_epargne = OperationEpargne.objects.get(operation_id=self.pk)
-            op_epargne.epargne_id = categorie_id
-            op_epargne.save()
+            if categorie_id == '-1':
+                # Pour le code -1 on distribue les sommes entre chaque "compte épargne"
+                epargnes = Epargne.objects.filter(utilisateurs__in=self.compte.utilisateurs.all()).distinct()
+                for epargne in epargnes:
+                    op = OperationEpargne()
+                    op.epargne = epargne
+                    op.montant = decimal.Decimal(self.montant * epargne.pourcentage_alloue / 100)
+                    op.operation = self
+                    op.save()
 
-            epargne = Epargne.objects.get(pk=categorie_id, utilisateurs=user)
-            epargne.solde += op_epargne.montant
-            epargne.save()
+                    epargne.solde += op.montant
+                    epargne.save()
+            else:
+                op = OperationEpargne()
+                op.operation = self
+                op.epargne_id = categorie_id
+                op.montant = self.montant
+                op.save()
+
+                epargne = Epargne.objects.get(pk=categorie_id, utilisateurs=user)
+                epargne.solde += op.montant
+                epargne.save()
 
         elif categorie_id == '-1':
             self.hors_budget = True

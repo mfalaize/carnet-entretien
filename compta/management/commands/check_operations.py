@@ -1,5 +1,4 @@
 import calendar
-import decimal
 from datetime import date
 
 from django.conf import settings
@@ -8,7 +7,7 @@ from django.core.management import BaseCommand
 from django.template.loader import get_template
 
 from compta.bank import get_bank_class
-from compta.models import Compte, Epargne, OperationEpargne, Budget
+from compta.models import Compte
 
 
 def generate_mail(compte):
@@ -34,7 +33,6 @@ def check_operations():
     """Récupère les dernières opérations bancaires en ligne, inscrit les nouvelles en base et les envoie par mail"""
     comptes = Compte.objects.all()
     for compte in comptes:
-        epargnes = Epargne.objects.filter(utilisateurs__in=compte.utilisateurs.all()).distinct()
         operations = compte.operation_set.all()
         bank_class = get_bank_class(compte.identifiant.banque)
         has_changed = False
@@ -52,29 +50,7 @@ def check_operations():
             if not found:
                 new_operation.compte = compte
                 new_operation.save()
-
-                if compte.epargne:
-                    if new_operation.montant >= 0:
-                        for epargne in epargnes:
-                            new_operation.hors_budget = True
-                            new_operation.save()
-
-                            op = OperationEpargne()
-                            op.epargne = epargne
-                            op.montant = decimal.Decimal(new_operation.montant * epargne.pourcentage_alloue / 100)
-                            op.operation = new_operation
-                            op.save()
-
-                            epargne.solde += op.montant
-                            epargne.save()
-                    else:
-                        op = OperationEpargne()
-                        op.montant = new_operation.montant
-                        op.operation = new_operation
-                        op.save()
-                        has_changed = True
-                else:
-                    has_changed = True
+                has_changed = True
 
         if compte.solde != new_solde:
             compte.solde = new_solde

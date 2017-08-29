@@ -50,14 +50,11 @@ class OperationCategoriesForm(forms.Form):
 
             self.fields['operation_id'].initial = operation.pk
             if operation.compte.epargne:
-                if operation.montant >= 0:
-                    self.fields['categorie'].disabled = True
-                    self.fields['categorie'].choices = (("", _("Partagé entre les différentes catégories")),)
-                else:
-                    if categories_epargne is None:
-                        categories_epargne = CategorieEpargne.objects.all().order_by('libelle')
-                    for categorie in categories_epargne:
-                        self.fields['categorie'].choices += ((str(categorie.pk).replace(" ", ""), categorie.libelle),)
+                self.fields['categorie'].choices += (("-1", _("Partagé entre les différentes catégories")),)
+                if categories_epargne is None:
+                    categories_epargne = CategorieEpargne.objects.all().order_by('libelle')
+                for categorie in categories_epargne:
+                    self.fields['categorie'].choices += ((str(categorie.pk).replace(" ", ""), categorie.libelle),)
             else:
                 self.fields['categorie'].choices += (("-1", _("Hors Budget")),)
                 self.fields['categorie'].choices += (("-2", _("Revenue")),)
