@@ -15,6 +15,7 @@ from django.views.generic import UpdateView
 from rest_framework import viewsets
 
 from compta.forms import BudgetForm, OperationCategoriesForm
+from compta.management.commands import check_operations
 from compta.models import Operation, Categorie, Compte, Budget, CategorieEpargne, OperationEpargne, Epargne
 from compta.serializers import UserSerializer, GroupSerializer
 
@@ -107,7 +108,8 @@ def set_revenus(request):
         revenus = float(request.POST['revenus'])
         operation_id_saisie_manuelle = request.POST['operation_id_saisie_manuelle']
 
-        operation = Operation() if operation_id_saisie_manuelle == '' else Operation.objects.get(pk=int(operation_id_saisie_manuelle))
+        operation = Operation() if operation_id_saisie_manuelle == '' else Operation.objects.get(
+            pk=int(operation_id_saisie_manuelle))
         operation.raz_categorie()
         operation.libelle = 'Revenus ' + request.user.get_full_name()
         operation.date_operation = datetime.date.today()
@@ -132,7 +134,8 @@ class Home(ListView):
 
     def get_queryset(self):
         return Operation.objects.filter(compte__utilisateurs=self.request.user, budget__isnull=True, hors_budget=False,
-                                        recette_id__isnull=True, contributeur_id__isnull=True, avance_debit=False).order_by('date_operation')
+                                        recette_id__isnull=True, contributeur_id__isnull=True,
+                                        avance_debit=False).order_by('date_operation')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -147,7 +150,8 @@ class Home(ListView):
         context['epargnes'] = Epargne.objects.filter(utilisateurs=self.request.user).order_by('categorie__libelle')
 
         self.request.user.revenus_personnels = self.request.user.get_revenus_personnels(context['today'])
-        self.request.user.revenus_personnels_saisis_manuellement = self.request.user.get_revenus_personnels_saisis_manuellement(context['today'])
+        self.request.user.revenus_personnels_saisis_manuellement = self.request.user.get_revenus_personnels_saisis_manuellement(
+            context['today'])
 
         context['total_epargnes'] = 0
         context['total_epargne_reel'] = 0
@@ -196,7 +200,8 @@ class OperationsEpargne(ListView):
     context_object_name = 'operations'
 
     def get_queryset(self):
-        return OperationEpargne.objects.filter(epargne__utilisateurs=self.request.user, epargne_id=self.kwargs['categorie_id'])\
+        return OperationEpargne.objects.filter(epargne__utilisateurs=self.request.user,
+                                               epargne_id=self.kwargs['categorie_id']) \
             .order_by('-operation__date_operation')
 
     def get_context_data(self, **kwargs):
@@ -215,7 +220,8 @@ class Operations(ListView):
     context_object_name = 'operations'
 
     def get_queryset(self):
-        return Operation.objects.filter(compte__utilisateurs=self.request.user, compte=self.kwargs['pk']).order_by('-date_operation')
+        return Operation.objects.filter(compte__utilisateurs=self.request.user, compte=self.kwargs['pk']).order_by(
+            '-date_operation')
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -247,3 +253,8 @@ def edit_categorie(request):
             return HttpResponse("OK")
 
     return HttpResponse("NOK", status=400)
+
+
+@login_required
+def refresh_comptes(request):
+    check_operations.check_operations()

@@ -21,5 +21,6 @@ urlpatterns = [
     url(r'^compte/(?P<pk>[0-9]+)/details-calcule-a-verser$', views.details_calcule_a_verser, name='details-calcule-a-verser'),
     url(r'^set-revenus$', views.set_revenus, name='set-revenus'),
     url(r'^compte/(?P<pk>[0-9]+)/operations$', views.Operations.as_view(), name='operations'),
-    url(r'^epargnes/(?P<categorie_id>[0-9]+)', views.OperationsEpargne.as_view(), name='voir-operations-epargnes')
+    url(r'^epargnes/(?P<categorie_id>[0-9]+)', views.OperationsEpargne.as_view(), name='voir-operations-epargnes'),
+    url(r'^refresh$', views.refresh_comptes, name='refresh')
 ]
