@@ -148,19 +148,19 @@
                         {% if compte.avances_sur_debits_futurs != 0 %}
                         <tr>
                             <td colspan="3" class="text-right"><strong>{% trans 'Avances sur débits futurs' %}</strong></td>
-                            <td><span class="{% if compte.avances_sur_debits_futurs >= 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.avances_sur_debits_futurs }}€</span></td>
+                            <td><span class="{% if compte.avances_sur_debits_futurs >= 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.avances_sur_debits_futurs|floatformat:2 }}€</span></td>
                         </tr>
                         {% endif %}
                         <tr>
                             <td colspan="3" class="text-right"><strong>{% trans 'Solde restant' %}</strong></td>
-                            <td><span class="{% if compte.solde_restant >= 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.solde_restant }}€</span></td>
+                            <td><span class="{% if compte.solde_restant >= 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.solde_restant|floatformat:2 }}€</span></td>
                         </tr>
                         {% if not compte.epargne and compte.utilisateurs.count == 1 %}
                             {% for compteJoint in comptes %}
                                 {% if compteJoint.total_contributions > 0 and compteJoint.utilisateur.a_verser > 0 %}
                                     <tr>
                                         <td colspan="3" class="text-right"><strong>{% blocktrans with libelle=compteJoint.libelle %}Solde après versement sur {{ libelle }}{% endblocktrans %}</strong></td>
-                                        <td><span class="{% if compte.solde_restant|subtract:compteJoint.utilisateur.a_verser > 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.solde_restant|subtract:compteJoint.utilisateur.a_verser }}€</span></td>
+                                        <td><span class="{% if compte.solde_restant|subtract:compteJoint.utilisateur.a_verser > 0 %}text-success{% else %}text-danger{% endif %}">{{ compte.solde_restant|subtract:compteJoint.utilisateur.a_verser|floatformat:2 }}€</span></td>
                                     </tr>
                                 {% endif %}
                             {% endfor %}
