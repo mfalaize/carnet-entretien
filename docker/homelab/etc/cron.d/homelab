@@ -1,3 +1,3 @@
 0 10 * * * root export PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin && cd /usr/src/app && python manage.py check_entretien >> data/logs/check_entretien.log 2>&1
-5 10 * * * root export PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin && cd /usr/src/app && python manage.py check_operations >> data/logs/check_operations.log 2>&1
+0 16 * * * root export PATH=/usr/local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin && cd /usr/src/app && python manage.py check_operations >> data/logs/check_operations.log 2>&1
 #
