@@ -236,11 +236,7 @@
                         {% for compte in comptes %}
                             {% if compte.total_contributions > 0 %}
                                 <tr>
-                                    <td>{% trans "Total investi sur" %} {{ compte.libelle }}</td>
-                                    <td>{{ compte.utilisateur.contributions }}€</td>
-                                </tr>
-                                <tr>
-                                    <td>{% trans "Part d'investissement sur" %} {{ compte.libelle }}</td>
+                                    <td>{% blocktrans with compte=compte.libelle %}Part d'investissement total sur {{ compte }} (hors apports){% endblocktrans %}</td>
                                     <td>{{ compte.utilisateur.part_contribution|times:100|floatformat:2 }}%</td>
                                 </tr>
                                 <tr>
