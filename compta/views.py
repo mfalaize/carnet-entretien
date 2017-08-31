@@ -258,3 +258,4 @@ def edit_categorie(request):
 @login_required
 def refresh_comptes(request):
     check_operations.check_operations()
+    return HttpResponse("OK")

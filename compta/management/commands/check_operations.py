@@ -10,23 +10,25 @@ from compta.bank import get_bank_class
 from compta.models import Compte
 
 
-def generate_mail(compte):
+def generate_mail():
     # Dernier jour du mois, on envoie un mail pour les comptes joints afin de fournir les sommes à y déposer
     if date.today().day == calendar.monthrange(date.today().year, date.today().month)[1]:
-        if compte.utilisateurs.count() > 1:
-            compte.calculer_parts()
-            if compte.total_salaire > 0:
-                html_content = get_template('compta/details_calcule_a_verser.html').render(locals())
+        comptes = Compte.objects.all()
+        for compte in comptes:
+            if compte.utilisateurs.count() > 1:
+                compte.calculer_parts()
+                if compte.total_salaire > 0:
+                    html_content = get_template('compta/details_calcule_a_verser.html').render(locals())
 
-                mails = []
-                for user in compte.utilisateurs_list:
-                    if user.email is not None:
-                        mails.append(user.email)
-                if len(mails) > 0:
-                    send_mail(
-                        '[Homelab] Sommes à verser sur {}'.format(str(compte)),
-                        "",
-                        settings.DEFAULT_FROM_EMAIL, mails, html_message=html_content)
+                    mails = []
+                    for user in compte.utilisateurs_list:
+                        if user.email is not None:
+                            mails.append(user.email)
+                    if len(mails) > 0:
+                        send_mail(
+                            '[Homelab] Sommes à verser sur {}'.format(str(compte)),
+                            "",
+                            settings.DEFAULT_FROM_EMAIL, mails, html_message=html_content)
 
 
 def check_operations():
@@ -67,7 +69,7 @@ def check_operations():
                     "",
                     settings.DEFAULT_FROM_EMAIL, mails)
 
-        generate_mail(compte)
+    generate_mail()
 
 
 class Command(BaseCommand):
