@@ -81,6 +81,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'carnet_auto',
     'compta',
+    'assmat',
     'portail',
     'bootstrap3',
     'widget_tweaks',

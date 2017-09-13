@@ -32,6 +32,19 @@
                 </div>
             </div>
         </div>
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title text-center">{% trans "Assistante Maternelle" %}</h3>
+                </div>
+
+                <div class="panel-body">
+                    <a href="{% url 'assmat:home' %}" class="thumbnail">
+                        <img src="{% static "img/assmat.jpg" %}" style="height: 200px;"/>
+                    </a>
+                </div>
+            </div>
+        </div>
         {% if user.is_superuser %}
         <div class="col-md-4">
             <div class="panel panel-primary">

@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load static %}
+{% load bootstrap3 %}
+{% load utils %}
+
+{% block content %}
+    <div class="container">
+        <form class="lead text-center form-inline" action="{% url 'assmat:home' %}" method="get">
+            {% trans "Bulletin de salaire" %}
+            <select class="form-control" name="mois">
+                <option value="1" {% if today.month == 1 %}selected{% endif %}>{% trans 'janvier' %}</option>
+                <option value="2" {% if today.month == 2 %}selected{% endif %}>{% trans 'février' %}</option>
+                <option value="3" {% if today.month == 3 %}selected{% endif %}>{% trans 'mars' %}</option>
+                <option value="4" {% if today.month == 4 %}selected{% endif %}>{% trans 'avril' %}</option>
+                <option value="5" {% if today.month == 5 %}selected{% endif %}>{% trans 'mai' %}</option>
+                <option value="6" {% if today.month == 6 %}selected{% endif %}>{% trans 'juin' %}</option>
+                <option value="7" {% if today.month == 7 %}selected{% endif %}>{% trans 'juillet' %}</option>
+                <option value="8" {% if today.month == 8 %}selected{% endif %}>{% trans 'août' %}</option>
+                <option value="9" {% if today.month == 9 %}selected{% endif %}>{% trans 'septembre' %}</option>
+                <option value="10" {% if today.month == 10 %}selected{% endif %}>{% trans 'octobre' %}</option>
+                <option value="11" {% if today.month == 11 %}selected{% endif %}>{% trans 'novembre' %}</option>
+                <option value="12" {% if today.month == 12 %}selected{% endif %}>{% trans 'décembre' %}</option>
+            </select>
+            <select class="form-control" name="annee">
+                {% for annee in available_years %}
+                    <option value="{{ annee|remove_spaces }}" {% if today.year == annee %}selected{% endif %}>{{ annee|remove_spaces }}</option>
+                {% endfor %}
+            </select>
+            <button class="btn btn-default" type="submit">{% trans 'OK' %}</button>
+        </form>
+
+        <div class="row">
+            <div class="col-md-12">
+                <form method="post" action="">
+                {% csrf_token %}
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th>{% trans "Jour du mois" %}</th>
+                            <th>{% trans "Heures effectuées" %}</th>
+                            <th>{% trans "Heures complémentaires" %}</th>
+                            <th>{% trans "Heures supplémentaires" %}</th>
+                            {% if contrat.indemnite_repas > 0 %}
+                                <th>{% trans "Repas ?" %}</th>
+                            {% endif %}
+                            {% if contrat.indemnite_gouter > 0 %}
+                                <th>{% trans "Goûté ?" %}</th>
+                            {% endif %}
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for jour in jours %}
+                            <tr>
+                            <td>{{ jour.jour_semaine }} {{ jour.date }}</td>
+                            <td>{% bootstrap_field jour.form.heures_effectuees show_label=False layout='inline' %}</td>
+                            <td>{% bootstrap_field jour.form.heures_complementaires show_label=False layout='inline' %}</td>
+                            <td>{% bootstrap_field jour.form.heures_supplementaires show_label=False layout='inline' %}</td>
+                            {% if contrat.indemnite_repas > 0 %}
+                                <td>{% bootstrap_field jour.form.repas show_label=False layout='inline' %}</td>
+                            {% endif %}
+                            {% if contrat.indemnite_gouter > 0 %}
+                                <td>{% bootstrap_field jour.form.gouter show_label=False layout='inline' %}</td>
+                            {% endif %}
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                    <button type="submit">{% trans "Valider" %}</button>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}

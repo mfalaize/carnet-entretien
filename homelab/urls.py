@@ -25,6 +25,7 @@ from portail.forms import BootstrapAuthenticationForm
 urlpatterns = [
     url(r'^carnet-auto/', include('carnet_auto.urls', namespace='carnet_auto', app_name='carnet_auto')),
     url(r'^compta/', include('compta.urls', namespace='compta', app_name='compta')),
+    url(r'^assmat/', include('assmat.urls', namespace='assmat', app_name='assmat')),
     url(r'^login/$', auth.login, {'authentication_form': BootstrapAuthenticationForm}, name='login'),
     url(r'^logout/$', auth.logout, {'next_page': 'login'}, name='logout'),
     url(r'^password_change/$', auth.password_change, name='password_change'),
