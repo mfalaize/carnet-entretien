@@ -6,5 +6,7 @@ from assmat import views
 # Additionally, we include login URLs for the browsable API.
 urlpatterns = [
     # url(r'^', include(router.urls)),
-    url(r'^$', views.home, name='home')
+    url(r'^$', views.home, name='home'),
+    url(r'^valider$', views.valider, name='valider')
+
 ]

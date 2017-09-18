@@ -13,3 +13,4 @@ sqlparse==0.2.3
 dealer==2.0.5
 ezodf==0.3.2
 lxml==3.8.0
+workalendar==2.3.1

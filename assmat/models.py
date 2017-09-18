@@ -54,6 +54,7 @@ class Contrat(models.Model):
     indemnite_km = models.DecimalField(default=0, max_digits=4, decimal_places=2,
                                        verbose_name=_("Indemnité de déplacement kilométrique"))
     jours_normalement_travailles = models.PositiveIntegerField(default=int(0b1111100), verbose_name=_("Jours de la semaine normalement travaillés"))
+    nb_enfants_moins_15_ans = models.IntegerField(default=0, verbose_name=_("Nombre d'enfants à charge du salairé de moins de 15 ans"))
 
 
 def repertoire_upload_bulletin_salaire_pdf(instance, filename):
@@ -89,10 +90,14 @@ class BulletinSalaire(models.Model):
     numero_cheque_virement = models.CharField(max_length=256, verbose_name=_("Numéro du chèque ou virement"), null=True, blank=True)
     cumul_nb_semaines_travaillees = models.IntegerField(
         verbose_name=_("Nombre de semaines travaillées depuis le 1er janvier"))
+    nb_jours_plus_8h = models.IntegerField(default=0, verbose_name=_("Nombre de jours travaillés de 8h et plus dans le mois"))
     cumul_nb_jours_plus_8h = models.IntegerField(
         verbose_name=_("Cumul annuel du nombre de jours travaillés de 8h et plus"))
+    nb_jours_moins_8h = models.IntegerField(default=0, verbose_name=_("Nombre de jours travaillés de moins de 8h dans le mois"))
     cumul_nb_jours_moins_8h = models.IntegerField(
         verbose_name=_("Cumul annuel du nombre de jours travaillés de moins de 8h"))
+    nb_semaines_travailles_mois = models.IntegerField(default=0, verbose_name=_("Nombre de semaines travaillées dans le mois"))
+    cumul_nb_semaines_travaillees = models.IntegerField(default=0, verbose_name=_("Cumul nombre de semaines travaillées"))
     pdf = models.FileField(upload_to=repertoire_upload_bulletin_salaire_pdf, verbose_name=_("Fichier PDF"), null=True)
 
 
@@ -119,3 +124,10 @@ class JourTravail(models.Model):
     type = models.CharField(max_length=64, choices=CHOIX_TYPES, verbose_name=_("Type"))
     repas = models.BooleanField(default=False, verbose_name=_("L'enfant a eu un repas"))
     gouter = models.BooleanField(default=False, verbose_name=_("L'enfant a eu un goûter"))
+
+    def get_heures_total(self):
+        total = 0
+        total += self.heures_effectuees
+        total += self.heures_complementaires
+        total += self.heures_supplementaires
+        return total

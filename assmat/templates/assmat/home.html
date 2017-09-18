@@ -8,7 +8,7 @@
     <div class="container">
         <form class="lead text-center form-inline" action="{% url 'assmat:home' %}" method="get">
             {% trans "Bulletin de salaire" %}
-            <select class="form-control" name="mois">
+            <select class="form-control" name="mois" id="mois">
                 <option value="1" {% if today.month == 1 %}selected{% endif %}>{% trans 'janvier' %}</option>
                 <option value="2" {% if today.month == 2 %}selected{% endif %}>{% trans 'février' %}</option>
                 <option value="3" {% if today.month == 3 %}selected{% endif %}>{% trans 'mars' %}</option>
@@ -22,7 +22,7 @@
                 <option value="11" {% if today.month == 11 %}selected{% endif %}>{% trans 'novembre' %}</option>
                 <option value="12" {% if today.month == 12 %}selected{% endif %}>{% trans 'décembre' %}</option>
             </select>
-            <select class="form-control" name="annee">
+            <select class="form-control" name="annee" id="annee">
                 {% for annee in available_years %}
                     <option value="{{ annee|remove_spaces }}" {% if today.year == annee %}selected{% endif %}>{{ annee|remove_spaces }}</option>
                 {% endfor %}
@@ -32,12 +32,15 @@
 
         <div class="row">
             <div class="col-md-12">
-                <form method="post" action="">
+                <form action="{% url 'assmat:valider' %}" method="post">
                 {% csrf_token %}
+                <input type="hidden" id="moisHidden" name="mois">
+                <input type="hidden" id="anneeHidden" name="annee">
                     <table class="table table-striped">
                         <thead>
                         <tr>
                             <th>{% trans "Jour du mois" %}</th>
+                            <th>{% trans "Type" %}</th>
                             <th>{% trans "Heures effectuées" %}</th>
                             <th>{% trans "Heures complémentaires" %}</th>
                             <th>{% trans "Heures supplémentaires" %}</th>
@@ -51,8 +54,9 @@
                         </thead>
                         <tbody>
                         {% for jour in jours %}
-                            <tr>
+                            <tr{% if not jour.is_travaille %} class="warning"{% endif %}>
                             <td>{{ jour.jour_semaine }} {{ jour.date }}</td>
+                            <td>{% bootstrap_field jour.form.type show_label=False layout='inline' %}</td>
                             <td>{% bootstrap_field jour.form.heures_effectuees show_label=False layout='inline' %}</td>
                             <td>{% bootstrap_field jour.form.heures_complementaires show_label=False layout='inline' %}</td>
                             <td>{% bootstrap_field jour.form.heures_supplementaires show_label=False layout='inline' %}</td>
@@ -66,7 +70,9 @@
                         {% endfor %}
                         </tbody>
                     </table>
-                    <button type="submit">{% trans "Valider" %}</button>
+                    <div class="text-center" style="margin-bottom: 30px;">
+                        <button onclick="$('#moisHidden').val($('#mois').val()); $('#anneeHidden').val($('#annee').val()); $(this).closest('form').submit();" type="button" class="btn btn-primary">{% trans "Valider" %}</button>
+                    </div>
                 </form>
             </div>
         </div>

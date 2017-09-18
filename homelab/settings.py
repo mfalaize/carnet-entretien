@@ -38,6 +38,11 @@ try:
 except KeyError:
     mail = {}
 
+try:
+    libreoffice_ws = config['LibreOffice']
+except KeyError:
+    libreoffice_ws = {}
+
 if application.get('SecretKey', '') == 'doNotTouch' or application.get('SecretKey', '') == '':
     chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$^&*(-_=+)'
     application['SecretKey'] = get_random_string(50, chars)
@@ -68,6 +73,8 @@ EMAIL_PORT = mail.get('Port', '587')
 EMAIL_HOST_USER = mail.get('User', '')
 EMAIL_HOST_PASSWORD = mail.get('Password', '')
 DEFAULT_FROM_EMAIL = mail.get('DefaultFrom', 'homelab@localhost')
+
+LIBREOFFICE_URL_WS = libreoffice_ws.get('urlws', '')
 
 
 # Application definition
