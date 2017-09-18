@@ -62,9 +62,11 @@ def valider(request):
         contrat = Contrat.objects.get(Q(date_debut_contrat__lte=today),
                                       Q(date_fin_contrat__gte=today) | Q(date_fin_contrat__isnull=True))
 
-        bulletin = BulletinSalaire.objects.get(date_debut__year=today.year, date_debut__month=today.month)
-        if bulletin is None:
+        try:
+            bulletin = BulletinSalaire.objects.get(date_debut__year=today.year, date_debut__month=today.month)
+        except BulletinSalaire.DoesNotExist:
             bulletin = BulletinSalaire()
+
         bulletin.contrat = contrat
         bulletin.date_debut = today.replace(day=1)
         bulletin.date_fin = today.replace(day=nb_jours_dans_mois)
@@ -130,15 +132,19 @@ def valider(request):
 
         # Calcul du cumul de nombre de jours de plus et moins de 8h depuis le 1er janvier
         sum_plus_8h = \
-        BulletinSalaire.objects.filter(date_debut__year=today.year).aggregate(sum=Sum('nb_jours_plus_8h'))['sum']
+            BulletinSalaire.objects.filter(date_debut__year=today.year).aggregate(sum=Sum('nb_jours_plus_8h'))['sum']
         if sum_plus_8h is None:
             sum_plus_8h = 0
         sum_moins_8h = \
-        BulletinSalaire.objects.filter(date_debut__year=today.year).aggregate(sum=Sum('nb_jours_moins_8h'))['sum']
+            BulletinSalaire.objects.filter(date_debut__year=today.year).aggregate(sum=Sum('nb_jours_moins_8h'))['sum']
         if sum_moins_8h is None:
             sum_moins_8h = 0
-        bulletin.cumul_nb_jours_plus_8h = sum_plus_8h + bulletin.nb_jours_plus_8h
-        bulletin.cumul_nb_jours_moins_8h = sum_moins_8h + bulletin.nb_jours_moins_8h
+        bulletin.cumul_nb_jours_plus_8h = sum_plus_8h
+        if bulletin.pk is None:
+            bulletin.cumul_nb_jours_plus_8h += bulletin.nb_jours_plus_8h
+        bulletin.cumul_nb_jours_moins_8h = sum_moins_8h
+        if bulletin.pk is None:
+            bulletin.cumul_nb_jours_moins_8h += bulletin.nb_jours_moins_8h
 
         # L'objet bulletin a toutes les infos pour calculer les montants. Le calcul est effectué par le template au format ODS
         # On remplit donc l'ODS avec les infos du bulletins et on collecte ensuite les informations restantes
@@ -146,10 +152,12 @@ def valider(request):
 
         # Une fois qu'on a les calcules du template ODS, on calcule les cumuls
         sum_net_imposable = \
-        BulletinSalaire.objects.filter(date_debut__year=today.year).aggregate(sum=Sum('net_imposable'))['sum']
+            BulletinSalaire.objects.filter(date_debut__year=today.year).aggregate(sum=Sum('net_imposable'))['sum']
         if sum_net_imposable is None:
             sum_net_imposable = 0
-        bulletin.cumul_net_imposable = sum_net_imposable + bulletin.net_imposable
+        bulletin.cumul_net_imposable = sum_net_imposable
+        if bulletin.pk is None:
+            bulletin.cumul_net_imposable += bulletin.net_imposable
 
         bulletin.save()
 
