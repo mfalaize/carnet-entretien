@@ -36,6 +36,7 @@
                 {% csrf_token %}
                 <input type="hidden" id="moisHidden" name="mois">
                 <input type="hidden" id="anneeHidden" name="annee">
+                <input type="hidden" id="nbHeuresDefault" name="nbHeuresDefault" value="{{ contrat.nb_heures_accueil_jour }}">
                     <table class="table table-striped">
                         <thead>
                         <tr>
@@ -77,4 +78,25 @@
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block extra_script %}
+    <script type="text/javascript">
+    $(document).ready(function() {
+        $('select[name$="-type"]').on('change', function(e) {
+            var prefix = $(this).attr('name').substring(0, $(this).attr('name').indexOf('-'));
+            if ($(this).val() === 'T') {
+                $('input[name="' + prefix + '-heures_effectuees"]').val($('#nbHeuresDefault').val().replace(',', '.'));
+                $('input[name="' + prefix + '-repas"]').prop('checked', true);
+                $('input[name="' + prefix + '-gouter"]').prop('checked', true);
+                $(this).closest("tr").removeClass("warning");
+            } else {
+                $('input[name="' + prefix + '-heures_effectuees"]').val("0.00");
+                $('input[name="' + prefix + '-repas"]').prop('checked', false);
+                $('input[name="' + prefix + '-gouter"]').prop('checked', false);
+                $(this).closest("tr").addClass("warning");
+            }
+        });
+    });
+    </script>
 {% endblock %}
