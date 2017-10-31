@@ -141,7 +141,7 @@ class Home(ListView):
         context = super().get_context_data(**kwargs)
         context['today'] = datetime.date.today()
         if self.request.GET and self.request.GET['mois'] and self.request.GET['annee']:
-            context['today'] = context['today'].replace(month=int(self.request.GET['mois']),
+            context['today'] = context['today'].replace(day=1, month=int(self.request.GET['mois']),
                                                         year=int(self.request.GET['annee']))
         context['available_years'] = range(2017, 2025)
         context['categories'] = Categorie.objects.all().order_by('libelle')
