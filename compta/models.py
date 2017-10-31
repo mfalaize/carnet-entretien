@@ -68,10 +68,13 @@ class Compte(models.Model):
             return self.libelle
         return self.banque + " " + self.numero_compte
 
-    def calculer_parts(self, date=datetime.date.today()):
+    def calculer_parts(self, date=None):
         """Remplis les propriétés total_budget, total_depenses, total_solde, total_salaire, total_part, total_a_verser, utilisateurs, budgets
         ainsi que les propriétés de chaque utilisateur du compte revenus_personnels, avances, part, a_verser et les propriétés de chaque
         budget depenses et solde"""
+        if date is None:
+            date = datetime.date.today()
+
         self.budgets = Budget.objects.filter(compte_associe=self).order_by('categorie__libelle')
         self.utilisateurs_list = self.utilisateurs.all()
 
@@ -133,8 +136,11 @@ class Budget(models.Model):
     def __str__(self):
         return self.categorie.libelle
 
-    def calcule_solde(self, date=datetime.date.today()):
+    def calcule_solde(self, date=None):
         """Calcule les propriétés solde, operations et depenses de l'objet"""
+        if date is None:
+            date = datetime.date.today()
+
         operations_mois_en_cours = Operation.objects.filter(compte_id=self.compte_associe.pk,
                                                             date_operation__month=date.month,
                                                             budget_id=self.pk).order_by('-date_operation')
@@ -283,7 +289,10 @@ class OperationEpargne(models.Model):
         return str(self.operation) + " " + str(self.epargne)
 
 
-def get_revenus_personnels(utilisateur, date=datetime.date.today()):
+def get_revenus_personnels(utilisateur, date=None):
+    if date is None:
+        date = datetime.date.today()
+
     value = Operation.objects.filter(
         date_operation__month=date.month, recette=utilisateur,
         compte__utilisateurs=utilisateur).aggregate(
@@ -293,7 +302,10 @@ def get_revenus_personnels(utilisateur, date=datetime.date.today()):
     return value
 
 
-def get_revenus_personnels_saisis_manuellement(utilisateur, date=datetime.date.today()):
+def get_revenus_personnels_saisis_manuellement(utilisateur, date=None):
+    if date is None:
+        date = datetime.date.today()
+
     try:
         return Operation.objects.get(
             date_operation__month=date.month, recette=utilisateur,
@@ -302,7 +314,10 @@ def get_revenus_personnels_saisis_manuellement(utilisateur, date=datetime.date.t
         return None
 
 
-def get_avances(utilisateur, compte, date=datetime.date.today()):
+def get_avances(utilisateur, compte, date=None):
+    if date is None:
+        date = datetime.date.today()
+
     value = Operation.objects.filter(
         date_operation__month=date.month, contributeur=utilisateur, avance=True,
         compte__utilisateurs=utilisateur, compte=compte).aggregate(
