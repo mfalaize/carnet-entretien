@@ -1,6 +1,7 @@
 import base64
 import datetime
 import decimal
+import os
 
 from Crypto.Cipher import AES
 from django.conf import settings
@@ -8,6 +9,8 @@ from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import Sum
 from django.utils.translation import ugettext_lazy as _
+
+from compta import pkcs7
 
 
 class Categorie(models.Model):
@@ -45,13 +48,16 @@ class Identifiant(models.Model):
     login = models.CharField(max_length=128, verbose_name=_("Login"))
     mot_de_passe = models.CharField(max_length=128, verbose_name=_("Mot de passe"))
     utilisateur = models.ForeignKey(settings.AUTH_USER_MODEL, verbose_name=_("Utilisateur"))
-    encrypted = models.BooleanField(default=False, verbose_name=_("Le mot de passe a été crypté"))
+    encrypted = models.BooleanField(default=False, verbose_name=_("Le mot de passe a été chiffré"))
 
     def clean(self):
         super().clean()
         if not self.encrypted:
-            obj = AES.new(settings.SECRET_KEY[:32])
-            self.mot_de_passe = base64.b64encode(obj.encrypt(self.mot_de_passe)).decode()
+            iv = os.urandom(16)
+            padding = pkcs7.PKCS7Encoder()
+            obj = AES.new(settings.SECRET_KEY[:32], mode=AES.MODE_CBC, IV=iv)
+            self.mot_de_passe = padding.encode(self.mot_de_passe)
+            self.mot_de_passe = base64.b64encode(iv + obj.encrypt(self.mot_de_passe)).decode()
             self.encrypted = True
 
 

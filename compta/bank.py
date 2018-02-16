@@ -6,14 +6,17 @@ from Crypto.Cipher import AES
 from bs4 import BeautifulSoup
 from django.conf import settings
 
+from compta import pkcs7
 from compta.models import Operation, Identifiant
 
 
 class BankFetcher:
     def __init__(self, login, password, account_id):
         self.login = login
-        obj = AES.new(settings.SECRET_KEY[:32])
-        self.password = obj.decrypt(base64.b64decode(password)).decode()
+        obj = AES.new(settings.SECRET_KEY[:32], mode=AES.MODE_CBC, IV=base64.b64decode(password)[:16])
+        self.password = obj.decrypt(base64.b64decode(password)[16:]).decode()
+        padding = pkcs7.PKCS7Encoder()
+        self.password = padding.decode(self.password)
         self.account_id = account_id
 
     def __enter__(self):
