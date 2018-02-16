@@ -1,4 +1,4 @@
-FROM python:3
+FROM python:3.4
 MAINTAINER Maxime Falaize <maxime.falaize@gmail.com>
 
 WORKDIR /usr/src/app
