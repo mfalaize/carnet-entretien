@@ -148,6 +148,7 @@ class Budget(models.Model):
             date = datetime.date.today()
 
         operations_mois_en_cours = Operation.objects.filter(compte_id=self.compte_associe.pk,
+                                                            date_operation__year=date.year,
                                                             date_operation__month=date.month,
                                                             budget_id=self.pk).order_by('-date_operation')
         self.operations = operations_mois_en_cours
@@ -300,6 +301,7 @@ def get_revenus_personnels(utilisateur, date=None):
         date = datetime.date.today()
 
     value = Operation.objects.filter(
+        date_operation__year=date.year,
         date_operation__month=date.month, recette=utilisateur,
         compte__utilisateurs=utilisateur).aggregate(
         revenus_personnels=Sum('montant'))['revenus_personnels']
@@ -314,6 +316,7 @@ def get_revenus_personnels_saisis_manuellement(utilisateur, date=None):
 
     try:
         return Operation.objects.get(
+            date_operation__year=date.year,
             date_operation__month=date.month, recette=utilisateur,
             compte__utilisateurs=utilisateur, saisie_manuelle=True)
     except Operation.DoesNotExist:
@@ -325,6 +328,7 @@ def get_avances(utilisateur, compte, date=None):
         date = datetime.date.today()
 
     value = Operation.objects.filter(
+        date_operation__year=date.year,
         date_operation__month=date.month, contributeur=utilisateur, avance=True,
         compte__utilisateurs=utilisateur, compte=compte).aggregate(
         avances=Sum('montant'))['avances']
