@@ -34,5 +34,7 @@ deploy:
   stage: deploy
   script:
     - ssh $DEPLOY_USER@$DEPLOY_HOST 'bash -s' < docker_install.sh
+  environment:
+    name: production
   only:
     - master
