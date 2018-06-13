@@ -1,3 +1,7 @@
+image: docker:stable
+services:
+  - docker:dind
+
 stages:
   - build
   - release
@@ -16,8 +20,6 @@ build:
   script:
     - docker build --pull --no-cache -t $CONTAINER_BUILD_IMAGE .
     - docker push $CONTAINER_BUILD_IMAGE
-  tags:
-    - docker
 
 release:
   stage: release
@@ -25,8 +27,6 @@ release:
     - docker pull $CONTAINER_BUILD_IMAGE
     - docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
     - docker push $CONTAINER_RELEASE_IMAGE
-  tags:
-    - docker
   only:
     - master
 
