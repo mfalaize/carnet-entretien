@@ -1,0 +1,38 @@
+stages:
+  - build
+  - release
+  - deploy
+
+variables:
+  CONTAINER_BUILD_IMAGE: registry.gitlab.com/mfalaize/homelab:$CI_COMMIT_REF_NAME
+  CONTAINER_RELEASE_IMAGE: mfalaize/homelab:latest
+
+before_script:
+  - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
+  - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
+
+build:
+  stage: build
+  script:
+    - docker build --pull --no-cache -t $CONTAINER_BUILD_IMAGE .
+    - docker push $CONTAINER_BUILD_IMAGE
+  tags:
+    - docker
+
+release:
+  stage: release
+  script:
+    - docker pull $CONTAINER_BUILD_IMAGE
+    - docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_IMAGE
+    - docker push $CONTAINER_RELEASE_IMAGE
+  tags:
+    - docker
+  only:
+    - master
+
+deploy:
+  stage: deploy
+  script:
+    - ssh $DEPLOY_USER@$DEPLOY_HOST 'bash -s' < docker_install.sh
+  only:
+    - master

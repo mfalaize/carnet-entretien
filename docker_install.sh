@@ -1,16 +1,5 @@
 #!/bin/sh
-HOMELAB_PATH=/opt/homelab
-
-rm -Rf ${HOMELAB_PATH}
-mkdir -p ${HOMELAB_PATH}
-cd ${HOMELAB_PATH}
-wget -O master.tar.gz "https://github.com/mfalaize/homelab/archive/master.tar.gz" && tar -xzf master.tar.gz --strip-components=1
-
-cd docker/homelab
-docker build --no-cache -t mfalaize/homelab .
-
-cd ../haproxy
-docker build --no-cache -t mfalaize/homelab-haproxy .
+# Ce script est lancé sur le serveur de déploiement
 
 docker volume create homelab
 docker volume create haproxy-config
