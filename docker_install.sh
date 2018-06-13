@@ -1,6 +1,8 @@
 #!/bin/sh
 # Ce script est lancé sur le serveur de déploiement
 
+docker pull mfalaize/homelab
+
 docker volume create homelab
 docker volume create haproxy-config
 docker volume create haproxy-certs
