@@ -1,5 +1,5 @@
 FROM python:3.4
-MAINTAINER Maxime Falaize <maxime.falaize@gmail.com>
+MAINTAINER Maxime Falaize <pro@maxime-falaize.fr>
 
 WORKDIR /usr/src/app
 
@@ -20,4 +20,5 @@ VOLUME data/
 
 EXPOSE 80
 
-ENTRYPOINT ["/docker_entrypoint.sh"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["apachectl", "-DFOREGROUND"]

@@ -10,6 +10,7 @@ stages:
 variables:
   CONTAINER_BUILD_IMAGE: registry.gitlab.com/mfalaize/homelab:$CI_COMMIT_REF_NAME
   CONTAINER_RELEASE_IMAGE: mfalaize/homelab:latest
+  CONTAINER_RELEASE_TAG_IMAGE: mfalaize/homelab:$CI_COMMIT_TAG
 
 before_script:
   ##
@@ -42,12 +43,14 @@ before_script:
   - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN registry.gitlab.com
   - docker login -u $DOCKER_HUB_USER -p $DOCKER_HUB_PASSWORD
 
+## Construit l'image et la stocke sur le registry docker gitlab
 build:
   stage: build
   script:
     - docker build --pull --no-cache -t $CONTAINER_BUILD_IMAGE .
     - docker push $CONTAINER_BUILD_IMAGE
 
+## Effectue la release sur le docker hub
 release:
   stage: release
   script:
@@ -57,6 +60,17 @@ release:
   only:
     - master
 
+## Effectue la release du tag sur le docker hub
+release-tag:
+  stage: release
+  script:
+    - docker pull $CONTAINER_BUILD_IMAGE
+    - docker tag $CONTAINER_BUILD_IMAGE $CONTAINER_RELEASE_TAG_IMAGE
+    - docker push $CONTAINER_RELEASE_TAG_IMAGE
+  only:
+    - tags
+
+## Déploie l'image docker sur le serveur de production
 deploy:
   stage: deploy
   script:

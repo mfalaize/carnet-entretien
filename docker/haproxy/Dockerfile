@@ -1,12 +1,12 @@
-FROM haproxy:1
+FROM haproxy:1-alpine
+MAINTAINER Maxime Falaize <pro@maxime-falaize.fr>
 
 COPY . /
 
 # Installation des packages
-RUN apt-get update && apt-get install -y --no-install-recommends cron \
-    && apt-get install -y --no-install-recommends -t jessie-backports certbot \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
+RUN apk add --no-cache certbot
 
-VOLUME /etc/letsencrypt
-VOLUME /usr/local/etc/haproxy
+VOLUME /etc/letsencrypt /usr/local/etc/haproxy
+
+ENTRYPOINT ["/docker-entrypoint-homelab.sh"]
+CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
