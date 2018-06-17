@@ -1,13 +1,14 @@
 #!/bin/sh
 # Ce script est lancé sur le serveur de déploiement
 
+docker pull mfalaize/homelab-haproxy
 docker pull mfalaize/homelab
 
-docker volume create homelab
-docker volume create haproxy-config
-docker volume create haproxy-certs
+docker volume ls | grep -q homelab || docker volume create homelab
+docker volume ls | grep -q haproxy-config || docker volume create haproxy-config
+docker volume ls | grep -q haproxy-certs || docker volume create haproxy-certs
 
-docker network create -d bridge homelab
+docker network ls | grep -q homelab || docker network create -d bridge homelab
 
 docker stop homelab && docker rm homelab
 docker stop haproxy && docker rm haproxy

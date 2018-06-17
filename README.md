@@ -5,19 +5,15 @@ Site web Django contenant plusieurs applications pour la gestion de la vie quoti
 
 ### Installation via Docker
 
-<code>wget https://raw.githubusercontent.com/mfalaize/homelab/master/docker_install.sh</code>
+Sur le serveur de production, lancer cette commande :
 
-<code>chmod +x docker_install.sh</code>
+<code>bash <(curl -s https://gitlab.com/mfalaize/homelab/raw/master/docker_install.sh)</code>
 
-<code>sudo ./docker_install.sh</code>
+### Activation du HTTPS avec letsencrypt
 
-### Activation du HTTPS
+Une fois l'installation via docker effectuée. Lancer cette commande sur le serveur de production :
 
-<code>wget https://raw.githubusercontent.com/mfalaize/homelab/master/cert_install.sh</code>
-
-<code>chmod +x cert_install.sh</code>
-
-<code>sudo ./cert_install.sh votredomaine votremail</code>
+<code>docker exec -it haproxy /cert_install.sh</code>
 
 Voilà l'application est disponible sur [https://votredomaine](#) ! Vous pouvez vous connecter avec l'utilisateur par défaut : <code>admin/s3cr3t</code>
 
