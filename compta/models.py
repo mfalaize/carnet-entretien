@@ -121,10 +121,13 @@ class Compte(models.Model):
                 self.total_avances += utilisateur.avances
 
             if self.total_salaire > 0:
+                avances_globales = 0
+                for utilisateur in self.utilisateurs_list:
+                    avances_globales += utilisateur.avances
                 for utilisateur in self.utilisateurs_list:
                     utilisateur.part = utilisateur.revenus_personnels / self.total_salaire
-                    utilisateur.a_verser = utilisateur.part * (self.total_budget - self.solde + self.avances_sur_debits_futurs) - utilisateur.avances
-                    utilisateur.formule_calcule_a_verser = str(utilisateur.part) + ' [part utilisateur] x (' + str(self.total_budget) + ' [budget total] - ' + str(self.solde) + ' [solde du compte] + ' + str(self.avances_sur_debits_futurs) + ' [avances sur débits futurs]) - ' + str(utilisateur.avances) + " [avances de l'utilisateur]"
+                    utilisateur.a_verser = utilisateur.part * (self.total_budget - self.solde + avances_globales + self.avances_sur_debits_futurs) - utilisateur.avances
+                    utilisateur.formule_calcule_a_verser = str(utilisateur.part) + ' [part utilisateur] x (' + str(self.total_budget) + ' [budget total] - ' + str(self.solde - avances_globales) + ' [solde du compte - les avances des utilisateurs] + ' + str(self.avances_sur_debits_futurs) + ' [avances sur débits futurs]) - ' + str(utilisateur.avances) + " [avances de l'utilisateur]"
                     if self.total_contributions > 0:
                         utilisateur.part_contribution = utilisateur.contributions / self.total_contributions
                         self.total_part_contributions += utilisateur.part_contribution
