@@ -46,7 +46,7 @@ def check_operations():
         for new_operation in new_operations:
             found = False
             for operation in operations:
-                if operation.date_operation == new_operation.date_operation and operation.libelle == new_operation.libelle:
+                if operation.date_valeur == new_operation.date_valeur and operation.libelle == new_operation.libelle:
                     found = True
                     break
             if not found:
